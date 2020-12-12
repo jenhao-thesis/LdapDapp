@@ -4,7 +4,7 @@ block content
   if (info)
     div.alert.alert-danger #{info}
   .row
-    .col-8.center-block.offset-2
+    .col-md-8.center-block.offset-md-2
       .card.text-center
         .card-header(style="font-size: 1.5rem; font-weight:bold")
           | 登入系統
@@ -22,7 +22,7 @@ block content
             input.btn.btn-primary.btn-lg.btn-block.mt-3(type='submit' value='登入')
             p.mt-2.text-left 還沒有帳戶？ <a href="#" data-toggle='modal' data-target='#registerModal'>立即註冊</a>
             p 或是
-            button.btn.btn-outline-info.btn-lg.btn-block(type='button') 使用 Ethereum 帳戶登入
+            button.btn.btn-outline-info.btn-lg.btn-block(type='button' onclick="javascript:location.href='/metamask-connect'") 使用 Ethereum 帳戶登入
 
   // Modal
   #registerModal.modal.fade(tabindex='-1' role='dialog' aria-hidden='true')

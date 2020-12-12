@@ -8,30 +8,27 @@ html
   body
     script(src='/js/jquery.min.js')
     script(src='/js/bootstrap.min.js')
-
+    
     nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
-      a.navbar-brand(href='/') NCTU DCSLAB
-      button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarNav' aria-controls='navbarNav' aria-expanded='false' aria-label='Toggle navigation')
-        span.navbar-toggler-icon
-      #navbarNav.collapse.navbar-collapse
-        ul.navbar-nav
-          li.nav-item.active
-            a.nav-link(href='#')
-              | Home 
-              span.sr-only (current)
-          if !user
-            li.nav-item
-              a.nav-link(href='#') Introduction
+      .container
+        a.navbar-brand(href='/') NCTU DCSLAB
+        button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarNav' aria-controls='navbarNav' aria-expanded='false' aria-label='Toggle navigation')
+          span.navbar-toggler-icon
+        #navbarNav.collapse.navbar-collapse
+          ul.navbar-nav
+            li.nav-item.active
+              a.nav-link(href='#')
+                | Home 
+                span.sr-only (current)
+            if !user
+              li.nav-item
+                a.nav-link(href='#') Introduction
 
-          if user
-            li.nav-item
-              a.nav-link(href='#') Profile
-            li.nav-item
-              a.nav-link(href='/users/logout') Logout
-
-
+            if user
+              li.nav-item
+                a.nav-link(href='#') Profile
+              li.nav-item
+                a.nav-link(href='/users/logout') Logout
 
     .container.mt-2
       block content
-
-

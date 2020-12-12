@@ -67,7 +67,7 @@ router.post('/login', function(req, res, next) {
   // // req.body.password = '{SSHA}B0/RzG5dL4stPl0NRmNAnSGwicIog3Yk';
   // res.redirect('/');
   // TODO
-  // Hash password
+  // Hash password with ssha256 for ldap 
   passport.authenticate('ldapauth', {session: true}, function(err, user, info) {
       if (err) {
           return next(err);

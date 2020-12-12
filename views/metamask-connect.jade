@@ -1,0 +1,23 @@
+extends layout
+
+block content
+    h3 #{title}
+    p.version
+    p.account
+
+    script. 
+        $(function() {
+            // for web3_bundle.js
+            $.getScript( "/javascripts/web3_bundle.js", function(data, textStatus, jqxhr) {
+                if (typeof(web3) !== "undefined") {
+                    account = web3.eth.accounts[0];
+                    $(".version").html("API vesion: " + web3.version.api);
+                    $(".account").html("Account:" + account);
+
+                    // TODO: call contract function
+                }
+                else {
+                    alert("Please install an Ethereum-compatible browser or extension like MetaMask to use this dApp!");
+                }
+            });
+        });

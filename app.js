@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var profile = require('./routes/profile');
+var metamask_connect = require('./routes/metamask-connect');
+
 var passport = require('passport');
 var cookieSession = require('cookie-session');
 var session = require('express-session');
@@ -57,6 +59,7 @@ app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/profile', profile);
+app.use('/metamask-connect', metamask_connect);
 
 passport.use(new LdapStrategy(OPTS));
 
