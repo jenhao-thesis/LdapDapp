@@ -1,0 +1,23 @@
+extends layout
+
+block content
+    h3 #{title}
+    table.mt-2.table.table-striped
+        thead
+          tr
+            th(scope='col') Attributes
+            th(scope='col') Value
+        tbody
+        each val, idx in user
+            tr
+              td #{idx}
+              td #{val}
+        //- tr
+        //-     td Mark
+        //-     td Otto
+        //- tr
+        //-     td Jacob
+        //-     td Thornton
+        //- tr
+        //-     td Larry
+        //-     td the Bird

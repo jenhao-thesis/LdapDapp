@@ -1,0 +1,64 @@
+extends layout
+
+block content
+  if (info)
+    div.alert.alert-danger #{info}
+  .row
+    .col-8.center-block.offset-2
+      .card.text-center
+        .card-header(style="font-size: 1.5rem; font-weight:bold")
+          | 登入系統
+        .card-body
+          h5.card-title 
+          form(action='/users/login' method='post')
+            .input-group
+              .input-group-prepend
+                span.input-group-text(id='') 使用者名稱
+              input.form-control(type='text' name='username' placeholder="Username" required="required")
+            .input-group.mt-3
+              .input-group-prepend
+                span.input-group-text(id='') 密碼
+              input.form-control(type='password' name='password' placeholder="Password" required="required")
+            input.btn.btn-primary.btn-lg.btn-block.mt-3(type='submit' value='登入')
+            p.mt-2.text-left 還沒有帳戶？ <a href="#" data-toggle='modal' data-target='#registerModal'>立即註冊</a>
+            p 或是
+            button.btn.btn-outline-info.btn-lg.btn-block(type='button') 使用 Ethereum 帳戶登入
+
+  // Modal
+  #registerModal.modal.fade(tabindex='-1' role='dialog' aria-hidden='true')
+    .modal-dialog(role='document')
+      .modal-content
+        .card.text-center
+          .card-header(style="font-size: 1.5rem; font-weight:bold")
+            | 註冊
+            button.close(type='button' data-dismiss='modal' aria-label='Close')
+              span(aria-hidden='true') ×
+          .card-body
+            h5.card-title 
+            form(action='/users/register' method='post')
+              .input-group
+                .input-group-prepend
+                  span.input-group-text(id='') 使用者名稱
+                input.form-control(type='text' name='username' placeholder="Username" required="required")
+              .input-group.mt-3
+                .input-group-prepend
+                  span.input-group-text(id='') 密碼
+                input.form-control(type='password' name='password' placeholder="Password" required="required")
+              .input-group.mt-3
+                .input-group-prepend
+                  span.input-group-text(id='') 密碼確認
+                input.form-control(type='password' name='confirmPassword' placeholder="Confirm password" required="required")
+              .input-group.mt-3
+                .input-group-prepend
+                  span.input-group-text(id='') 電子郵件
+                input.form-control(type='email' name='email' placeholder="Email" required="required")
+              .input-group.mt-3
+                .input-group-prepend
+                  span.input-group-text(id='') 行動電話
+                input.form-control(type='tel' name='phone' placeholder="Phone number" required="required")
+              input.btn.btn-success.btn-lg.btn-block.mt-4(type='submit' value='註冊')
+  
+  script. 
+    function clearRegisterContent() {
+      
+    }

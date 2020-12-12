@@ -1,0 +1,37 @@
+doctype html
+html
+  head
+    title= title
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    link(rel='stylesheet', href='/css/bootstrap.min.css')
+  body
+    script(src='/js/jquery.min.js')
+    script(src='/js/bootstrap.min.js')
+
+    nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
+      a.navbar-brand(href='/') NCTU DCSLAB
+      button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarNav' aria-controls='navbarNav' aria-expanded='false' aria-label='Toggle navigation')
+        span.navbar-toggler-icon
+      #navbarNav.collapse.navbar-collapse
+        ul.navbar-nav
+          li.nav-item.active
+            a.nav-link(href='#')
+              | Home 
+              span.sr-only (current)
+          if !user
+            li.nav-item
+              a.nav-link(href='#') Introduction
+
+          if user
+            li.nav-item
+              a.nav-link(href='#') Profile
+            li.nav-item
+              a.nav-link(href='/users/logout') Logout
+
+
+
+    .container.mt-2
+      block content
+
+
