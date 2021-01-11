@@ -8,8 +8,7 @@ router.get('/', function(req, res) {
   }
   else {
     var msg;
-    msg = req.flash('info')[0]
-    console.log(msg);
+    msg = req.flash('info')[0];
     res.render('index', { title: 'Homepage', info: msg});
   }
 });

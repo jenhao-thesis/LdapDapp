@@ -2,19 +2,77 @@ extends layout
 
 block content
     h3 #{title}
-    p.version
-    p.account
 
+    .row
+        .col
+            .input-group.mb-3
+                input.func1-input0.form-control(type='text' placeholder="Enter org index" aria-label="Parameter" aria-describedby='basic-addon2')
+                .input-group-append
+                    button.func1.btn.btn-primary(type='button') getOrg(onlyOrg)
+        .col
+            .input-group.mb-3
+                input.func2-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2')
+                .input-group-append
+                    button.func2.btn.btn-secondary(type='button') addUser(onlyOrg)
+        .col
+            button.btn.btn-success.btn-block(type='button') Success
+    
+    .row.mt-2
+        .col
+            p.version
+            p.account
+    
     script. 
         $(function() {
             // for web3_bundle.js
             $.getScript( "/javascripts/web3_bundle.js", function(data, textStatus, jqxhr) {
                 if (typeof(web3) !== "undefined") {
-                    account = web3.eth.accounts[0];
+                    
+                    let account = web3.eth.accounts[0];
+                    console.log("current address:", web3.eth.accounts);
                     $(".version").html("API vesion: " + web3.version.api);
                     $(".account").html("Account:" + account);
-
+                    let contract_address = "#{address}";
+                    console.log("contract address:", contract_address);
+                    
                     // TODO: call contract function
+
+                    $(".func1").on("click", function(e) {
+                        // get abi of contract
+                        $.getJSON('metamask-connect/org.json', function (data) {
+                            let myContract = web3.eth.contract(data.abi);
+                            let contractInstance = myContract.at(contract_address);
+                            let input_0 = $(".func1-input0").val();
+                            contractInstance.getOrg(input_0, (err, res) => {
+                                if (err) {
+                                    console.log(err);
+                                    alert(err.data.message);
+                                }
+                                else {
+                                    alert(res);
+                                    console.log(res);
+                                }
+                            });                        
+                        });
+                    });
+
+                    $(".func2").on("click", function(e) {
+                        let input_0 = $(".func2-input0").val();
+                        $.ajax({
+                            url: 'metamask-connect/addUser',
+                            data: { uid: input_0},
+                            type: 'post',
+                            cache: false,
+                            dataType: 'json',
+                            success: function(res) {
+                                alert(res.msg);
+                            },
+                            error: function(err) {
+                                alert(err);
+                            }
+                        });
+                    });
+
                 }
                 else {
                     alert("Please install an Ethereum-compatible browser or extension like MetaMask to use this dApp!");

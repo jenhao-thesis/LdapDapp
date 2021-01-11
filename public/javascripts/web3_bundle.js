@@ -23903,36 +23903,21 @@ utils.intFromLE = intFromLE;
 
 },{"bn.js":69,"minimalistic-assert":226,"minimalistic-crypto-utils":227}],148:[function(require,module,exports){
 module.exports={
-  "_args": [
-    [
-      "elliptic@^6.4.0",
-      "/home/jhcheng/Desktop/ldapJStest/ldapApp/node_modules/eth-lib"
-    ]
-  ],
-  "_from": "elliptic@>=6.4.0 <7.0.0",
-  "_hasShrinkwrap": false,
+  "_from": "elliptic@^6.4.0",
   "_id": "elliptic@6.5.3",
-  "_inCache": true,
-  "_installable": true,
+  "_inBundle": false,
+  "_integrity": "sha512-IMqzv5wNQf+E6aHeIqATs0tOLeOTwj1QKbRcS3jBbYkl5oLAserA8yJTT7/VyHUYG91PRmPyeQDObKLPpeS4dw==",
   "_location": "/elliptic",
-  "_nodeVersion": "13.9.0",
-  "_npmOperationalInternal": {
-    "host": "s3://npm-registry-packages",
-    "tmp": "tmp/elliptic_6.5.3_1592494366350_0.7296651468879995"
-  },
-  "_npmUser": {
-    "email": "fedor@indutny.com",
-    "name": "indutny"
-  },
-  "_npmVersion": "6.13.7",
   "_phantomChildren": {},
   "_requested": {
-    "name": "elliptic",
+    "type": "range",
+    "registry": true,
     "raw": "elliptic@^6.4.0",
+    "name": "elliptic",
+    "escapedName": "elliptic",
     "rawSpec": "^6.4.0",
-    "scope": null,
-    "spec": ">=6.4.0 <7.0.0",
-    "type": "range"
+    "saveSpec": null,
+    "fetchSpec": "^6.4.0"
   },
   "_requiredBy": [
     "/@ethersproject/signing-key",
@@ -23946,16 +23931,16 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.5.3.tgz",
   "_shasum": "cb59eb2efdaf73a0bd78ccd7015a62ad6e0f93d6",
-  "_shrinkwrap": null,
   "_spec": "elliptic@^6.4.0",
   "_where": "/home/jhcheng/Desktop/ldapJStest/ldapApp/node_modules/eth-lib",
   "author": {
-    "email": "fedor@indutny.com",
-    "name": "Fedor Indutny"
+    "name": "Fedor Indutny",
+    "email": "fedor@indutny.com"
   },
   "bugs": {
     "url": "https://github.com/indutny/elliptic/issues"
   },
+  "bundleDependencies": false,
   "dependencies": {
     "bn.js": "^4.4.0",
     "brorand": "^1.0.1",
@@ -23965,6 +23950,7 @@ module.exports={
     "minimalistic-assert": "^1.0.0",
     "minimalistic-crypto-utils": "^1.0.0"
   },
+  "deprecated": false,
   "description": "EC cryptography",
   "devDependencies": {
     "brfs": "^1.4.3",
@@ -23982,34 +23968,19 @@ module.exports={
     "jshint": "^2.10.3",
     "mocha": "^6.2.2"
   },
-  "directories": {},
-  "dist": {
-    "fileCount": 17,
-    "integrity": "sha512-IMqzv5wNQf+E6aHeIqATs0tOLeOTwj1QKbRcS3jBbYkl5oLAserA8yJTT7/VyHUYG91PRmPyeQDObKLPpeS4dw==",
-    "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJe64kfCRA9TVsSAnZWagAAnnEP/jFxX0m9YZshgdiItHkR\nVLy+kvaHKZyosZySjGqIXkJn9JQ2wzOt4YCKVyaRnrAlSxJm7D7x568Uq1fl\nOgIdY/t2VDgwgiOIYZ7RzpE4AKLnEw45LX4XvzXlQ6xxD8YV1J7AltlxYhNl\nIm8ofDd2zOTqwrRicnAUaVR0PoQwnLhKUsOaRUPSqP9WByDKq5qNjLb6Hcxi\nZVsZHaaIPQFzMah9Kxn8aAGGf9f8WizUq84qjJnL27ATTJsjrzku3V/elMvC\nljY7OtcWf+En6yZigHfK3eYVnYuZmpUmPmtP6+mcAcqnp2LDu+Tj0I0NUJjW\nbYIlOzutL1W5U6dSKwI8yi1OwR+NuXcJDu8b05cXpI2V85CbZ9uBu1uhloNY\nytwVzVkuZD1GifAjCMfe3Zjlha6KOvo5ASatWS1u9cxD887wuJA/rWpFMGgF\n/lkZASJzcij6gwDpSMmkpX3OJUE7xTrPv+8QBt7HBH22nqZm41l3HRFEH/3r\n/pkRGVI6MiyILzYHgQOo716Fbnj9u9NFXoeAcQm/fBDaaDTG/XYK34gmF2Iy\nRqbmsFNRoQ5HYbdIwHEzom2gkT8Zm9Gac+zUpIt+I/Z1wvvdai7K3VI9wHgw\n8e8+TsyJ6KB2iCo8h0uvwWrIm/dk3dAdnW19X3jxqhGc8QEV/mh/VORaXuE1\nkv4D\r\n=45uD\r\n-----END PGP SIGNATURE-----\r\n",
-    "shasum": "cb59eb2efdaf73a0bd78ccd7015a62ad6e0f93d6",
-    "tarball": "https://registry.npmjs.org/elliptic/-/elliptic-6.5.3.tgz",
-    "unpackedSize": 118531
-  },
-  "gitHead": "8647803dc3d90506aa03021737f7b061ba959ae1",
+  "files": [
+    "lib"
+  ],
   "homepage": "https://github.com/indutny/elliptic",
   "keywords": [
-    "Cryptography",
     "EC",
     "Elliptic",
-    "curve"
+    "curve",
+    "Cryptography"
   ],
   "license": "MIT",
   "main": "lib/elliptic.js",
-  "maintainers": [
-    {
-      "name": "indutny",
-      "email": "fedor@indutny.com"
-    }
-  ],
   "name": "elliptic",
-  "optionalDependencies": {},
-  "readme": "ERROR: No README data found!",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/indutny/elliptic.git"
@@ -63010,43 +62981,27 @@ module.exports = Web3;
 
 },{"../package.json":371,"web3-bzz":320,"web3-core":333,"web3-eth":359,"web3-eth-personal":357,"web3-net":360,"web3-shh":365,"web3-utils":366}],371:[function(require,module,exports){
 module.exports={
-  "_args": [
-    [
-      "web3@^1.3.0",
-      "/home/jhcheng/Desktop/ldapJStest/ldapApp"
-    ]
-  ],
-  "_from": "web3@>=1.3.0 <2.0.0",
-  "_hasShrinkwrap": false,
+  "_from": "web3@^1.3.0",
   "_id": "web3@1.3.0",
-  "_inCache": true,
-  "_installable": true,
+  "_inBundle": false,
+  "_integrity": "sha512-4q9dna0RecnrlgD/bD1C5S+81Untbd6Z/TBD7rb+D5Bvvc0Wxjr4OP70x+LlnwuRDjDtzBwJbNUblh2grlVArw==",
   "_location": "/web3",
-  "_nodeVersion": "12.16.1",
-  "_npmOperationalInternal": {
-    "host": "s3://npm-registry-packages",
-    "tmp": "tmp/web3_1.3.0_1600197295722_0.1618058526048527"
-  },
-  "_npmUser": {
-    "email": "gregorymarkou@gmail.com",
-    "name": "gregthegreek"
-  },
-  "_npmVersion": "lerna/3.22.0/node@v12.16.1+x64 (linux)",
   "_phantomChildren": {},
   "_requested": {
-    "name": "web3",
+    "type": "range",
+    "registry": true,
     "raw": "web3@^1.3.0",
+    "name": "web3",
+    "escapedName": "web3",
     "rawSpec": "^1.3.0",
-    "scope": null,
-    "spec": ">=1.3.0 <2.0.0",
-    "type": "range"
+    "saveSpec": null,
+    "fetchSpec": "^1.3.0"
   },
   "_requiredBy": [
     "/"
   ],
   "_resolved": "https://registry.npmjs.org/web3/-/web3-1.3.0.tgz",
   "_shasum": "8fe4cd6e2a21c91904f343ba75717ee4c76bb349",
-  "_shrinkwrap": null,
   "_spec": "web3@^1.3.0",
   "_where": "/home/jhcheng/Desktop/ldapJStest/ldapApp",
   "author": {
@@ -63081,6 +63036,7 @@ module.exports={
   "bugs": {
     "url": "https://github.com/ethereum/web3.js/issues"
   },
+  "bundleDependencies": false,
   "dependencies": {
     "web3-bzz": "1.3.0",
     "web3-core": "1.3.0",
@@ -63090,20 +63046,12 @@ module.exports={
     "web3-shh": "1.3.0",
     "web3-utils": "1.3.0"
   },
+  "deprecated": false,
   "description": "Ethereum JavaScript API",
   "devDependencies": {
     "@types/node": "^12.12.6",
     "dtslint": "^3.4.1",
     "typescript": "^3.9.5"
-  },
-  "directories": {},
-  "dist": {
-    "fileCount": 15,
-    "integrity": "sha512-4q9dna0RecnrlgD/bD1C5S+81Untbd6Z/TBD7rb+D5Bvvc0Wxjr4OP70x+LlnwuRDjDtzBwJbNUblh2grlVArw==",
-    "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJfYRKwCRA9TVsSAnZWagAAWOoP/1j0sXbI2u7svjA4z9Xh\nycsGP+5BCrLrjK2LeEgvy4/GqjHedV7IWXyite9bOPWzH8AdlrIJNDbTK29l\nfrn/sBK9zJfoEvMqIDanZ9n5pJnK5YNEDKzgCjKoPTaG/5XyIu5M03WR6Shq\nqhwbgR8OkWYaQXGws/+Far0ZGYpdaLqVzUU/XDfa+8Oca29HZxeoG688Bh/w\nqjR+/oSLyK0Vf4oSOpID28JQk1CMcRgZa35C3kn3FbOimyxt0bpClTtucyH0\nlq2AV6CVBZlcOfZ4KeKHS53NEV0fiVTLI0eVDmJT2V1LGHEJPUHF2RZlVK4y\ndCuh0pczMRzeAV/Dw7VPE35dSPLiT+QLYhsJfTweb4+viVsPFgoT+SflAcHN\nj7YAKLdoNtGFpGaZakP9xevGNL9+qZtz09gQEo+VqTxJ3xiZdF+xq6z1topZ\nHPAqKaB5JteHAwxpodiYEBD0AyRE+4h5p6Wtg6AUfEvr8XHSZdBxITu7cBGM\nWFkwIQ+ykljyxmin3MW+xDSHKkYd1HHHWVy5mmuLEhl5RqBu4SLmPbIeXOU1\nca1B9gEnSCUqhOlCTOMPrtsCh24aBSFoTueNFBdSRqotPAsApnv1ONNp1dLL\nzl6aLhIsvejk/yQvq0OF82h6xLr5UCe6zt9LNDkqnI36PLSCrhUnJKDErAjg\n8skb\r\n=Eso4\r\n-----END PGP SIGNATURE-----\r\n",
-    "shasum": "8fe4cd6e2a21c91904f343ba75717ee4c76bb349",
-    "tarball": "https://registry.npmjs.org/web3/-/web3-1.3.0.tgz",
-    "unpackedSize": 12010134
   },
   "engines": {
     "node": ">=8.0.0"
@@ -63111,33 +63059,13 @@ module.exports={
   "gitHead": "a88944fff1f62b2b6f00e3de52446d24d9e92cc6",
   "homepage": "https://github.com/ethereum/web3.js#readme",
   "keywords": [
-    "API",
     "Ethereum",
-    "JavaScript"
+    "JavaScript",
+    "API"
   ],
   "license": "LGPL-3.0",
   "main": "lib/index.js",
-  "maintainers": [
-    {
-      "name": "ralxz",
-      "email": "ryan@ryanio.com"
-    },
-    {
-      "name": "cgewecke",
-      "email": "christophergewecke@gmail.com"
-    },
-    {
-      "name": "holgerd77",
-      "email": "Holger.Drewes@gmail.com"
-    },
-    {
-      "name": "gregthegreek",
-      "email": "gregorymarkou@gmail.com"
-    }
-  ],
   "name": "web3",
-  "optionalDependencies": {},
-  "readme": "ERROR: No README data found!",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ethereum/web3.js.git"
@@ -63208,56 +63136,41 @@ module.exports = require('../package.json').version;
 
 },{"../package.json":374}],374:[function(require,module,exports){
 module.exports={
-  "_args": [
-    [
-      "websocket@^1.0.32",
-      "/home/jhcheng/Desktop/ldapJStest/ldapApp/node_modules/web3-providers-ws"
-    ]
-  ],
-  "_from": "websocket@>=1.0.32 <2.0.0",
-  "_hasShrinkwrap": false,
+  "_from": "websocket@^1.0.32",
   "_id": "websocket@1.0.33",
-  "_inCache": true,
-  "_installable": true,
+  "_inBundle": false,
+  "_integrity": "sha512-XwNqM2rN5eh3G2CUQE3OHZj+0xfdH42+OFK6LdC2yqiC0YU8e5UK0nYre220T0IyyN031V/XOvtHvXozvJYFWA==",
   "_location": "/websocket",
-  "_nodeVersion": "14.8.0",
-  "_npmOperationalInternal": {
-    "host": "s3://npm-registry-packages",
-    "tmp": "tmp/websocket_1.0.33_1607479252910_0.21102337965095042"
-  },
-  "_npmUser": {
-    "email": "theturtle32@gmail.com",
-    "name": "theturtle32"
-  },
-  "_npmVersion": "6.14.7",
   "_phantomChildren": {
     "ms": "2.0.0"
   },
   "_requested": {
-    "name": "websocket",
+    "type": "range",
+    "registry": true,
     "raw": "websocket@^1.0.32",
+    "name": "websocket",
+    "escapedName": "websocket",
     "rawSpec": "^1.0.32",
-    "scope": null,
-    "spec": ">=1.0.32 <2.0.0",
-    "type": "range"
+    "saveSpec": null,
+    "fetchSpec": "^1.0.32"
   },
   "_requiredBy": [
     "/web3-providers-ws"
   ],
   "_resolved": "https://registry.npmjs.org/websocket/-/websocket-1.0.33.tgz",
   "_shasum": "407f763fc58e74a3fa41ca3ae5d78d3f5e3b82a5",
-  "_shrinkwrap": null,
   "_spec": "websocket@^1.0.32",
   "_where": "/home/jhcheng/Desktop/ldapJStest/ldapApp/node_modules/web3-providers-ws",
   "author": {
-    "email": "theturtle32@gmail.com",
     "name": "Brian McKelvey",
+    "email": "theturtle32@gmail.com",
     "url": "https://github.com/theturtle32"
   },
   "browser": "lib/browser.js",
   "bugs": {
     "url": "https://github.com/theturtle32/WebSocket-Node/issues"
   },
+  "bundleDependencies": false,
   "config": {
     "verbose": false
   },
@@ -63276,6 +63189,7 @@ module.exports={
     "utf-8-validate": "^5.0.2",
     "yaeti": "^0.0.6"
   },
+  "deprecated": false,
   "description": "Websocket Client & Server Library implementing the WebSocket protocol as specified in RFC 6455.",
   "devDependencies": {
     "buffer-equal": "^1.0.0",
@@ -63288,42 +63202,25 @@ module.exports={
   "directories": {
     "lib": "./lib"
   },
-  "dist": {
-    "fileCount": 23,
-    "integrity": "sha512-XwNqM2rN5eh3G2CUQE3OHZj+0xfdH42+OFK6LdC2yqiC0YU8e5UK0nYre220T0IyyN031V/XOvtHvXozvJYFWA==",
-    "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJf0C/VCRA9TVsSAnZWagAAh/QP/jI3N4npYtCL2uBDxAf9\nBiZ5MrJQtEKDVlbkHGePN83G5zm/HXFuDHxQDPzuVcAYgKJLgKcZCg8n7fg8\nc7V8r0J6fC5453CUR91ONHNJKdIIoZgnkLjNDc4bZDesko1bP5dFtNJiT92B\n0mMnkbvT0yEvyPc+ymUOwFXWq89Fdl5IGd3+AzBddaOmIhiDeFzSKAmSlXRz\n46KFbd/sceRHEMgEuV6o+gMMj4P4+E+ksJyo3eDbmppwkhBSP9hktS5sF5ps\nzXpjh5rXlbUjjRCFLuPP0GZOpbta1k6r+ukhzQC8/zu6ds8jC5xEmZcaLd9w\ncs1G5O6siOa5/m1BC97DnvO5PS6+bFejF/28L4GIWBXDxF8cvrrDEb9DvzKw\n+fpt0sxOl7Kl/rrT4v17KkYYC9pOi1YHNwVDx0/ypQK+3i6J4rO9Z7FHxBKe\nmWyHhsqiubfjT23Llr1ktzMGx2WR0L8jMjdEik8HLTptD3CJsCRFO1/V0b4a\n74e80MtbdLnaK4POF3CWG5enOM4DrxU5Cl7URHLwvMum6A5ggfQevJRBZlaa\nXidZkZZq17xPtvGXjBN2wIVKMtU1b5xB3kBjEFoyJt+llTn+b1pQc7k4vZJu\nP70QUJLWWTVglpqR+K6WmgnFmmd4GdiPEqw03UF0bdzhfVZP3UeQuETC6Sdn\nXT8U\r\n=bAEo\r\n-----END PGP SIGNATURE-----\r\n",
-    "shasum": "407f763fc58e74a3fa41ca3ae5d78d3f5e3b82a5",
-    "tarball": "https://registry.npmjs.org/websocket/-/websocket-1.0.33.tgz",
-    "unpackedSize": 153614
-  },
   "engines": {
     "node": ">=4.0.0"
   },
-  "gitHead": "39bf9037707f9cd60ce04ae6fd2203c97480c2fe",
   "homepage": "https://github.com/theturtle32/WebSocket-Node",
   "keywords": [
-    "RFC-6455",
-    "client",
-    "comet",
+    "websocket",
+    "websockets",
+    "socket",
     "networking",
+    "comet",
     "push",
+    "RFC-6455",
     "realtime",
     "server",
-    "socket",
-    "websocket",
-    "websockets"
+    "client"
   ],
   "license": "Apache-2.0",
   "main": "index",
-  "maintainers": [
-    {
-      "name": "theturtle32",
-      "email": "theturtle32@gmail.com"
-    }
-  ],
   "name": "websocket",
-  "optionalDependencies": {},
-  "readme": "ERROR: No README data found!",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/theturtle32/WebSocket-Node.git"
@@ -64381,46 +64278,47 @@ function extend() {
 },{}],387:[function(require,module,exports){
 var web3 = require('web3');
 
-window.addEventListener('load', async () => {
-    // Modern dapp browsers...
-    if (window.ethereum) {
-        window.web3 = new Web3(ethereum);
-        try {
-            // Request account access if needed
-            await ethereum.enable();
-            // Acccounts now exposed
-            web3.eth.sendTransaction({/* ... */});
-        } catch (error) {
-            // User denied account access...
-        }
-    }
-    // Legacy dapp browsers...
-    else if (window.web3) {
-        window.web3 = new Web3(web3.currentProvider);
-        // Acccounts always exposed
-        web3.eth.sendTransaction({/* ... */});
-    }
-    // Non-dapp browsers...
-    else {
-        console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
-    }
-});
-
-// const ethEnabled = () => {
+// window.addEventListener('load', async () => {
+//     // Modern dapp browsers...
 //     if (window.ethereum) {
-//       window.web3 = new Web3(window.ethereum);
-//       window.ethereum.enable();
-//       ethereum.request({ method: 'eth_requestAccounts' })
-//       alert("Get metamask successfully.");
-//       return true;
+//         window.web3 = new Web3(ethereum);
+//         try {
+//             // Request account access if needed
+//             await ethereum.enable();
+//             // Acccounts now exposed
+//             // web3.eth.sendTransaction({/* ... */});
+//         } catch (error) {
+//             // User denied account access...
+//         }
 //     }
-//     return false;
-// }
+//     // Legacy dapp browsers...
+//     else if (window.web3) {
+//         window.web3 = new Web3(web3.currentProvider);
+//         // Acccounts always exposed
+//         // web3.eth.sendTransaction({/* ... */});
+//     }
+//     // Non-dapp browsers...
+//     else {
+//         console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+//     }
+// });
 
-// if (!ethEnabled()) {
-//     alert("Please install an Ethereum-compatible browser or extension like MetaMask to use this dApp!");
-// }
+const ethEnabled = () => {
+    if (window.ethereum) {
+      window.web3 = new Web3(window.ethereum);
+      window.ethereum.enable();
+      ethereum.request({ method: 'eth_requestAccounts' })
+    //   alert("Get metamask successfully.");
+      return true;
+    }
+    return false;
+}
 
+if (!ethEnabled()) {
+    alert("Please install an Ethereum-compatible browser or extension like MetaMask to use this dApp!");
+}
+
+module.exports = web3;
 
 },{"web3":370}],388:[function(require,module,exports){
 
