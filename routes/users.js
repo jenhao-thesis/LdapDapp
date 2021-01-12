@@ -90,4 +90,21 @@ router.post('/login', function(req, res, next) {
   }) (req, res, next);
 });
 
+router.post('/loginWithMetamask', async function(req, res) {
+    // TODO: Get unique id by address of metamask from smart contract
+    // ...
+
+    // TODO: Get user data by unique id from ldap server
+    // ...
+
+  let user = {cn: "qwe", id: "asd", dd: "asd"};
+  await req.login(user, function(err) {
+    if (err) {
+      console.log("login err");
+    };
+  });
+
+  res.render('profile', { title: 'Profile ', user: user});
+});
+
 module.exports = router;

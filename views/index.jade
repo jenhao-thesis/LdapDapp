@@ -22,7 +22,8 @@ block content
             input.btn.btn-primary.btn-lg.btn-block.mt-3(type='submit' value='登入')
             p.mt-2.text-left 還沒有帳戶？ <a href="#" data-toggle='modal' data-target='#registerModal'>立即註冊</a>
             p 或是
-            button.btn.btn-outline-info.btn-lg.btn-block(type='button' onclick="javascript:location.href='/metamask-connect'") 使用 Ethereum 帳戶登入
+            button.btn.btn-outline-info.btn-lg.btn-block.loginWithMetamask(type='button') 使用 Ethereum 帳戶登入
+            button.btn.btn-outline-success.btn-lg.btn-block(type='button' onclick="javascript:location.href='/metamask-connect'") Metamask Test Page
 
   // Modal
   #registerModal.modal.fade(tabindex='-1' role='dialog' aria-hidden='true')
@@ -63,6 +64,22 @@ block content
               input.btn.btn-success.btn-lg.btn-block.mt-4(type='submit' value='註冊')
   
   script. 
-    function clearRegisterContent() {
-      
-    }
+    $(function() {
+        $(".modal").on("hidden.bs.modal", function() {
+          $(this).find('form').trigger('reset');
+        });
+
+      $(".loginWithMetamask").on('click', function(e) {
+        $.ajax({
+            url: '/users/loginWithMetamask',
+            type: 'post',
+            cache: false,
+            success: function(res) {
+              console.log("success");
+            },
+            error: function(err) {
+              alert("error");
+            }
+        });
+      });
+    });
