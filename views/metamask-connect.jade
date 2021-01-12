@@ -4,17 +4,17 @@ block content
     h3 #{title}
 
     .row
-        .col
+        .col.col-md-4.col-sm-12
             .input-group.mb-3
                 input.func1-input0.form-control(type='text' placeholder="Enter org index" aria-label="Parameter" aria-describedby='basic-addon2')
                 .input-group-append
                     button.func1.btn.btn-primary(type='button') getOrg(onlyOrg)
-        .col
+        .col.col-md-4.col-sm-12
             .input-group.mb-3
                 input.func2-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2')
                 .input-group-append
                     button.func2.btn.btn-secondary(type='button') addUser(onlyOrg)
-        .col
+        .col.col-md-4.col-sm-12
             button.btn.btn-success.btn-block(type='button') Success
     
     .row.mt-2

@@ -33,6 +33,8 @@ contract OrganizationManager {
     mapping(bytes32 => bool) _uniqueState;
     mapping(bytes32 => UserInfo) _uniqueIdenity;
     
+    // Events
+    event AddUserEvent(address orgAddress, uint status);
 
     uint256 _state;
     
@@ -51,14 +53,14 @@ contract OrganizationManager {
     function addUser(
         string memory uniqueId
     )
-        public onlyOrg returns (bool)
+        public onlyOrg
     {
         bytes32 hashed = keccak256(bytes(uniqueId));
         if (_uniqueState[hashed]) {
             // alreay exist and add org
             _uniqueIdenity[hashed].orgs[msg.sender] = true;
             _uniqueIdenity[hashed].lastModifyOrg = msg.sender;
-            return false;
+            emit AddUserEvent(msg.sender, 0);
         }
         else {
             _uniqueState[hashed] = true;
@@ -67,7 +69,7 @@ contract OrganizationManager {
                                     );
             _uniqueIdenity[hashed] = info;
             _uniqueIdenity[hashed].orgs[msg.sender] = true;
-            return true;
+            emit AddUserEvent(msg.sender, 1);
         }
     }
         

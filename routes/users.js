@@ -30,13 +30,14 @@ router.get('/', function(req, res) {
 });
 
 router.post('/register', async function(req, res) {
-  const {email, username, password, confirmPassword, phone} = req.body;
+  const {email, username, password, confirmPassword, phone, id} = req.body;
   if (password === confirmPassword) {
     newUser['cn'] = username;
     newUser['sn'] = username;
     newUser['userPassword'] = password;
     newUser['mail'] = email;
     newUser['phone'] = phone;
+    newUser['id'] = id;
     var DN = util.format(newDN, req.body.username); 
     await client.add(DN, newUser, function(err) {
       if (err) {
@@ -81,6 +82,7 @@ router.post('/login', function(req, res, next) {
       }
       console.log("User exist");
       console.log(user);
+      user.sn="backend-edited";
       req.logIn(user, function(err) {
           if (err) { return next(err); }
       }); 

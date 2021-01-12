@@ -6,9 +6,12 @@ function isAuthenticated(req,res,next){
         next();
     }
     else {
-        res.status(401).json({"message": 'User not authenticated.'});
+        // alert("Login first");
+        req.flash('info', 'Login first.');
+        res.redirect('/');
+        // res.status(401).json({"message": 'User not authenticated.'});
     }
-  }
+};
 
 router.get('/', isAuthenticated, function(req, res) {
     res.render('profile', { title: 'Profile ', user: req.user});
