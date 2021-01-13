@@ -5,6 +5,7 @@ var ssha = require('node-ssha256');
 const { nextTick } = require('process');
 var util = require('util');
 var passport = require('passport');
+var LocalStrategy = require('passport-local');
 
 var client = ldap.createClient({
   url: 'ldap://192.168.139.130:1389',
@@ -23,6 +24,16 @@ var newUser = {
     phone: '0900000000',
     userPassword: 'default'
 }
+
+passport.use('local', new LocalStrategy(
+  function (username, password, done) {
+      console.log("entor local strategy");
+      return done(null, {
+          username: 'test',
+          tt: "qew"
+      })
+  }
+));
 
 /* GET users listing. */
 router.get('/', function(req, res) {
@@ -82,7 +93,6 @@ router.post('/login', function(req, res, next) {
       }
       console.log("User exist");
       console.log(user);
-      user.sn="backend-edited";
       req.logIn(user, function(err) {
           if (err) { return next(err); }
       }); 
@@ -90,21 +100,17 @@ router.post('/login', function(req, res, next) {
   }) (req, res, next);
 });
 
-router.post('/loginWithMetamask', async function(req, res) {
-    // TODO: Get unique id by address of metamask from smart contract
-    // ...
+// TODO: Get unique id by address of metamask from smart contract
+// ...
 
-    // TODO: Get user data by unique id from ldap server
-    // ...
+// TODO: Get user data by unique id from ldap server
+// ...
 
-  let user = {cn: "qwe", id: "asd", dd: "asd"};
-  await req.login(user, function(err) {
-    if (err) {
-      console.log("login err");
-    };
-  });
-
-  res.render('profile', { title: 'Profile ', user: user});
+router.post('/loginWithMetamask', passport.authenticate('local', {
+  failureRedirect: '/'
+}), function (req, res) {
+  console.log(req.user);
+  res.redirect("/");
 });
 
 module.exports = router;

@@ -69,16 +69,21 @@ block content
           $(this).find('form').trigger('reset');
         });
 
+
+
       $(".loginWithMetamask").on('click', function(e) {
         $.ajax({
             url: '/users/loginWithMetamask',
+            data: { username: "wqe", password: "qfadsf"},
             type: 'post',
-            cache: false,
             success: function(res) {
               console.log("success");
+              window.location.replace("/profile");
             },
             error: function(err) {
-              alert("error");
+              console.log("error");
+              alert(err);
+
             }
         });
       });
