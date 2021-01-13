@@ -5,7 +5,7 @@ var Web3 = require('web3');
 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'));
 const admin_address = '0x56B1817fFa1Ff86ebB922400155CD3bE3F734419'; // org0
-const contract_address = "0x4c21A80B407b05E56300b2B26d068ACc6F43e9D6";
+const contract_address = "0x8f674F58e0a58dC10B232aEE3e4005BB4A513109";
 
 router.get('/', function(req, res) {
     console.log("web3 versin", web3.version);
@@ -77,6 +77,33 @@ router.post('/addUser', async function(req, res, next) {
 
     console.log(req.body.uid);
     res.send({msg: req.body.uid+"-backend-return-"+balance});
+});
+
+router.post('/bindAccount', async function(req, res, next) {
+    let contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));    
+    let contractInstance = new web3.eth.Contract(contract.abi, contract_address);
+
+    let userId = req.body.uid;
+    let userAddress = req.body.address;
+    let txHash = 0;
+    console.log("id", userId);
+    console.log("address", userAddress);
+
+    await contractInstance.methods.bindAccount(userId, userAddress).send({
+        from: admin_address
+    }, function(error, transactionHash) {
+        if (error) {
+            console.log("err", error);
+        }
+        else {
+            txHash = transactionHash;
+            console.log("Transaction hash:", transactionHash);
+        }
+    })
+
+
+
+    res.send({msg: "OK, i got it, this is your transaction hash:" + txHash});
 });
 
 module.exports = router;

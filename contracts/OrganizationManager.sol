@@ -31,10 +31,12 @@ contract OrganizationManager {
     //     
     mapping(address => bytes32) _bindUsers;
     mapping(bytes32 => bool) _uniqueState;
+    mapping(bytes32 => bool) _bindState;
     mapping(bytes32 => UserInfo) _uniqueIdenity;
     
     // Events
     event AddUserEvent(address orgAddress, uint status);
+    event BindUserAccountEvent(address orgAddress, address userAccount, bytes32 hashed);
 
     uint256 _state;
     
@@ -72,7 +74,25 @@ contract OrganizationManager {
             emit AddUserEvent(msg.sender, 1);
         }
     }
-        
+
+    function bindAccount(
+        string memory uniqueId,
+        address userAddress
+    )
+        public onlyOrg
+    {
+        require(_bindUsers[userAddress] == 0,
+                "This address already binded.");
+        require(_bindState[keccak256(bytes(uniqueId))] == false,
+                "This UniqueId already binded");
+        require(_uniqueState[keccak256(bytes(uniqueId))],
+                "UniqueId invalid.");
+        bytes32 hashed = keccak256(bytes(uniqueId));
+        _bindUsers[userAddress] = hashed;    
+        _bindState[hashed] = true;
+        emit BindUserAccountEvent(msg.sender, userAddress, hashed);
+    }
+
     // function enroll(
     //     string memory userId,
     //     string memory orgId

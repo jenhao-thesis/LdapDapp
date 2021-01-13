@@ -4,19 +4,32 @@ block content
     h3 #{title}
 
     .row
-        .col.col-md-4.col-sm-12
+        .col.col-lg-4.col-sm-12
             .input-group.mb-3
                 input.func1-input0.form-control(type='text' placeholder="Enter org index" aria-label="Parameter" aria-describedby='basic-addon2')
                 .input-group-append
                     button.func1.btn.btn-primary(type='button') getOrg(onlyOrg)
-        .col.col-md-4.col-sm-12
+        .col.col-lg-4.col-sm-12
             .input-group.mb-3
                 input.func2-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2')
                 .input-group-append
                     button.func2.btn.btn-secondary(type='button') addUser(onlyOrg)
-        .col.col-md-4.col-sm-12
-            button.btn.btn-success.btn-block(type='button') Success
-    
+        .col.col-lg-4.col-sm-12
+            .input-group.mb-3
+                input.func3-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2')
+                .input-group-append
+                    button.func3.btn.btn-info(type='button') getId  
+        .col.col-lg-4.col-sm-12
+            .input-group.mb-3
+                input.func4-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2' required="required")
+                input.func4-input1.form-control(type='text' placeholder="Enter ethereum address" aria-label="Parameter" aria-describedby='basic-addon2' required="required")
+                .input-group-append
+                    button.func4.btn.btn-success(type='button') bindAccount(onlyOrg)
+    .row
+        .col
+            button.btn.btn-block.btn-warning.check-log(type='button') Check log
+    br
+    br
     .row.mt-2
         .col
             p.version
@@ -32,6 +45,7 @@ block content
                     console.log("current address:", web3.eth.accounts);
                     $(".version").html("API vesion: " + web3.version.api);
                     $(".account").html("Account:" + account);
+                    $(".func4-input1").val(account);
                     let contract_address = "#{address}";
                     console.log("contract address:", contract_address);
                     
@@ -73,9 +87,63 @@ block content
                         });
                     });
 
-                }
-                else {
-                    alert("Please install an Ethereum-compatible browser or extension like MetaMask to use this dApp!");
+                    $(".func3").on("click", function(e) {
+                        $.getJSON('metamask-connect/org.json', function (data) {
+                            let myContract = web3.eth.contract(data.abi);
+                            let contractInstance = myContract.at(contract_address);
+                            let input_0 = $(".func3-input0").val();
+                            contractInstance.getId(input_0, (err, res) => {
+                                if (err) {
+                                    console.log(err);
+                                    alert(err.data.message);
+                                }
+                                else {
+                                    alert(res);
+                                    console.log(res);
+                                }
+                            });                        
+                        });
+                    });
+
+                    $(".func4").on("click", function(e) {
+                        let input_0 = $(".func4-input0").val();
+                        let input_1 = $(".func4-input1").val();
+                        $.ajax({
+                            url: 'metamask-connect/bindAccount',
+                            data: { uid: input_0, address: input_1},
+                            type: 'post',
+                            cache: false,
+                            dataType: 'json',
+                            success: function(res) {
+                                alert(res.msg);
+                            },
+                            error: function(err) {
+                                alert(err);
+                            }
+                        });
+                    });
+
+                    $(".check-log").on("click", async function(e) {
+                        let options = {
+                            "fromBlock": "0",
+                            "toBlock": "latest",
+                            "address": contract_address
+                        }
+                        
+                        let filterGet = web3.eth.filter(options);
+                        await filterGet.get(function(error, result) {
+                            if (error) {
+                                alert("listen error");
+                            }
+                            else {
+                                alert("listen success");
+                                console.log(result);
+                                for (let i = 0; i < result.length; i++) {
+                                    console.log(result[i].data);
+                                }
+                            }
+                        });
+                    });
                 }
             });
         });

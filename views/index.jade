@@ -1,90 +1,123 @@
 extends layout
 
 block content
-  if (info)
-    div.alert.alert-danger #{info}
-  .row
-    .col-md-8.center-block.offset-md-2
-      .card.text-center
-        .card-header(style="font-size: 1.5rem; font-weight:bold")
-          | 登入系統
-        .card-body
-          h5.card-title 
-          form(action='/users/login' method='post')
-            .input-group
-              .input-group-prepend
-                span.input-group-text(id='') 使用者名稱
-              input.form-control(type='text' name='username' placeholder="Username" required="required")
-            .input-group.mt-3
-              .input-group-prepend
-                span.input-group-text(id='') 密碼
-              input.form-control(type='password' name='password' placeholder="Password" required="required")
-            input.btn.btn-primary.btn-lg.btn-block.mt-3(type='submit' value='登入')
-            p.mt-2.text-left 還沒有帳戶？ <a href="#" data-toggle='modal' data-target='#registerModal'>立即註冊</a>
-            p 或是
-            button.btn.btn-outline-info.btn-lg.btn-block.loginWithMetamask(type='button') 使用 Ethereum 帳戶登入
-            button.btn.btn-outline-success.btn-lg.btn-block(type='button' onclick="javascript:location.href='/metamask-connect'") Metamask Test Page
+    if (info)
+        div.alert.alert-danger #{info}
+    .row
+        .col-md-8.center-block.offset-md-2
+            .card.text-center
+                .card-header(style="font-size: 1.5rem; font-weight:bold")
+                    | 登入系統
+                .card-body
+                    h5.card-title 
+                    form(action='/users/login' method='post')
+                        .input-group
+                            .input-group-prepend
+                                span.input-group-text(id='') 使用者名稱
+                            input.form-control(type='text' name='username' placeholder="Username" required="required")
+                        .input-group.mt-3
+                            .input-group-prepend
+                                span.input-group-text(id='') 密碼
+                            input.form-control(type='password' name='password' placeholder="Password" required="required")
+                        input.btn.btn-primary.btn-lg.btn-block.mt-3(type='submit' value='登入')
+                        p.mt-2.text-left 還沒有帳戶？ <a href="#" data-toggle='modal' data-target='#registerModal'>立即註冊</a>
+                        p 或是
+                        button.btn.btn-outline-info.btn-lg.btn-block.loadInfo(type='button' data-toggle='modal' data-target='#confirmModal') 使用 Ethereum 帳戶登入
+                        button.btn.btn-outline-success.btn-lg.btn-block(type='button' onclick="javascript:location.href='/metamask-connect'") Metamask Test Page
 
-  // Modal
-  #registerModal.modal.fade(tabindex='-1' role='dialog' aria-hidden='true')
-    .modal-dialog(role='document')
-      .modal-content
-        .card.text-center
-          .card-header(style="font-size: 1.5rem; font-weight:bold")
-            | 註冊
-            button.close(type='button' data-dismiss='modal' aria-label='Close')
-              span(aria-hidden='true') ×
-          .card-body
-            h5.card-title 
-            form(action='/users/register' method='post')
-              .input-group
-                .input-group-prepend
-                  span.input-group-text(id='') 使用者名稱
-                input.form-control(type='text' name='username' placeholder="Username" required="required")
-              .input-group.mt-3
-                .input-group-prepend
-                  span.input-group-text(id='') 密碼
-                input.form-control(type='password' name='password' placeholder="Password" required="required")
-              .input-group.mt-3
-                .input-group-prepend
-                  span.input-group-text(id='') 密碼確認
-                input.form-control(type='password' name='confirmPassword' placeholder="Confirm password" required="required")
-              .input-group.mt-3
-                .input-group-prepend
-                  span.input-group-text(id='') 電子郵件
-                input.form-control(type='email' name='email' placeholder="Email" required="required")
-              .input-group.mt-3
-                .input-group-prepend
-                  span.input-group-text(id='') 行動電話
-                input.form-control(type='tel' name='phone' placeholder="Phone number" required="required")
-              .input-group.mt-3
-                .input-group-prepend
-                  span.input-group-text(id='') 身份證字號
-                input.form-control(type='text' name='id' placeholder="Identification card number")
-              input.btn.btn-success.btn-lg.btn-block.mt-4(type='submit' value='註冊')
-  
-  script. 
-    $(function() {
-        $(".modal").on("hidden.bs.modal", function() {
-          $(this).find('form').trigger('reset');
+    // Register Modal
+    #registerModal.modal.fade(tabindex='-1' role='dialog' aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .card.text-center
+                    .card-header(style="font-size: 1.5rem; font-weight:bold")
+                        | 註冊
+                        button.close(type='button' data-dismiss='modal' aria-label='Close')
+                            span(aria-hidden='true') ×
+                .card-body
+                    h5.card-title 
+                    form(action='/users/register' method='post')
+                        .input-group
+                            .input-group-prepend
+                                span.input-group-text(id='') 使用者名稱
+                            input.form-control(type='text' name='username' placeholder="Username" required="required")
+                        .input-group.mt-3
+                            .input-group-prepend
+                                span.input-group-text(id='') 密碼
+                            input.form-control(type='password' name='password' placeholder="Password" required="required")
+                        .input-group.mt-3
+                            .input-group-prepend
+                                span.input-group-text(id='') 密碼確認
+                            input.form-control(type='password' name='confirmPassword' placeholder="Confirm password" required="required")
+                        .input-group.mt-3
+                            .input-group-prepend
+                                span.input-group-text(id='') 電子郵件
+                            input.form-control(type='email' name='email' placeholder="Email" required="required")
+                        .input-group.mt-3
+                            .input-group-prepend
+                                span.input-group-text(id='') 行動電話
+                            input.form-control(type='tel' name='phone' placeholder="Phone number" required="required")
+                        .input-group.mt-3
+                            .input-group-prepend
+                                span.input-group-text(id='') 身份證字號
+                            input.form-control(type='text' name='id' placeholder="Identification card number")
+                        input.btn.btn-success.btn-lg.btn-block.mt-4(type='submit' value='註冊')
+    
+    // Confirm Dialog
+    #confirmModal.modal.fade(tabindex='-1' role='dialog')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5.modal-title 系統訊息
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') ×
+                .modal-body
+                    p 是否使用該帳戶登入?
+                    br
+                    p 目前帳戶(Address)
+                    p.address.text-uppercase.font-weight-bold.text-center ...
+                .modal-footer
+                    button.btn.btn-primary.loginWithMetamask(type='button') 繼續
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') 關閉
+
+    script. 
+        $(function() {
+            $(".modal").on("hidden.bs.modal", function() {
+                $(this).find('form').trigger('reset');
+            });
+
+            $(".loadInfo").on("click", function(e) {
+                $.getScript( "/javascripts/web3_bundle.js", function(data, textStatus, jqxhr) {
+                    if (typeof(web3) !== "undefined") {
+                        var account = web3.eth.accounts[0];
+                        console.log(account);
+                        $("#confirmModal").find('.modal-body .address').text(account);
+                    }
+                });
+            });
+
+            $(".loginWithMetamask").on('click', function(e) {
+                // for web3_bundle.js
+                $.getScript( "/javascripts/web3_bundle.js", function(data, textStatus, jqxhr) {
+                    if (typeof(web3) !== "undefined") {
+                        var account = web3.eth.accounts[0];
+                        alert(account);
+                    }
+                });
+                //- $.ajax({
+                //-     url: '/users/loginWithMetamask',
+                //-     data: { username: "wqe", password: "qfadsf"},
+                //-     type: 'post',
+                //-     success: function(res) {
+                //-         console.log("success");
+                //-         window.location.replace("/profile");
+                //-     },
+                //-     error: function(err) {
+                //-         console.log("error");
+                //-         alert(err);
+                //-     }
+                //- });
+        
+        
+            });
         });
-
-
-
-      $(".loginWithMetamask").on('click', function(e) {
-        $.ajax({
-            url: '/users/loginWithMetamask',
-            data: { username: "wqe", password: "qfadsf"},
-            type: 'post',
-            success: function(res) {
-              console.log("success");
-              window.location.replace("/profile");
-            },
-            error: function(err) {
-              console.log("error");
-              alert(err);
-
-            }
-        });
-      });
-    });
