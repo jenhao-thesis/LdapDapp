@@ -1,0 +1,19 @@
+{
+    "ldap": {
+        "server": {
+            "url": "ldap://192.168.139.130:1389",
+            "bindDN": "cn=root",
+            "bindCredentials": "secret",
+            "searchBase": "ou=location2,dc=jenhao,dc=com",
+            "searchFilter": "(cn={{username}})"
+          },
+          "usernameField": "username",
+          "passwordField": "password"
+    },
+    "contracts": {
+        "organizationManagerAddress": "0x8f674F58e0a58dC10B232aEE3e4005BB4A513109",
+        "accessManagerAddress": ""
+    },
+    "admin_address": "0x8f674F58e0a58dC10B232aEE3e4005BB4A513109",
+    "web3_provider": "http://localhost:7545"
+}

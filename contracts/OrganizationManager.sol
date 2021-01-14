@@ -90,24 +90,10 @@ contract OrganizationManager {
         bytes32 hashed = keccak256(bytes(uniqueId));
         _bindUsers[userAddress] = hashed;    
         _bindState[hashed] = true;
+        _users[userAddress] = true;
         emit BindUserAccountEvent(msg.sender, userAddress, hashed);
     }
 
-    // function enroll(
-    //     string memory userId,
-    //     string memory orgId
-    // )
-    //     public onlyOrg returns (uint)
-    // {
-    //     // if (keccak256(bytes(_userOrgMap[userId])) != keccak256(bytes(""))) {
-    //     //     return 0;
-    //     // }
-    //     // else {
-    //     //     _userOrgMap[userId] = orgId;    
-    //     // }
-    //     return 1;
-    // }
-    
     function checkLastModify(string memory uniqueId) public view returns (address){
         return (_uniqueIdenity[keccak256(bytes(uniqueId))]).lastModifyOrg;
     }

@@ -104,19 +104,20 @@ block content
                         alert(account);
                     }
                 });
-                //- $.ajax({
-                //-     url: '/users/loginWithMetamask',
-                //-     data: { username: "wqe", password: "qfadsf"},
-                //-     type: 'post',
-                //-     success: function(res) {
-                //-         console.log("success");
-                //-         window.location.replace("/profile");
-                //-     },
-                //-     error: function(err) {
-                //-         console.log("error");
-                //-         alert(err);
-                //-     }
-                //- });
+
+                $.ajax({
+                    url: '/users/loginWithMetamask',
+                    data: { username: "wqe", password: "qfadsf"},
+                    type: 'post',
+                    success: function(res) {
+                        console.log("success");
+                        window.location.replace("/profile");
+                    },
+                    error: function(err) {
+                        console.log("error");
+                        alert(err);
+                    }
+                });
         
         
             });

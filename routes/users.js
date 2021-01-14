@@ -94,6 +94,8 @@ router.post('/login', function(req, res, next) {
       console.log("User exist");
       console.log(user);
       req.logIn(user, function(err) {
+          console.log("after");
+          console.log(user);
           if (err) { return next(err); }
       }); 
       return res.redirect('/profile/');

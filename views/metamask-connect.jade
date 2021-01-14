@@ -1,40 +1,59 @@
 extends layout
 
 block content
-    h3 #{title}
 
     .row
-        .col.col-lg-4.col-sm-12
-            .input-group.mb-3
-                input.func1-input0.form-control(type='text' placeholder="Enter org index" aria-label="Parameter" aria-describedby='basic-addon2')
-                .input-group-append
-                    button.func1.btn.btn-primary(type='button') getOrg(onlyOrg)
-        .col.col-lg-4.col-sm-12
-            .input-group.mb-3
-                input.func2-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2')
-                .input-group-append
-                    button.func2.btn.btn-secondary(type='button') addUser(onlyOrg)
-        .col.col-lg-4.col-sm-12
-            .input-group.mb-3
-                input.func3-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2')
-                .input-group-append
-                    button.func3.btn.btn-info(type='button') getId  
-        .col.col-lg-4.col-sm-12
-            .input-group.mb-3
-                input.func4-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2' required="required")
-                input.func4-input1.form-control(type='text' placeholder="Enter ethereum address" aria-label="Parameter" aria-describedby='basic-addon2' required="required")
-                .input-group-append
-                    button.func4.btn.btn-success(type='button') bindAccount(onlyOrg)
+        .col-md-8.offset-md-2.col-sm-12
+            .card
+                .card-header
+                    h4.font-weight-bold(style="margin:0;") #{title}
+
+                .card-body
+                    p.version
+                    p.account
+            
+    br
+
     .row
-        .col
-            button.btn.btn-block.btn-warning.check-log(type='button') Check log
+        .col-md-8.offset-md-2.col-sm-12
+            .card
+                .card-header
+                    h4.font-weight-bold(style="margin:0;") Functions
+                .card-body
+                    .input-group.mb-3
+                        input.func1-input0.form-control(type='text' placeholder="Enter org index" aria-label="Parameter" aria-describedby='basic-addon2')
+                        .input-group-append
+                            button.func1.btn.btn-primary(type='button') getOrg(onlyOrg)
+                    
+                    .input-group.mb-3
+                        input.func2-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2')
+                        .input-group-append
+                            button.func2.btn.btn-secondary(type='button') addUser(onlyOrg)
+
+                    .input-group.mb-3
+                        input.func3-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2')
+                        .input-group-append
+                            button.func3.btn.btn-info(type='button') getId  
+
+                    .input-group.mb-3
+                        input.func4-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2' required="required")
+                        input.func4-input1.form-control(type='text' placeholder="Enter ethereum address" aria-label="Parameter" aria-describedby='basic-addon2' required="required")
+                        .input-group-append
+                            button.func4.btn.btn-success(type='button') bindAccount(onlyOrg)
+
+                    button.btn.btn-block.btn-warning.check-log(type='button') Stop log        
+
     br
-    br
-    .row.mt-2
-        .col
-            p.version
-            p.account
     
+    .row
+        .col-md-8.offset-md-2.col-sm-12
+            .card
+                .card-header
+                    h4.font-weight-bold(style="margin:0;") Logs
+                .card-body
+                    ul.list-group.list-group-flush#log-list
+
+
     script. 
         $(function() {
             // for web3_bundle.js
@@ -124,26 +143,50 @@ block content
                     });
 
                     $(".check-log").on("click", async function(e) {
-                        let options = {
-                            "fromBlock": "0",
-                            "toBlock": "latest",
-                            "address": contract_address
-                        }
+                        clearInterval(refreshIntervalId);
+                        //- let options = {
+                        //-     "fromBlock": "0",
+                        //-     "toBlock": "latest",
+                        //-     "address": contract_address
+                        //- }
                         
-                        let filterGet = web3.eth.filter(options);
+                        
+                        //- await filterGet.get(function(error, result) {
+                        //-     $("#log-list li").remove();
+                        //-     if (error) {
+                        //-         alert("listen error");
+                        //-     }
+                        //-     else {
+                        //-         alert("listen success");
+                        //-         console.log(result);
+                        //-         for (let i = 0; i < result.length; i++) {
+                        //-             console.log(result[i].data);
+                        //-             $("#log-list").append('<li class="list-group-item">'+result[i].data+'</li>')
+                        //-         }
+                        //-     }
+                        //- });
+                    });
+
+                    let options = {
+                        "fromBlock": "0",
+                        "toBlock": "latest",
+                        "address": contract_address
+                    }
+                    let filterGet = web3.eth.filter(options);
+                    var refreshIntervalId = setInterval(async function () {
                         await filterGet.get(function(error, result) {
+                            $("#log-list li").remove();
                             if (error) {
                                 alert("listen error");
                             }
                             else {
-                                alert("listen success");
-                                console.log(result);
+                                console.log("listen success");
                                 for (let i = 0; i < result.length; i++) {
-                                    console.log(result[i].data);
+                                    $("#log-list").append('<li class="list-group-item">'+result[i].data+'</li>')
                                 }
                             }
                         });
-                    });
+                    }, 1000);
                 }
             });
         });

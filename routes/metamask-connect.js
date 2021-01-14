@@ -3,9 +3,10 @@ var router = express.Router();
 var fs = require('fs')
 var Web3 = require('web3');
 
-const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'));
-const admin_address = '0x56B1817fFa1Ff86ebB922400155CD3bE3F734419'; // org0
-const contract_address = "0x8f674F58e0a58dC10B232aEE3e4005BB4A513109";
+const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
+const web3 = new Web3(new Web3.providers.HttpProvider(config.web3_provider));
+const admin_address = config.admin_address; // org0
+const contract_address = config.contracts.organizationManagerAddress;
 
 router.get('/', function(req, res) {
     console.log("web3 versin", web3.version);
@@ -100,8 +101,6 @@ router.post('/bindAccount', async function(req, res, next) {
             console.log("Transaction hash:", transactionHash);
         }
     })
-
-
 
     res.send({msg: "OK, i got it, this is your transaction hash:" + txHash});
 });
