@@ -2,7 +2,13 @@ extends layout
 
 block content
     if (info)
-        div.alert.alert-danger #{info}
+        if (info === "Create successfully.")
+            div.alert.alert-primary #{info}
+        else
+            div.alert.alert-danger #{info}
+
+    if (createInfo)
+        div.alert.alert-primary #{createInfo}
     .row
         .col-md-8.center-block.offset-md-2
             .card.text-center
@@ -73,7 +79,6 @@ block content
                         span(aria-hidden='true') ×
                 .modal-body
                     p 是否使用該帳戶登入?
-                    br
                     p 目前帳戶(Address)
                     p.address.text-uppercase.font-weight-bold.text-center ...
                 .modal-footer
@@ -87,9 +92,18 @@ block content
             });
 
             $(".loadInfo").on("click", function(e) {
-                $.getScript( "/javascripts/web3_bundle.js", function(data, textStatus, jqxhr) {
+                $.getScript( "/javascripts/web3_bundle.js", async function(data, textStatus, jqxhr) {
                     if (typeof(web3) !== "undefined") {
-                        var account = web3.eth.accounts[0];
+                        let account = "";
+                        await web3.eth.getAccounts()
+                        .then( (data) => {
+                            account = data[0];
+                            $(".account").html("Account:" + account);    
+                            $(".func4-input1").val(account);
+                        })
+                        .catch( (err) => {
+                            alert(err);
+                        });
                         console.log(account);
                         $("#confirmModal").find('.modal-body .address').text(account);
                     }

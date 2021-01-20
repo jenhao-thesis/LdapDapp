@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var fs = require('fs')
+var fs = require('fs');
 var Web3 = require('web3');
 
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    

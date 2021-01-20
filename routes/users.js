@@ -6,13 +6,10 @@ const { nextTick } = require('process');
 var util = require('util');
 var passport = require('passport');
 var LocalStrategy = require('passport-local');
+var fs = require('fs')
 
-var client = ldap.createClient({
-  url: 'ldap://192.168.139.130:1389',
-  bindDN: 'cn=root',
-  bindCredentials: 'secret',
-  searchBase: 'ou=location2,dc=jenhao,dc=com',
-});
+const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
+const client = ldap.createClient(config.ldap.server);
 
 var newDN = "cn=%s,ou=location2,dc=jenhao,dc=com"
 // var c = ssha.create('qwer');

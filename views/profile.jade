@@ -18,7 +18,12 @@ block content
                                 tr
                                     td #{idx}
                                     td #{val}
-    
+
+                    br
+                    br                    
+                    .alert.alert-primary.status(role='alert')
+                        | No any transaction.
+
     br
 
     button.btn.btn-block.btn-outline-info.bind-btn(type='button' data-toggle='modal' data-target='#bindModal') 使用 Metamask 綁定帳號
@@ -50,14 +55,32 @@ block content
     script. 
         $(function() {
     
+            let contract_address = "#{address}";
+            let status = 0;
+            let txHash = "";
+            let options = {
+                "fromBlock": "0",
+                "toBlock": "latest",
+                "address": contract_address
+            }
+
             $(".modal").on("hidden.bs.modal", function() {
                 $(this).find('form').trigger('reset');
             });
 
             $(".bind-btn").on("click", function(e) {
-                $.getScript( "/javascripts/web3_bundle.js", function(data, textStatus, jqxhr) {
+                $.getScript( "/javascripts/web3_bundle.js", async function(data, textStatus, jqxhr) {
                     if (typeof(web3) !== "undefined") {
-                        let account = web3.eth.accounts[0];
+                        let account = "";
+                        await web3.eth.getAccounts()
+                        .then( (data) => {
+                            account = data[0];
+                            $(".account").html("Account:" + account);    
+                            $(".func4-input1").val(account);
+                        })
+                        .catch( (err) => {
+                            alert(err);
+                        });
                         $('#address').val(account);
                         $('#address').attr("readonly", "readonly");
                         $('#address').attr("style", "background-color: white;");
@@ -73,12 +96,12 @@ block content
                     $('#identityId').attr("style", "background-color: white;");
                 }
             });
-
-            $(".submit-bind-btn").on("click", function(e) {
+            
+            $(".submit-bind-btn").on("click", async function(e) {
                 let input_0 = $("#identityId").val();
                 let input_1 = $("#address").val();
-
-                $.ajax({
+                $('#bindModal').modal('toggle');
+                await $.ajax({
                     url: 'bindAccount',
                     data: { uid: input_0, address: input_1},
                     type: 'post',
@@ -86,12 +109,37 @@ block content
                     dataType: 'json',
                     success: function(res) {
                         alert(res.msg);
+                        status = res.status;
+                        txHash = res.txHash;
+
                     },
                     error: function(err) {
-                        alert(err);
+                        console.log(err);
+                        alert("Error");
                     }
                 });
 
-                $('#bindModal').modal('toggle');
+                console.log(status);
+
+
             });
+        
+            $.getScript( "/javascripts/web3_bundle.js", function(data, textStatus, jqxhr) {
+                if (typeof(web3) !== "undefined") {
+                    let subscription = web3.eth.subscribe('logs', options, function(error, result){
+                        if (!error) {
+                            if (status) {
+                                if (txHash === result.transactionHash) {
+                                    alert("Alreay done");
+                                    $(".status").html("Done");
+                                }
+                            }
+                        }
+                        else {
+                            alert(error);
+                        }
+                    })
+                }
+            });
+
         });

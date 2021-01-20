@@ -11,9 +11,9 @@
           "passwordField": "password"
     },
     "contracts": {
-        "organizationManagerAddress": "0x8f674F58e0a58dC10B232aEE3e4005BB4A513109",
+        "organizationManagerAddress": "0xB0ce44F8e1dD4d20dA0735dd588af30fa19E8651",
         "accessManagerAddress": ""
     },
-    "admin_address": "0x8f674F58e0a58dC10B232aEE3e4005BB4A513109",
+    "admin_address": "0x56B1817fFa1Ff86ebB922400155CD3bE3F734419",
     "web3_provider": "http://localhost:7545"
 }

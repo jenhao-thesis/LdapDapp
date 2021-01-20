@@ -21,7 +21,7 @@ block content
                     h4.font-weight-bold(style="margin:0;") Functions
                 .card-body
                     .input-group.mb-3
-                        input.func1-input0.form-control(type='text' placeholder="Enter org index" aria-label="Parameter" aria-describedby='basic-addon2')
+                        input.func1-input0.form-control(type='number' placeholder="Enter org index" aria-label="Parameter" aria-describedby='basic-addon2', value="0")
                         .input-group-append
                             button.func1.btn.btn-primary(type='button') getOrg(onlyOrg)
                     
@@ -41,6 +41,12 @@ block content
                         .input-group-append
                             button.func4.btn.btn-success(type='button') bindAccount(onlyOrg)
 
+                    .input-group.mb-3
+                        input.func5-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2')
+                        .input-group-append
+                            button.func5.btn.btn-info(type='button') sign data
+
+
                     button.btn.btn-block.btn-warning.check-log(type='button') Stop log        
 
     br
@@ -57,14 +63,21 @@ block content
     script. 
         $(function() {
             // for web3_bundle.js
-            $.getScript( "/javascripts/web3_bundle.js", function(data, textStatus, jqxhr) {
+            $.getScript( "/javascripts/web3_bundle.js", async function(data, textStatus, jqxhr) {
                 if (typeof(web3) !== "undefined") {
+                    let account = "";
+                    await web3.eth.getAccounts()
+                    .then( (data) => {
+                        account = data[0];
+                        $(".account").html("Account:" + account);    
+                        $(".func4-input1").val(account);
+                    })
+                    .catch( (err) => {
+                        alert(err);
+                    });
+
+                    $(".version").html("API vesion: " + web3.version);
                     
-                    let account = web3.eth.accounts[0];
-                    console.log("current address:", web3.eth.accounts);
-                    $(".version").html("API vesion: " + web3.version.api);
-                    $(".account").html("Account:" + account);
-                    $(".func4-input1").val(account);
                     let contract_address = "#{address}";
                     console.log("contract address:", contract_address);
                     
@@ -73,19 +86,16 @@ block content
                     $(".func1").on("click", function(e) {
                         // get abi of contract
                         $.getJSON('metamask-connect/org.json', function (data) {
-                            let myContract = web3.eth.contract(data.abi);
-                            let contractInstance = myContract.at(contract_address);
+                            let contractInstance = new web3.eth.Contract(data.abi, contract_address);
                             let input_0 = $(".func1-input0").val();
-                            contractInstance.getOrg(input_0, (err, res) => {
-                                if (err) {
-                                    console.log(err);
-                                    alert(err.data.message);
-                                }
-                                else {
-                                    alert(res);
-                                    console.log(res);
-                                }
-                            });                        
+
+                            contractInstance.methods.getOrg(input_0).call({from: account})
+                            .then( (result) => {
+                                alert(`Index: ${input_0}\nAddress: ${result}`);
+                            })
+                            .catch( (err) => {
+                                alert(err);
+                            }); 
                         });
                     });
 
@@ -108,19 +118,15 @@ block content
 
                     $(".func3").on("click", function(e) {
                         $.getJSON('metamask-connect/org.json', function (data) {
-                            let myContract = web3.eth.contract(data.abi);
-                            let contractInstance = myContract.at(contract_address);
+                            let contractInstance = new web3.eth.Contract(data.abi, contract_address);
                             let input_0 = $(".func3-input0").val();
-                            contractInstance.getId(input_0, (err, res) => {
-                                if (err) {
-                                    console.log(err);
-                                    alert(err.data.message);
-                                }
-                                else {
-                                    alert(res);
-                                    console.log(res);
-                                }
-                            });                        
+                            contractInstance.methods.getId(input_0).call({from: account})
+                            .then( (result) => {
+                                alert(result);
+                            })
+                            .catch( (err) => {
+                                alert(err);
+                            });                
                         });
                     });
 
@@ -142,29 +148,26 @@ block content
                         });
                     });
 
+                    $(".func5").on("click", async function(e) {
+                        let input_0 = $(".func5-input0").val();
+                        await web3.eth.sign(web3.utils.utf8ToHex(input_0), account)
+                        .then( (data) => {
+                            console.log(data);
+                        })
+                        .catch( (err) => {
+                            alert("sign fail");
+                        })
+                    });
+
                     $(".check-log").on("click", async function(e) {
-                        clearInterval(refreshIntervalId);
-                        //- let options = {
-                        //-     "fromBlock": "0",
-                        //-     "toBlock": "latest",
-                        //-     "address": contract_address
-                        //- }
-                        
-                        
-                        //- await filterGet.get(function(error, result) {
-                        //-     $("#log-list li").remove();
-                        //-     if (error) {
-                        //-         alert("listen error");
-                        //-     }
-                        //-     else {
-                        //-         alert("listen success");
-                        //-         console.log(result);
-                        //-         for (let i = 0; i < result.length; i++) {
-                        //-             console.log(result[i].data);
-                        //-             $("#log-list").append('<li class="list-group-item">'+result[i].data+'</li>')
-                        //-         }
-                        //-     }
-                        //- });
+                        //- clearInterval(refreshIntervalId);
+                        subscription.unsubscribe(function(error, success) {
+                            if (success) {
+                                console.log("Successfully unsubscribed!");
+                                $(".check-log").html("Done");
+                                $(".check-log").attr("disabled", true);
+                            }
+                        });
                     });
 
                     let options = {
@@ -172,21 +175,29 @@ block content
                         "toBlock": "latest",
                         "address": contract_address
                     }
-                    let filterGet = web3.eth.filter(options);
-                    var refreshIntervalId = setInterval(async function () {
-                        await filterGet.get(function(error, result) {
-                            $("#log-list li").remove();
-                            if (error) {
-                                alert("listen error");
+                    $("#log-list li").remove();
+
+                    let subscription = web3.eth.subscribe('logs', options, function(error, result){
+                        if (!error) {
+                            let start = 2; // "0x"
+                            let r = "";
+                            while(start < result.data.length) {
+                                r += result.data.substring(start, start+64) + "<br><br>";
+                                start += 64;
                             }
-                            else {
-                                console.log("listen success");
-                                for (let i = 0; i < result.length; i++) {
-                                    $("#log-list").append('<li class="list-group-item">'+result[i].data+'</li>')
-                                }
-                            }
-                        });
-                    }, 1000);
+                            $("#log-list").append(`<li class="list-group-item">Block Num.: ${result.blockNumber}<br><br>Data: <br>${r}tx Hash: ${result.transactionHash}</li>`)
+                            console.log(result);
+                        }
+                    })
+                    .on("connected", function(subscriptionId) {
+                        console.log(`Your subscription ID is ${subscriptionId}`);
+                    })
+                    .on("data", function(log) {
+                        //- console.log(log);
+                    })
+                    .on("changed", function(log) {
+                        //- console.log(log);
+                    });
                 }
             });
         });
