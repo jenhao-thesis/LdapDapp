@@ -3,6 +3,9 @@
 ## Compile cotract
 
 browserify: convert web3_init.js to web3_bundle.js
+```
+browserify web3_init.js -o web3_bundle.js
+```
 truffle: compile and deploy contract // if node -v is 8.10 it won't worked, please uprgade to v14
 
 ```
