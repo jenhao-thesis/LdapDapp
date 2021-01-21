@@ -52,19 +52,20 @@ router.post('/bindAccount', isAuthenticated, async function(req, res, next) {
         console.log(err);
         msg = `${err}`;
     })
+    
+    if (status) {
+        let change = new ldap.Change({
+            operation: 'add',
+            modification: {
+                hashed: "0xfc043e80768cb3034a508ca5e0e256c5c72aad2642771f18b795f774fb4c945c"
+            }
+        });
+    
+        client.modify(req.user.dn, change, function(err) {
+            console.log("error", err);
+        });
+    }
 
-    let change = new ldap.Change({
-        operation: 'add',
-        modification: {
-            hashed: "qwe3333333333"
-        }
-    });
-
-    client.modify(req.user.dn, change, function(err) {
-        console.log("error", err);
-    });
-
-    console.log(req.user);
     res.send({msg: msg, status: status, txHash: hash});
 });
 

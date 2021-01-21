@@ -22,9 +22,15 @@ var newUser = {
     userPassword: 'default'
 }
 
-passport.use('local', new LocalStrategy(
+passport.use('local', new LocalStrategy( {
+    // Override those field if you don'y need it
+    // https://stackoverflow.com/questions/35079795/passport-login-authentication-without-password-field
+    usernameField: 'address',
+    passwordField: 'address'
+  },
   function (username, password, done) {
       console.log("entor local strategy");
+      console.log(username);
       return done(null, {
           username: 'test',
           tt: "qew"
@@ -81,7 +87,7 @@ router.post('/login', function(req, res, next) {
       if (err) {
           return next(err);
       }
-      
+      console.log("```", user);
       if (!user) {
           // return res.send({status: info})
           // return res.render('index', {err: info});

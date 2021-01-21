@@ -75,6 +75,7 @@ contract OrganizationManager {
         }
     }
 
+    // bind user identity(hash of ID card number) with ethereum account
     function bindAccount(
         string memory uniqueId,
         address userAddress
@@ -112,10 +113,16 @@ contract OrganizationManager {
         return _orgsArr[idx];
     }
     
+    // Get hashed id by plaintext id number
     function getId(string memory uniqueId) public view returns (bytes32) {
         bytes32 hashed = keccak256(bytes(uniqueId));
         if (_uniqueState[hashed]) return hashed;
         return 0;
+    }
+    
+    // Get hashed id by etherenum address(msg.sender)
+    function getId() public view returns (bytes32) {
+        return _bindUsers[msg.sender];
     }
 }
 

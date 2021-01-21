@@ -111,17 +111,21 @@ block content
             });
 
             $(".loginWithMetamask").on('click', function(e) {
-                // for web3_bundle.js
-                $.getScript( "/javascripts/web3_bundle.js", function(data, textStatus, jqxhr) {
-                    if (typeof(web3) !== "undefined") {
-                        var account = web3.eth.accounts[0];
-                        alert(account);
-                    }
+                $.getJSON('metamask-connect/org.json', function (data) {
+                    let contractInstance = new web3.eth.Contract(data.abi, contract_address);
+                    let input_0 = $(".func3-input0").val();
+                    contractInstance.methods.getId(input_0).call({from: account})
+                    .then( (result) => {
+                        alert(result);
+                    })
+                    .catch( (err) => {
+                        alert(err);
+                    });                
                 });
 
                 $.ajax({
                     url: '/users/loginWithMetamask',
-                    data: { username: "wqe", password: "qfadsf"},
+                    data: { address: "wqe"},
                     type: 'post',
                     success: function(res) {
                         console.log("success");
@@ -129,7 +133,7 @@ block content
                     },
                     error: function(err) {
                         console.log("error");
-                        alert(err);
+                        alert();
                     }
                 });
         

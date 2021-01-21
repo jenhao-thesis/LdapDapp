@@ -21,8 +21,11 @@ block content
 
                     br
                     br                    
-                    .alert.alert-primary.status(role='alert')
-                        | No any transaction.
+                    .alert.alert-warning.alert-dismissible.fade.show(role='alert')
+                        .status
+                            | ...
+                        button.close(type='button' data-dismiss='alert' aria-label='Close')
+                            span(aria-hidden='true') ×
 
     br
 
@@ -56,7 +59,7 @@ block content
         $(function() {
     
             let contract_address = "#{address}";
-            let status = 0;
+            let status = false;
             let txHash = "";
             let options = {
                 "fromBlock": "0",
@@ -118,28 +121,34 @@ block content
                         alert("Error");
                     }
                 });
-
                 console.log(status);
-
-
             });
         
-            $.getScript( "/javascripts/web3_bundle.js", function(data, textStatus, jqxhr) {
+            $.getScript("/javascripts/web3_bundle.js", function(data, textStatus, jqxhr) {
                 if (typeof(web3) !== "undefined") {
                     let subscription = web3.eth.subscribe('logs', options, function(error, result){
                         if (!error) {
                             if (status) {
                                 if (txHash === result.transactionHash) {
-                                    alert("Alreay done");
-                                    $(".status").html("Done");
+                                    alert("已完成綁定作業！");
+                                    location.reload();  
                                 }
                             }
                         }
                         else {
                             alert(error);
                         }
-                    })
+                    });
                 }
             });
+
+            setInterval(function() {
+                if ("#{user.hashed}" === "") {
+                    $(".status").html("尚未綁定任何區塊鏈帳戶");
+                }
+                else {
+                    $(".status").html("已綁定");
+                }
+            }, 1000);
 
         });

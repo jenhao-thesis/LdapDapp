@@ -54,4 +54,4 @@ call do not alter the state of the contract, send do.
 * [Truffle v5.1.57](https://www.trufflesuite.com/docs/truffle/testing/writing-tests-in-solidity)
 * [Solidity v0.5.16](https://docs.soliditylang.org/en/v0.5.16/genindex.html)
 * [Node v14.15.1](https://nodejs.org/en/)
-* [Web3.hs v1.3.0](https://github.com/ChainSafe/web3.js?source=post_page-----70de1c0c035c----------------------)
+* [Web3.js v1.3.0](https://github.com/ChainSafe/web3.js?source=post_page-----70de1c0c035c----------------------)
