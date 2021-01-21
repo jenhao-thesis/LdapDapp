@@ -28,3 +28,6 @@ benchmarks/graphs
 
 # truffle build
 build/
+
+# config
+server-config.json
