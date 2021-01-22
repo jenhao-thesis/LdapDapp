@@ -62,20 +62,16 @@ block content
 
     script. 
         $(function() {
+            let account = "";
+            window.ethereum.on('accountsChanged', function(accounts) {
+                account = accounts[0];
+                $(".account").html("Account:" + account);    
+                $(".func4-input1").val(account);
+            });
+
             // for web3_bundle.js
             $.getScript( "/javascripts/web3_bundle.js", async function(data, textStatus, jqxhr) {
                 if (typeof(web3) !== "undefined") {
-                    let account = "";
-                    await web3.eth.getAccounts()
-                    .then( (data) => {
-                        account = data[0];
-                        $(".account").html("Account:" + account);    
-                        $(".func4-input1").val(account);
-                    })
-                    .catch( (err) => {
-                        alert(err);
-                    });
-
                     $(".version").html("API vesion: " + web3.version);
                     
                     let contract_address = "#{address}";

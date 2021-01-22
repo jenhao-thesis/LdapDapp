@@ -10,7 +10,7 @@ block content
     if (createInfo)
         div.alert.alert-primary #{createInfo}
     .row
-        .col-md-8.center-block.offset-md-2
+        .col-md-6.center-block.offset-md-3
             .card.text-center
                 .card-header(style="font-size: 1.5rem; font-weight:bold")
                     | 登入系統
@@ -87,55 +87,53 @@ block content
 
     script. 
         $(function() {
+            const emptyAddress = "0x0000000000000000000000000000000000000000000000000000000000000000";
+            let contract_address = "#{address}";
+            let account = "";
+
             $(".modal").on("hidden.bs.modal", function() {
                 $(this).find('form').trigger('reset');
             });
 
+            window.ethereum.on('accountsChanged', function(accounts) {
+                account = accounts[0];
+            });
+
             $(".loadInfo").on("click", function(e) {
-                $.getScript( "/javascripts/web3_bundle.js", async function(data, textStatus, jqxhr) {
-                    if (typeof(web3) !== "undefined") {
-                        let account = "";
-                        await web3.eth.getAccounts()
-                        .then( (data) => {
-                            account = data[0];
-                            $(".account").html("Account:" + account);    
-                            $(".func4-input1").val(account);
-                        })
-                        .catch( (err) => {
-                            alert(err);
-                        });
-                        console.log(account);
-                        $("#confirmModal").find('.modal-body .address').text(account);
-                    }
-                });
+                $("#confirmModal").find('.modal-body .address').text(account);
             });
 
             $(".loginWithMetamask").on('click', function(e) {
-                $.getJSON('metamask-connect/org.json', function (data) {
-                    let contractInstance = new web3.eth.Contract(data.abi, contract_address);
-                    let input_0 = $(".func3-input0").val();
-                    contractInstance.methods.getId(input_0).call({from: account})
-                    .then( (result) => {
-                        alert(result);
-                    })
-                    .catch( (err) => {
-                        alert(err);
-                    });                
+                $.getScript( "/javascripts/web3_bundle.js", async function(data, textStatus, jqxhr) {
+                    $.getJSON('metamask-connect/org.json', function (data) {
+                        console.log(data);
+                        let contractInstance = new web3.eth.Contract(data.abi, contract_address);
+                        contractInstance.methods.getId().call({from: account})
+                        .then( (result) => {
+                            if (result === emptyAddress)
+                                alert("該帳戶尚未進行綁定！");
+                            else {
+                                $.ajax({
+                                    url: '/users/loginWithMetamask',
+                                    data: { identity: result},
+                                    type: 'post',
+                                    success: function(res) {
+                                        console.log("success");
+                                        window.location.replace("/profile");
+                                    },
+                                    error: function(err) {
+                                        console.log("error");
+                                        alert();
+                                    }
+                                });
+                            }
+                        })
+                        .catch( (err) => {
+                            alert(err);
+                        });                
+                    });
                 });
 
-                $.ajax({
-                    url: '/users/loginWithMetamask',
-                    data: { address: "wqe"},
-                    type: 'post',
-                    success: function(res) {
-                        console.log("success");
-                        window.location.replace("/profile");
-                    },
-                    error: function(err) {
-                        console.log("error");
-                        alert();
-                    }
-                });
         
         
             });

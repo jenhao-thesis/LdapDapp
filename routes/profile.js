@@ -27,6 +27,11 @@ router.get('/', isAuthenticated, function(req, res) {
     res.render('profile', { title: 'Profile ', user: req.user, address: contract_address});
 });
 
+router.get('/org.json', function(req, res) {
+    let contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));
+    res.json(contract);
+});
+
 router.post('/bindAccount', isAuthenticated, async function(req, res, next) {
     let contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));    
     let contractInstance = new web3.eth.Contract(contract.abi, contract_address);
@@ -54,19 +59,35 @@ router.post('/bindAccount', isAuthenticated, async function(req, res, next) {
     })
     
     if (status) {
-        let change = new ldap.Change({
-            operation: 'add',
-            modification: {
-                hashed: "0xfc043e80768cb3034a508ca5e0e256c5c72aad2642771f18b795f774fb4c945c"
-            }
-        });
-    
-        client.modify(req.user.dn, change, function(err) {
-            console.log("error", err);
-        });
     }
-
+    
     res.send({msg: msg, status: status, txHash: hash});
+});
+
+
+router.post('/updateUser', isAuthenticated, function(req, res) {
+    const {hashed} = req.body;
+    let msg = "successfully";
+
+    let change = new ldap.Change({
+        operation: 'add',
+        modification: {
+            hashed: hashed
+        }
+    });
+    
+    client.modify(req.user.dn, change, function(err) {
+        console.log("error", err);
+    });
+    
+    let newUser = req.user;
+    newUser.hashed = hashed;
+    req.logIn(newUser, function(err) {
+        if (err)
+            console.log("err");
+    })
+
+    res.send({msg: msg});
 });
 
 module.exports = router;
