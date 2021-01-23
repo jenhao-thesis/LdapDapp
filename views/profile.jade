@@ -86,6 +86,14 @@ block content
                     // TODO: reset the input
                 }
                 else {
+                    $.getScript("/javascripts/web3_bundle.js", function(data, textStatus, jqxhr) {                        
+                        web3.eth.getAccounts().then((accounts) => {
+                            account = accounts[0];
+                            $('#address').val(account);
+                            $('#address').attr("readonly", "readonly");
+                            $('#address').attr("style", "background-color: white;");                        });
+                    });
+
                     $("#identityId").val(id);
                     $('#identityId').attr("readonly", "readonly");
                     $('#identityId').attr("style", "background-color: white;");
@@ -160,13 +168,16 @@ block content
                 }
             });
 
-            setInterval(function() {
+            let id = setInterval(function() {
                 if ("#{user.hashed}" === "") {
                     $(".status").html("尚未綁定任何區塊鏈帳戶");
                 }
                 else {
                     $(".status").html("已綁定");
+                    clearInterval(id);
+                    $(".bind-btn").attr("disabled", "disabled");
                 }
+                console.log("checked");
             }, 1000);
 
         });

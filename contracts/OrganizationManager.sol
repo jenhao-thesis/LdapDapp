@@ -18,11 +18,11 @@ contract OrganizationManager {
     }
     
     // Pre-registered organization
-    address[] _orgsArr = [0x56B1817fFa1Ff86ebB922400155CD3bE3F734419, 
-                            0x8519B08add5a70A1fE164554EB5FCca0a9610b2e,
-                            0x411Dd550079Bb53221E11Ad59313e2AcB85B0f29,
-                            0x7e71751dBe4a5054EFd00Dd52E71b60608731466,
-                            0x42adAE49621887c8F455dF841d55e88587E8DE1A];
+    address[] _orgsArr = [0x1F7F0f7Be634D340EB070f3f3C21b6cE4ab857BD, 
+                            0xA3e898C280220bf5fAE9e7e6ceB4F3a6BFa67163,
+                            0x18db34baE039C54aA2B56BDF59ff380d29BffeD7,
+                            0xF799b4462423B551cF404a3688C03051A2BE7359,
+                            0x8423B7478160163c6e3319E64a6Ad4B77dfb7015];
     
     // Permission of user and organization
     mapping (address => bool) _orgs;

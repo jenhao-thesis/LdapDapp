@@ -73,7 +73,14 @@ block content
             $.getScript( "/javascripts/web3_bundle.js", async function(data, textStatus, jqxhr) {
                 if (typeof(web3) !== "undefined") {
                     $(".version").html("API vesion: " + web3.version);
-                    
+
+                    web3.eth.getAccounts().then((accounts) => {
+                        account = accounts[0];
+                        $(".account").html("Account:" + account);    
+                        $(".func4-input1").val(account);
+                    });
+
+
                     let contract_address = "#{address}";
                     console.log("contract address:", contract_address);
                     

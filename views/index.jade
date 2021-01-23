@@ -97,10 +97,16 @@ block content
 
             window.ethereum.on('accountsChanged', function(accounts) {
                 account = accounts[0];
+                $("#confirmModal").find('.modal-body .address').text(account);                
             });
 
             $(".loadInfo").on("click", function(e) {
-                $("#confirmModal").find('.modal-body .address').text(account);
+                $.getScript("/javascripts/web3_bundle.js", function(data, textStatus, jqxhr) {                        
+                    web3.eth.getAccounts().then((accounts) => {
+                        account = accounts[0];
+                        $("#confirmModal").find('.modal-body .address').text(account);
+                    });
+                });                
             });
 
             $(".loginWithMetamask").on('click', function(e) {
@@ -109,25 +115,25 @@ block content
                         console.log(data);
                         let contractInstance = new web3.eth.Contract(data.abi, contract_address);
                         contractInstance.methods.getId().call({from: account})
-                        .then( (result) => {
-                            if (result === emptyAddress)
-                                alert("該帳戶尚未進行綁定！");
-                            else {
-                                $.ajax({
-                                    url: '/users/loginWithMetamask',
-                                    data: { identity: result},
-                                    type: 'post',
-                                    success: function(res) {
-                                        console.log("success");
-                                        window.location.replace("/profile");
-                                    },
-                                    error: function(err) {
-                                        console.log("error");
-                                        alert();
-                                    }
-                                });
-                            }
-                        })
+                            .then( (result) => {
+                                if (result === emptyAddress)
+                                    alert("該帳戶尚未進行綁定！");
+                                else {
+                                    $.ajax({
+                                        url: '/users/loginWithMetamask',
+                                        data: { identity: result},
+                                        type: 'post',
+                                        success: function(res) {
+                                            console.log("success");
+                                            window.location.replace("/profile");
+                                        },
+                                        error: function(err) {
+                                            console.log("error");
+                                            alert();
+                                        }
+                                    });
+                                }
+                            })
                         .catch( (err) => {
                             alert(err);
                         });                
