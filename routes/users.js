@@ -59,6 +59,16 @@ passport.use('local', new LocalStrategy( {
           });
 
     });
+
+    // If identity(username) exist and no data in ldap server, create one for this idenetity.
+    return done(null, {
+        cn: 'new user',
+        sn: 'new sn',
+        mail: 'new@qwe',
+        objectClass: 'Person',
+        phone: '0900000000',
+        hashed: username
+    })
     // return done(null, false);
   }
 ));
