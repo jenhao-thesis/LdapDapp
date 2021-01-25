@@ -114,7 +114,7 @@ contract OrganizationManager {
     }
     
     // Get hashed id by plaintext id number
-    function getId(string memory uniqueId) public view returns (bytes32) {
+    function getId(string memory uniqueId) public onlyOrg view returns (bytes32) {
         bytes32 hashed = keccak256(bytes(uniqueId));
         if (_uniqueState[hashed]) return hashed;
         return 0;
@@ -124,6 +124,11 @@ contract OrganizationManager {
     function getId() public view returns (bytes32) {
         return _bindUsers[msg.sender];
     }
+
+    // Get hashed id by orgs
+    function getIdByOrg(address userAddress) public onlyOrg view returns (bytes32) {
+        return _bindUsers[userAddress];
+    } 
 }
 
 

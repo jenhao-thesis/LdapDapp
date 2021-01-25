@@ -115,25 +115,36 @@ block content
                         console.log(data);
                         let contractInstance = new web3.eth.Contract(data.abi, contract_address);
                         contractInstance.methods.getId().call({from: account})
-                            .then( (result) => {
-                                if (result === emptyAddress)
-                                    alert("該帳戶尚未進行綁定！");
-                                else {
-                                    $.ajax({
-                                        url: '/users/loginWithMetamask',
-                                        data: { identity: result},
-                                        type: 'post',
-                                        success: function(res) {
-                                            console.log("success");
-                                            window.location.replace("/profile");
-                                        },
-                                        error: function(err) {
-                                            console.log("error");
-                                            alert();
-                                        }
-                                    });
-                                }
-                            })
+                        .then( (result) => {
+                            if (result === emptyAddress)
+                                return Promise.reject("該帳戶尚未進行綁定！");
+                            else {
+                                // Sign the identity and then send to server
+                                return Promise.resolve(result);
+                            }
+                        })
+                        .then( (result) => {
+                            web3.eth.personal.sign(result, account).then((res) => {
+                                $.ajax({
+                                    url: '/users/loginWithMetamask',
+                                    data: { 
+                                        identity: result, // identity
+                                        signature: res,   // signature
+                                        account: account  // account
+                                    },
+                                    type: 'post',
+                                    success: function(res) {
+                                        console.log("success");
+                                        window.location.replace("/profile");
+                                    },
+                                    error: function(err) {
+                                        console.log("error");
+                                        alert();
+                                    }
+                                });
+
+                            });
+                        })
                         .catch( (err) => {
                             alert(err);
                         });                

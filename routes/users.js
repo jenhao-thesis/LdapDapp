@@ -8,9 +8,15 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local');
 var fs = require('fs');
 const { search } = require('../app');
+var Web3 = require('web3');
+const { resolve } = require('path');
 
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
+const web3 = new Web3(new Web3.providers.HttpProvider(config.web3_provider));
+const admin_address = config.admin_address; // org0
+const contract_address = config.contracts.organizationManagerAddress;
 const client = ldap.createClient(config.ldap.server);
+const contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));
 
 var newDN = "cn=%s,ou=location2,dc=jenhao,dc=com";
 var newUser = {
@@ -32,45 +38,77 @@ passport.use('local', new LocalStrategy( {
     // Override those field if you don'y need it
     // https://stackoverflow.com/questions/35079795/passport-login-authentication-without-password-field
     usernameField: 'identity',
-    passwordField: 'identity'
+    passwordField: 'signature',
+    passReqToCallback: true
 },
-    async function (username, password, done) {
-    console.log("entor local strategy");
-    console.log("identity: "+username);
-    searchOpts['filter'] = util.format("(hashed=%s)", username);
-    console.log(searchOpts);
-    // TODO: it should be encrypt/decrypt 
-    await client.search(searchDN, searchOpts, function(err, res) {
-        if (err) return done(err);
+    async function (req, username, password, done) {
+        let identity = username;
+        let signature = password;
+        let account = req.body.account.toUpperCase();
+        signingAccount = web3.eth.accounts.recover(identity, signature).toUpperCase();
+        searchOpts['filter'] = util.format("(hashed=%s)", identity);
+        console.log(searchOpts);
+        console.log("acc:"+account);
+        
+        let actualIdentity = "";
+        let contractInstance = new web3.eth.Contract(contract.abi, contract_address);
+        await contractInstance.methods.getIdByOrg(req.body.account).call({from: admin_address})
+        .then((result) => {
+            actualIdentity = result
+        })
+        .catch((err) => {
+            console.log(err);
+        });
 
-        res.on('searchEntry', function(entry) {
-            console.log('entry: ' + JSON.stringify(entry.object));
-            console.log(entry.object);
-            return done(null, entry.object);
-          });
-          res.on('searchReference', function(referral) {
-            console.log('referral: ' + referral.uris.join());
-          });
-          res.on('error', function(err) {
-            console.error('error: ' + err.message);
-          });
-          res.on('end', function(result) {
-            console.log('status: ' + result.status);
-          });
+        let search = function(dn, opts) {
+            return new Promise( (resolve, reject) => {
+                let userObject;
+                
+                client.search(dn, opts, function(err, res) {
+                    if (err) return done(err);
+                    
+                    res.on('searchEntry', function(entry) {
+                        console.log('entry: ' + JSON.stringify(entry.object));
+                        console.log(entry.object);
+                        userObject = entry.object;
+                    });
+                    
+                    res.on('searchReference', function(referral) {
+                        console.log('referral: ' + referral.uris.join());
+                    });
+                    
+                    res.on('error', function(err) {
+                        console.error('error: ' + err.message);
+                    });
+                    
+                    res.on('end', function(result) {
+                        console.log('status: ' + result.status);
+                        resolve(userObject);
+                    });
+        
+                });
+            })
+        }
 
-    });
-
-    // If identity(username) exist and no data in ldap server, create one for this idenetity.
-    return done(null, {
-        cn: 'new user',
-        sn: 'new sn',
-        mail: 'new@qwe',
-        objectClass: 'Person',
-        phone: '0900000000',
-        hashed: username
-    })
-    // return done(null, false);
-  }
+        let userObject = await search(searchDN, searchOpts);
+        if (account === signingAccount && actualIdentity === identity && userObject) {
+            return done(null, userObject);
+        }
+        else if (account === signingAccount && actualIdentity === identity) {
+            // If identity(username) exist and no data in ldap server, create one for this idenetity.
+            // TODO: create real user for this org
+            return done(null, {
+                cn: 'new user',
+                sn: 'new sn',
+                mail: 'new@qwe',
+                objectClass: 'Person',
+                phone: '0900000000',
+                hashed: identity
+            })
+        }
+        else
+            return done(null, false); 
+    }
 ));
 
 /* GET users listing. */
