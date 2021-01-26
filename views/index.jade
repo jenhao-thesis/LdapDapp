@@ -31,6 +31,10 @@ block content
                         button.btn.btn-outline-info.btn-lg.btn-block.loadInfo(type='button' data-toggle='modal' data-target='#confirmModal') 使用 Ethereum 帳戶登入
                         button.btn.btn-outline-success.btn-lg.btn-block(type='button' onclick="javascript:location.href='/metamask-connect'") Metamask Test Page
 
+    .row
+        form(action='/users/authenticate' method='post')
+            input.btn.btn-success.btn-lg.btn-block.mt-4(type='submit' value='Authenticate')
+
     // Register Modal
     #registerModal.modal.fade(tabindex='-1' role='dialog' aria-hidden='true')
         .modal-dialog(role='document')

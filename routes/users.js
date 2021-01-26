@@ -10,6 +10,7 @@ var fs = require('fs');
 const { search } = require('../app');
 var Web3 = require('web3');
 const { resolve } = require('path');
+var jwt = require('jsonwebtoken')
 
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
 const web3 = new Web3(new Web3.providers.HttpProvider(config.web3_provider));
@@ -190,4 +191,48 @@ router.post('/loginWithMetamask', passport.authenticate('local', {
     res.redirect("/");
 });
 
+var authenticateToken = function (req, res, next) {
+    var token = req.body.token || req.query.token || req.headers['x-access-token'];
+    if (token) {
+        jwt.verify(token, 'secret', function (err, decoded) {
+            if (err) {
+                return res.json({success: false, message: 'Failed to authenticate token.'})
+            } else {
+                req.decoded = decoded
+                next();
+            }
+        })
+    } else {
+        return res.status(403).send({
+            success: false,
+            message: 'No token provided.'
+        })
+    }   
+};
+
+router.post('/authenticate', function(req, res) {
+    let user = {
+        cn: 'new user',
+        sn: 'new sn',
+        mail: 'new@qwe',
+        objectClass: 'Person',
+        phone: '0900000000',
+        hashed: 'test'
+    };
+    
+    let token = jwt.sign(user, 'secret', {
+        expiresIn:10
+    });
+
+    res.json({
+        success: true,
+        message: 'Got token',
+        token: token
+    })
+    
+});
+
+router.get('/protected', authenticateToken, function(req, res) {
+    res.json({success: true, message: "ok, got token", data: req.decoded});
+});
 module.exports = router;

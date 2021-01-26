@@ -11,7 +11,7 @@ const contract_address = config.contracts.organizationManagerAddress;
 const client = ldap.createClient(config.ldap.server);
 
 
-function isAuthenticated(req,res,next){
+var isAuthenticated = function (req,res,next){
     if (req.isAuthenticated()) {
         next();
     }
