@@ -15,18 +15,10 @@ var session = require('express-session');
 var LdapStrategy = require('passport-ldapauth');
 var ssha = require('node-ssha256');
 var flash = require("connect-flash");
+var fs = require('fs');
 
-var OPTS = {
-    server: {
-      url: 'ldap://192.168.139.130:1389',
-      bindDN: 'cn=root',
-      bindCredentials: 'secret',
-      searchBase: 'ou=location2,dc=jenhao,dc=com',
-      searchFilter: '(cn={{username}})'
-    },
-    usernameField: "username",
-    passwordField: "password"
-  };
+const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
+var OPTS = config.ldap;
 
 var app = express();
 
