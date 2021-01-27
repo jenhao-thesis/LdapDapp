@@ -1,0 +1,22 @@
+extends layout
+
+block content
+
+    .row
+        .col-md-6.center-block.offset-md-3
+            .card.text-center
+                .card-header
+                    | Log in with Blockchain
+                .card-body
+                    h5.card-title #{id} will receive: your profile
+                    p.card-text scope: #{scope}
+                    a.btn.btn-primary.btn-block.redirect-btn(href='#') Continue as
+
+    script.
+        $(function() {
+            $('.redirect-btn').on('click', function(e) {
+                let redirect_uri = "#{uri}";
+                alert(redirect_uri);
+            });
+        });
+

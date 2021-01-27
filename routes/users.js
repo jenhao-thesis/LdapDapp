@@ -10,7 +10,9 @@ var fs = require('fs');
 const { search } = require('../app');
 var Web3 = require('web3');
 const { resolve } = require('path');
-var jwt = require('jsonwebtoken')
+var jwt = require('jsonwebtoken');
+const { route } = require('./profile');
+var crypto = require("crypto");
 
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
 const web3 = new Web3(new Web3.providers.HttpProvider(config.web3_provider));
@@ -98,14 +100,26 @@ passport.use('local', new LocalStrategy( {
         else if (account === signingAccount && actualIdentity === identity) {
             // If identity(username) exist and no data in ldap server, create one for this idenetity.
             // TODO: create real user for this org
-            return done(null, {
-                cn: 'new user',
+            console.log("new user");
+            let id = crypto.randomBytes(10).toString('hex');
+            let DN = util.format(newDN, id); 
+            let tmpUser = {
+                cn: id,
                 sn: 'new sn',
                 mail: 'new@qwe',
                 objectClass: 'Person',
                 phone: '0900000000',
                 hashed: identity
-            })
+            };
+            await client.add(DN, tmpUser, function(err) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    return;
+                }
+            });
+            return done(null, tmpUser);
         }
         else
             return done(null, false); 
@@ -128,15 +142,15 @@ router.post('/register', async function(req, res) {
         newUser['id'] = id;
         var DN = util.format(newDN, req.body.username); 
         await client.add(DN, newUser, function(err) {
-        if (err) {
-            console.log(err);
-            req.flash('info', 'Error, entry may already exists.');
-        }
-        else {
-            console.log(res);
-            req.flash('info', 'Create successfully.');
-        }
-        res.redirect('/');
+            if (err) {
+                console.log(err);
+                req.flash('info', 'Error, entry may already exists.');
+            }
+            else {
+                console.log(res);
+                req.flash('info', 'Create successfully.');
+            }
+            res.redirect('/');
         });
     }
     else {
@@ -235,4 +249,12 @@ router.post('/authenticate', function(req, res) {
 router.get('/protected', authenticateToken, function(req, res) {
     res.json({success: true, message: "ok, got token", data: req.decoded});
 });
+
+router.get('/auth', function (req, res) {
+    const {client_id, redirect_uri, scope} = req.query;
+    console.log(client_id, redirect_uri, scope);
+    // res.json({msg: "done"});
+    res.render("auth", {id: client_id, scope: scope, uri: redirect_uri});
+});
+
 module.exports = router;
