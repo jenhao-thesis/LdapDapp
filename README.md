@@ -11,7 +11,7 @@ truffle: compile and deploy contract // if node -v is 8.10 it won't worked, plea
 ```
 truffle init
 truffle compile
-truffle migrate
+truffle migrate --reset
 ```
 
 ## LDAP server setup

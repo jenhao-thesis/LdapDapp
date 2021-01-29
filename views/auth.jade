@@ -10,13 +10,12 @@ block content
                 .card-body
                     h5.card-title #{id} will receive: your profile
                     p.card-text scope: #{scope}
-                    a.btn.btn-primary.btn-block.redirect-btn(href='#') Continue as
+                    form.confirm-form(action='#' method='post')
+                        input.btn.btn-success.btn-lg.btn-block.mt-4(type='submit' value='Continue as XXX')
 
     script.
         $(function() {
-            $('.redirect-btn').on('click', function(e) {
-                let redirect_uri = "#{uri}";
-                alert(redirect_uri);
-            });
+            let uri = "#{uri}";
+            $(".confirm-form").attr("action", "/users/confirmAuth?redirect_uri=" + uri);
         });
 

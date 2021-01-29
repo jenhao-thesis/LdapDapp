@@ -257,4 +257,18 @@ router.get('/auth', function (req, res) {
     res.render("auth", {id: client_id, scope: scope, uri: redirect_uri});
 });
 
+router.post('/confirmAuth', function (req, res) {
+    const {client_id, redirect_uri, scope} = req.query;
+    console.log("!!! redirect:"+redirect_uri);
+    res.redirect("http://"+redirect_uri);
+});
+
+let noneSet = [];
+router.post('/nonce', function (req, res) {
+    let nonce = crypto.randomBytes(5).toString('hex');
+    noneSet.push(nonce);
+    res.json({set: JSON.stringify(noneSet)});
+});
+
+
 module.exports = router;
