@@ -129,6 +129,11 @@ contract OrganizationManager {
     function getIdByOrg(address userAddress) public onlyOrg view returns (bytes32) {
         return _bindUsers[userAddress];
     } 
+
+    // Get Org list by anyone
+    function getOrgList() public view returns (address [] memory) {
+        return _orgsArr;
+    }
 }
 
 

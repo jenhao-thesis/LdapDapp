@@ -1,0 +1,65 @@
+extends layout
+
+block content
+    .row
+        .col-12
+            table.table.table-bordered#org-table
+                thead
+                    tr
+                        th(scope='col') Index
+                        th(scope='col') 組織位址
+                        th(scope='col') 狀態
+                tbody
+
+    .row
+        .col-12
+            .text-right
+                button.btn.btn-primary(type='button') 授權
+
+
+
+    script. 
+        $(function() {
+            let account = "";
+            let contract_address = "#{address}";
+
+            window.ethereum.on('accountsChanged', function(accounts) {
+                account = accounts[0];
+                $(".account").html("Account:" + account);    
+                $(".func4-input1").val(account);
+            });
+
+            $.getScript( "/javascripts/web3_bundle.js", async function(data, textStatus, jqxhr) {
+                $.getJSON('metamask-connect/org.json', function (data) {
+                    web3.eth.getAccounts().then((accounts) => {
+                        account = accounts[0];
+                    });
+
+                    let contractInstance = new web3.eth.Contract(data.abi, contract_address);
+
+                    contractInstance.methods.getOrgList().call({from: account})
+                    .then( (result) => {
+                        //- alert(`Index: 0, Address: ${result}`);
+                        console.log(result);
+                        for (let i = 0; i < result.length; ++i) {
+                            console.log(result[i]);
+                            $("#org-table>tbody").append(`
+                                <tr>
+                                    <td>
+                                        <div class="custom-control custom-checkbox">
+                                            <input class="custom-control-input" id="customCheck${i}" type="checkbox" />
+                                            <label class="custom-control-label" for="customCheck${i}">${i}</label>
+                                        </div>
+                                    </td>
+                                    <td>${result[i]}</td>
+                                    <td></td>
+                                </tr>
+                            `);
+                        }
+                    })
+                    .catch( (err) => {
+                        alert(err);
+                    });                     
+                });
+            });
+        });

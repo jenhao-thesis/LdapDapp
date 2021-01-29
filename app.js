@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var profile = require('./routes/profile');
+var dataSharing = require('./routes/dataSharing');
 var metamask_connect = require('./routes/metamask-connect');
 
 var passport = require('passport');
@@ -52,6 +53,7 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/profile', profile);
 app.use('/metamask-connect', metamask_connect);
+app.use('/dataSharing', dataSharing);
 
 passport.use(new LdapStrategy(OPTS));
 
