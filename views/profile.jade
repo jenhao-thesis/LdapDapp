@@ -8,16 +8,17 @@ block content
                     h4.font-weight-bold(style="margin:0;")
                         | #{title}
                 .card-body
-                    table.mt-2.table.table-striped
-                        thead
-                            tr
-                                th(scope='col') Attributes
-                                th(scope='col') Value
-                        tbody
-                            each val, idx in user
+                    div(style='overflow-x:auto;')
+                        table.mt-2.table.table-striped
+                            thead
                                 tr
-                                    td #{idx}
-                                    td #{val}
+                                    th(scope='col') Attributes
+                                    th(scope='col') Value
+                            tbody
+                                each val, idx in user
+                                    tr
+                                        td #{idx}
+                                        td #{val}
 
                     br
                     br                    
