@@ -54,7 +54,8 @@ router.post('/addUser', async function(req, res, next) {
     // TODO: addUser
     let userId = req.body.uid;
     await contractInstance.methods.addUser(userId).send({
-        from: admin_address
+        from: admin_address,
+        gas: 6721975
     }, function(error, transactionHash) {
         if (error) {
             console.log("err", error);

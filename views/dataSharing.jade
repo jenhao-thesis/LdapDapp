@@ -30,36 +30,105 @@ block content
             });
 
             $.getScript( "/javascripts/web3_bundle.js", async function(data, textStatus, jqxhr) {
-                $.getJSON('metamask-connect/org.json', function (data) {
+                let data_org, data_acc;
+                $.when(
+                    $.getJSON('/dataSharing/org.json', function(data) {
+                        data_org = data;
+                    }),
+                    $.getJSON('/dataSharing/acc.json', function(data) {
+                        data_acc = data;
+                    })
+                ).done(function() {
                     web3.eth.getAccounts().then((accounts) => {
                         account = accounts[0];
                     });
 
-                    let contractInstance = new web3.eth.Contract(data.abi, contract_address);
+                    let contractOrgInstance = new web3.eth.Contract(data_org.abi, contract_address);
+                    let contractAccInstance;
 
-                    contractInstance.methods.getOrgList().call({from: account})
-                    .then( (result) => {
+                    contractOrgInstance.methods.getOrgList().call({from: account})
+                    .then( (result) => { // orgList
                         //- alert(`Index: 0, Address: ${result}`);
                         console.log(result);
-                        for (let i = 0; i < result.length; ++i) {
-                            console.log(result[i]);
-                            $("#org-table>tbody").append(`
-                                <tr>
-                                    <td>
-                                        <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" id="customCheck${i}" type="checkbox" />
-                                            <label class="custom-control-label" for="customCheck${i}">${i}</label>
-                                        </div>
-                                    </td>
-                                    <td>${result[i]}</td>
-                                    <td></td>
-                                </tr>
-                            `);
-                        }
+
+                        contractOrgInstance.methods.getAccessManagerAddress(account).call({from: account})
+                        .then( (r) => {
+                            contractAccInstance = new web3.eth.Contract(data_acc.abi, r);
+                            console.log("accMgr:"+r);
+                            contractAccInstance.methods.owner().call({from: account})
+                            .then( (r) => {
+                                console.log("owner:"+r);
+                            });
+                        })
+                        .then( () => {
+
+                            for (let i = 0; i < result.length; ++i) {
+                                contractAccInstance.methods.validatePermission(result[i]).call({from: account})
+                                .then( (r) => {
+                                    console.log(r);
+                                    $("#org-table>tbody").append(`
+                                        <tr>
+                                            <td>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" id="customCheck${i}" type="checkbox" />
+                                                    <label class="custom-control-label" for="customCheck${i}">${i}</label>
+                                                </div>
+                                            </td>
+                                            <td>${result[i]}</td>
+                                            <td>`+
+                                            (r == false ? `<i class="fas fa-lock"></i>` : `<i class="fas fa-lock-open"></i>`)
+                                            +`</td>
+                                        </tr>
+                                    `);
+                                });
+                            }
+
+                        });
                     })
                     .catch( (err) => {
                         alert(err);
-                    });                     
+                    });
                 });
+
+                
+                
+                
+                //- $.getJSON('/dataSharing/org.json', async function (data_org) {
+                //-     web3.eth.getAccounts().then((accounts) => {
+                //-         account = accounts[0];
+                //-     });
+
+                //-     let contractInstance = new web3.eth.Contract(data_org.abi, contract_address);
+
+                //-     contractInstance.methods.getOrgList().call({from: account})
+                //-     .then( (result) => {
+                //-         //- alert(`Index: 0, Address: ${result}`);
+                //-         console.log(result);
+
+                //-         contractInstance.methods.getAccessManagerAddress(account).call({from: account})
+                //-         .then( (r) => {
+                //-                 console.log("accMgr:"+r);
+                //-             }
+                //-         )
+                //-         for (let i = 0; i < result.length; ++i) {
+                //-             console.log(result[i]);
+                //-             $("#org-table>tbody").append(`
+                //-                 <tr>
+                //-                     <td>
+                //-                         <div class="custom-control custom-checkbox">
+                //-                             <input class="custom-control-input" id="customCheck${i}" type="checkbox" />
+                //-                             <label class="custom-control-label" for="customCheck${i}">${i}</label>
+                //-                         </div>
+                //-                     </td>
+                //-                     <td>${result[i]}</td>
+                //-                     <td><i class="fas fa-lock"></i></td>
+                //-                 </tr>
+                //-             `);
+                //-         }
+                //-     })
+                //-     .catch( (err) => {
+                //-         alert(err);
+                //-     });                     
+                //- });
             });
         });

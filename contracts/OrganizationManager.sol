@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.8.0;
+import "./AccessManager.sol";
 
 contract OrganizationManager {
     constructor() public {
@@ -14,6 +15,7 @@ contract OrganizationManager {
     
     struct UserInfo {
         address lastModifyOrg;          // [org2.id]
+        address accessManagerAddress;
         mapping(address => bool) orgs;  // [org1.id, org2.id]
     }
     
@@ -67,7 +69,8 @@ contract OrganizationManager {
         else {
             _uniqueState[hashed] = true;
             UserInfo memory info = UserInfo(
-                                        msg.sender
+                                        msg.sender,
+                                        address(0)
                                     );
             _uniqueIdenity[hashed] = info;
             _uniqueIdenity[hashed].orgs[msg.sender] = true;
@@ -92,6 +95,9 @@ contract OrganizationManager {
         _bindUsers[userAddress] = hashed;    
         _bindState[hashed] = true;
         _users[userAddress] = true;
+        AccessManager accessManager = new AccessManager();
+        accessManager.transferOwnership(userAddress);
+        _uniqueIdenity[hashed].accessManagerAddress = address(accessManager);
         emit BindUserAccountEvent(msg.sender, userAddress, hashed);
     }
 
@@ -133,6 +139,11 @@ contract OrganizationManager {
     // Get Org list by anyone
     function getOrgList() public view returns (address [] memory) {
         return _orgsArr;
+    }
+
+    // Get Contract address by UserManager
+    function getAccessManagerAddress(address userAddress) public onlyUser view returns (address) {
+        return _uniqueIdenity[_bindUsers[userAddress]].accessManagerAddress;
     }
 }
 

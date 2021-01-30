@@ -22,6 +22,11 @@ router.get('/org.json', function(req, res) {
     res.json(contract);
 });
 
+router.get('/acc.json', function(req, res) {
+    let contract = JSON.parse(fs.readFileSync('./build/contracts/AccessManager.json', 'utf-8'));
+    res.json(contract);
+});
+
 /* GET home page. */
 router.get('/', isAuthenticated, function(req, res) {
 
