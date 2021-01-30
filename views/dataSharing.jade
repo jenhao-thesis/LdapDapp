@@ -14,7 +14,7 @@ block content
     .row
         .col-12
             .text-right
-                button.btn.btn-primary(type='button') 授權
+                button.btn.btn-primary.auth-btn(type='button') 授權
 
 
 
@@ -31,6 +31,8 @@ block content
 
             $.getScript( "/javascripts/web3_bundle.js", async function(data, textStatus, jqxhr) {
                 let data_org, data_acc;
+                let contractAccInstance;
+                let contractOrgInstance;
                 $.when(
                     $.getJSON('/dataSharing/org.json', function(data) {
                         data_org = data;
@@ -43,8 +45,7 @@ block content
                         account = accounts[0];
                     });
 
-                    let contractOrgInstance = new web3.eth.Contract(data_org.abi, contract_address);
-                    let contractAccInstance;
+                    contractOrgInstance = new web3.eth.Contract(data_org.abi, contract_address);
 
                     contractOrgInstance.methods.getOrgList().call({from: account})
                     .then( (result) => { // orgList
@@ -69,12 +70,12 @@ block content
                                         <tr>
                                             <td>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input" id="customCheck${i}" type="checkbox" value="${result[i]}"/>
-                                                    <label class="custom-control-label" for="customCheck${i}">${i}</label>
+                                                    <input class="custom-control-input" id="customCheck${i}" type="checkbox" value="${result[i]}" name="orgAddress"/>
+                                                    <label class="custom-control-label" for="customCheck${i}"></label>
                                                 </div>
                                             </td>
                                             <td>${result[i]}</td>
-                                            <td>`+
+                                            <td class="text-center">`+
                                             (r == false ? `<i class="fas fa-lock"></i>` : `<i class="fas fa-lock-open"></i>`)
                                             +`</td>
                                         </tr>
@@ -86,6 +87,21 @@ block content
                     .catch( (err) => {
                         alert(err);
                     });
+
+                    $(".auth-btn").on("click", function(e) {
+                        let selected = [];
+                        $.each($("input[name=orgAddress]:checked"), function() {
+                            selected.push($(this).val());
+                            contractAccInstance.methods.authorizeAccess($(this).val()).send({from: account})
+                            .then( (result) => {
+                                console.log("txHash:"+result.transactionHash);
+                            })
+                            .catch( (err) => {
+                                console.log("err"+err);
+                            })
+                        });
+                        //- alert(selected);
+                    })
                 });
             });
         });
