@@ -2,13 +2,19 @@ extends layout
 
 block content
     .row
+        .col-12 
+            .form-group.row
+                label.col-sm-2.col-form-label(for='staticEmail') TSP address:
+                .col-sm-10
+                    input#staticEmail.form-control-plaintext(type='text' readonly='' value="#{org_address}")
+
         .col-12
             table.table.table-bordered#org-table
                 thead
                     tr
                         th(scope='col') Index
-                        th(scope='col') 組織位址
-                        th(scope='col') 狀態
+                        th(scope='col') Address of data provider
+                        th(scope='col') Status
                 tbody
 
     .row
@@ -22,7 +28,7 @@ block content
         $(function() {
             let account = "";
             let contract_address = "#{address}";
-
+            let target_address = "#{org_address}";
             window.ethereum.on('accountsChanged', function(accounts) {
                 account = accounts[0];
                 $(".account").html("Account:" + account);    
@@ -63,13 +69,13 @@ block content
                         })
                         .then( () => {
                             for (let i = 0; i < result.length; ++i) {
-                                contractAccInstance.methods.validatePermission(result[i]).call({from: account})
+                                contractAccInstance.methods.validatePermission(target_address, result[i]).call({from: account})
                                 .then( (r) => {
                                     console.log(r);
                                     $("#org-table>tbody").append(`
                                         <tr>
                                             <td>
-                                                <div class="custom-control custom-checkbox">
+                                                <div class="custom-control custom-checkbox text-center">
                                                     <input class="custom-control-input" id="customCheck${i}" type="checkbox" value="${result[i]}" name="orgAddress"/>
                                                     <label class="custom-control-label" for="customCheck${i}"></label>
                                                 </div>
@@ -92,7 +98,7 @@ block content
                         let selected = [];
                         $.each($("input[name=orgAddress]:checked"), function() {
                             selected.push($(this).val());
-                            contractAccInstance.methods.authorizeAccess($(this).val()).send({from: account})
+                            contractAccInstance.methods.authorizeAccess(target_address, $(this).val()).send({from: account})
                             .then( (result) => {
                                 console.log("txHash:"+result.transactionHash);
                             })

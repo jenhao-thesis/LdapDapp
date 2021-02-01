@@ -4,6 +4,7 @@ var fs = require('fs');
 
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
 const contract_address = config.contracts.organizationManagerAddress;
+const admin_address = config.admin_address; // org0
 
 var isAuthenticated = function (req,res,next){
     if (req.isAuthenticated()) {
@@ -30,7 +31,7 @@ router.get('/acc.json', function(req, res) {
 /* GET home page. */
 router.get('/', isAuthenticated, function(req, res) {
 
-    res.render('dataSharing', {user: req.user, address: contract_address});
+    res.render('dataSharing', {user: req.user, address: contract_address, org_address: admin_address});
 });
 
 module.exports = router;

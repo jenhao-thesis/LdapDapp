@@ -9,7 +9,7 @@ contract AccessManager {
     //     bool customData;
     // }
     
-    mapping(address=>bool) _accessAuthority;
+    mapping(address=>mapping(address=>bool)) _accessAuthority;
     // mapping(address=>AccessScope) _accessScope;
     
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
@@ -38,19 +38,19 @@ contract AccessManager {
         _owner = newOwner;
     }
 
-    function authorizeAccess(address org) public onlyOwner {
-        require(_accessAuthority[org] == false, "The org already authorized.");
-        _accessAuthority[org] = true;   
+    function authorizeAccess(address target, address org) public onlyOwner {
+        require((_accessAuthority[target])[org] == false, "The org already authorized.");
+        (_accessAuthority[target])[org] = true;   
         emit AccessAuthorization(_owner, org);
     }
     
-    function revokeAccess(address org) public onlyOwner {
-        require(_accessAuthority[org] == true, "The org don't have access right.");
-        _accessAuthority[org] = false;
+    function revokeAccess(address target, address org) public onlyOwner {
+        require((_accessAuthority[target])[org] == true, "The org don't have access right.");
+        (_accessAuthority[target])[org] = false;
         emit AccessRevocation(_owner, org);
     }
     
-    function validatePermission(address org) public view returns (bool) {
-        return _accessAuthority[org];
+    function validatePermission(address target, address org) public view returns (bool) {
+        return (_accessAuthority[target])[org];
     }
 }
