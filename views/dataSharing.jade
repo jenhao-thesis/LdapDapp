@@ -32,7 +32,21 @@ block content
                                 .text-right
                                     button.btn.btn-primary.auth-btn.mr-2(type='button') 授權
                                     button.btn.btn-danger.revoke-btn(type='button') 撤回
-                #data.tab-pane.fade(role='tabpanel' aria-labelledby='data-tab') ...
+                #data.tab-pane.fade(role='tabpanel' aria-labelledby='data-tab') 
+                    div(style='overflow-x:auto;')
+                        table.mt-2.table.table-striped
+                            thead
+                                tr
+                                    th(scope='col') Address of org
+                                    th(scope='col') Created at
+                                    th(scope='col') Updated at
+                            tbody
+                                each val, idx in tokens
+                                    tr
+                                        td #{val.org}
+                                        td #{val.createdAt}
+                                        td #{val.updatedAt}
+                    button.btn.btn-info.request-token-btn(type='button') Get Token
 
 
     script. 
@@ -119,7 +133,7 @@ block content
                             })
                         });
                         //- alert(selected);
-                    })
+                    });
 
                     $(".revoke-btn").on("click", function(e) {
                         let selected = [];
@@ -135,7 +149,23 @@ block content
                             })
                         });
                         //- alert(selected);
-                    })
+                    });
+
+                    $(".request-token-btn").on("click", function(e) {
+                        $.ajax({
+                            url: '/dataSharing/getAccessToken',
+                            type: 'get',
+                            cache: false,
+                            dataType: 'json',
+                            success: function(res) {
+                                alert(res.message);
+                                location.reload();
+                            },
+                            error: function(err) {
+                                console.log(err);
+                            }
+                        });
+                    });
                 });
             });
         });

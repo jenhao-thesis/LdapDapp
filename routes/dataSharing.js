@@ -1,8 +1,12 @@
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
+const db = require("../models");
+const fetch = require('node-fetch');
+var Web3 = require('web3');
 
-const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
+const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));
+const web3 = new Web3(new Web3.providers.HttpProvider(config.web3_provider));    
 const contract_address = config.contracts.organizationManagerAddress;
 const admin_address = config.admin_address; // org0
 
@@ -29,9 +33,57 @@ router.get('/acc.json', function(req, res) {
 });
 
 /* GET home page. */
-router.get('/', isAuthenticated, function(req, res) {
+router.get('/', isAuthenticated, async function(req, res) {
+    let tokens = await db.tokens.findAll({where: {identity: req.user.hashed}});
+    res.render('dataSharing', {user: req.user, address: contract_address, org_address: admin_address, tokens: tokens});
+});
 
-    res.render('dataSharing', {user: req.user, address: contract_address, org_address: admin_address});
+router.get('/getAccessToken', isAuthenticated, async function(req, res) {
+    // TODO: lookup which org we should ask
+    let provider_address = "0xA3e898C280220bf5fAE9e7e6ceB4F3a6BFa67163";
+    let provider_ip = "192.168.139.133:3000";
+    let jwt = "";
+    let identity = req.user.hashed;
+    let signatureObject;
+    // TODO: prove org identity, it should be nonce from provider
+    signatureObject =  web3.eth.accounts.sign("secret", "2d599b8b9cf813f3863235cc9488d2d0f8528f5f5c2d633bd9e8425e249e24f2");
+
+    // get token
+    await fetch("http://"+provider_ip+'/users/authenticate',{ 
+            method: 'POST',
+            body: JSON.stringify({
+                identity: identity,
+                target_address: admin_address,
+                signature: signatureObject
+            }),
+            headers: {'Content-Type': 'application/json'}
+        })
+        .then( res => res.json())
+        .then( json => jwt = json.token)
+        .catch( (err) => {
+            console.log(err);
+        });
+    
+    if (jwt) {
+
+        const token = {
+            identity: identity,
+            org: provider_address,
+            jwt: jwt
+        }
+    
+        await db.tokens.upsert(token)
+            .then(data => {
+                console.log("upsert successfully");
+            })
+            .catch(err => {
+                console.log(err.message || "Some error occurred while creating the Token")
+            });
+
+
+        return res.send({status: true, message:"Got token successfully."});
+    }
+    return res.send({status: false, message: "org has no response."});
 });
 
 module.exports = router;

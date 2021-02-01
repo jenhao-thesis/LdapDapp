@@ -225,6 +225,13 @@ var authenticateToken = function (req, res, next) {
 };
 
 router.post('/authenticate', function(req, res) {
+    // TODO: check target address whether own access right.
+    console.log("request hashed:"+req.body.identity);
+    console.log("request target:"+req.body.target_address);
+    console.log("request sig:"+req.body.signature);
+
+    console.log("recover:"+web3.eth.accounts.recover(req.body.signature));
+    
     let user = {
         cn: 'new user',
         sn: 'new sn',
@@ -235,7 +242,7 @@ router.post('/authenticate', function(req, res) {
     };
     
     let token = jwt.sign(user, 'secret', {
-        expiresIn:10
+        expiresIn:60*60*30
     });
 
     res.json({
