@@ -31,3 +31,4 @@ build/
 
 # config
 server-config.json
+database.sqlite

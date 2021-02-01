@@ -23,6 +23,15 @@ var OPTS = config.ldap;
 
 var app = express();
 
+// db setup
+const db = require("./models");
+
+// If you don't want to drop, leave empty.
+// db.sequelize.sync();
+db.sequelize.sync({ force: true }).then( () => {
+    console.log("Drop and re-sync db.")
+});
+ 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -54,6 +63,9 @@ app.use('/users', users);
 app.use('/profile', profile);
 app.use('/metamask-connect', metamask_connect);
 app.use('/dataSharing', dataSharing);
+
+// api route
+require("./routes/token.routes")(app);
 
 passport.use(new LdapStrategy(OPTS));
 
