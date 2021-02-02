@@ -18,6 +18,7 @@ const db = require("../models");
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
 const web3 = new Web3(new Web3.providers.HttpProvider(config.web3_provider));
 const admin_address = config.admin_address; // org0
+const admin_key = config.admin_key;
 const contract_address = config.contracts.organizationManagerAddress;
 const client = ldap.createClient(config.ldap.server);
 const contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));
@@ -209,7 +210,7 @@ router.post('/loginWithMetamask', passport.authenticate('local', {
 var authenticateToken = function (req, res, next) {
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
     if (token) {
-        jwt.verify(token, 'secret', function (err, decoded) {
+        jwt.verify(token, admin_key, function (err, decoded) {
             if (err) {
                 return res.json({success: false, message: 'Failed to authenticate token.'})
             } else {
@@ -272,7 +273,7 @@ router.post('/authenticate', async function(req, res) {
         hashed: identity
     };
     
-    let token = jwt.sign(user, 'secret', {
+    let token = jwt.sign(user, admin_key, {
         expiresIn:60*60*30
     });
 

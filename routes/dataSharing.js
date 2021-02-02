@@ -9,7 +9,7 @@ const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));
 const web3 = new Web3(new Web3.providers.HttpProvider(config.web3_provider));    
 const contract_address = config.contracts.organizationManagerAddress;
 const admin_address = config.admin_address; // org0
-
+const admin_key = config.admin_key;
 var isAuthenticated = function (req,res,next){
     if (req.isAuthenticated()) {
         next();
@@ -53,7 +53,7 @@ router.get('/getAccessToken', isAuthenticated, async function(req, res) {
             console.log(json);
             nonceObject = json;
         });
-    signatureObject =  web3.eth.accounts.sign(nonceObject.nonce, config.admin_key);
+    signatureObject =  web3.eth.accounts.sign(nonceObject.nonce, admin_key);
 
     // get token
     await fetch(`http://${provider_ip}/users/authenticate`,{ 
