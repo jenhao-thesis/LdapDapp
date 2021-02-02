@@ -40,7 +40,11 @@ ldapsearch -H ldap://localhost:1389 -x -D "cn=root" -w "secret" -b "ou=location2
         "accessManagerAddress": "[contract address]"
     },
     "admin_address": "[administrator address]",
-    "web3_provider": "http://[ip:port]"
+    "admin_key": "[administrator private key]",
+    "web3_provider": "http://[ip:port]",
+    "org_mapping": {
+        "[address of organization]": "[ip of organization]"
+    }
 }
 ```
 
