@@ -45,8 +45,15 @@ router.get('/getAccessToken', isAuthenticated, async function(req, res) {
     let jwt = "";
     let identity = req.user.hashed;
     let signatureObject;
-    // TODO: prove org identity, it should be nonce from provider
-    signatureObject =  web3.eth.accounts.sign("secret", "2d599b8b9cf813f3863235cc9488d2d0f8528f5f5c2d633bd9e8425e249e24f2");
+    let nonceObject;
+    // prove org identity, it should be nonce from provider
+    await fetch(`http://${provider_ip}/users/auth/nonce?org=${admin_address}`)
+        .then( res => res.json())
+        .then( json => {
+            console.log(json);
+            nonceObject = json;
+        });
+    signatureObject =  web3.eth.accounts.sign(nonceObject.nonce, config.admin_key);
 
     // get token
     await fetch(`http://${provider_ip}/users/authenticate`,{ 
@@ -54,12 +61,16 @@ router.get('/getAccessToken', isAuthenticated, async function(req, res) {
             body: JSON.stringify({
                 identity: identity,
                 target_address: admin_address,
-                signature: signatureObject
+                signature: signatureObject,
+                nonce: nonceObject
             }),
             headers: {'Content-Type': 'application/json'}
         })
         .then( res => res.json())
-        .then( json => jwt = json.token)
+        .then( json => {
+            if (!json.success) return res.send({status: false, message: json.message});
+            jwt = json.token
+        })
         .catch( (err) => {
             console.log(err);
         });
