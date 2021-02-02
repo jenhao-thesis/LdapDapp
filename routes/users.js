@@ -225,33 +225,62 @@ var authenticateToken = function (req, res, next) {
     }   
 };
 
-router.post('/authenticate', function(req, res) {
+router.post('/authenticate', async function(req, res) {
     // TODO: check target address whether own access right.
-    console.log("request hashed:"+req.body.identity);
-    console.log("request target:"+req.body.target_address);
-    console.log("request sig:"+req.body.signature);
-
-    console.log("recover:"+web3.eth.accounts.recover(req.body.signature));
+    const {identity, target_address, signature, nonce} = req.body;
+    // show info about authenticate
+    console.log("request hashed:"+identity);
+    console.log("request target:"+target_address);
+    console.log(signature);
+    console.log(nonce);
     
+    // verify info
+
+    // Check sign
+    const recoverTarget = web3.eth.accounts.recover(req.body.signature);
+    if (recoverTarget !== target_address)
+        return res.json({
+            success: false,
+            message: 'Target address is not the same'
+        })
+    
+    // Chceck nonce whether are the same
+    if (signature.message !== nonce.nonce)
+        return res.json({
+            success: false,
+            message: 'Nonce is not the same'
+        })
+
+    // Check nonce is issued by me
+    await db.nonce.findByPk(nonce.id)
+        .then( data => {
+            if (!data)
+                return res.json({status: false, message: "Nonce not exist"});
+            else
+                // if exist, delete it.
+                db.nonce.destroy({ where: {id: nonce.id}})
+                    .then( num => {
+                        if (num == 1) 
+                            console.log("Nonce was deleted successfully.");
+                        else
+                            console.log(`Cannot delete nonce with id ${nonce.id}, maybe not found`);
+                    })
+                    .catch( err => res.status(500).send({ message: `could not delete nonce with id=${nonce.id}`}));
+        });
+
     let user = {
-        cn: 'new user',
-        sn: 'new sn',
-        mail: 'new@qwe',
-        objectClass: 'Person',
-        phone: '0900000000',
-        hashed: 'test'
+        hashed: identity
     };
     
     let token = jwt.sign(user, 'secret', {
         expiresIn:60*60*30
     });
 
-    res.json({
+    return res.json({
         success: true,
         message: 'Got token',
         token: token
     })
-    
 });
 
 router.get('/protected', authenticateToken, function(req, res) {
