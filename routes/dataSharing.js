@@ -49,7 +49,7 @@ router.get('/getAccessToken', isAuthenticated, async function(req, res) {
     signatureObject =  web3.eth.accounts.sign("secret", "2d599b8b9cf813f3863235cc9488d2d0f8528f5f5c2d633bd9e8425e249e24f2");
 
     // get token
-    await fetch("http://"+provider_ip+'/users/authenticate',{ 
+    await fetch(`http://${provider_ip}/users/authenticate`,{ 
             method: 'POST',
             body: JSON.stringify({
                 identity: identity,

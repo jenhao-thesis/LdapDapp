@@ -13,6 +13,7 @@ const { resolve } = require('path');
 var jwt = require('jsonwebtoken');
 const { route } = require('./profile');
 var crypto = require("crypto");
+const db = require("../models");
 
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
 const web3 = new Web3(new Web3.providers.HttpProvider(config.web3_provider));
@@ -270,11 +271,26 @@ router.post('/confirmAuth', function (req, res) {
     res.redirect("http://"+redirect_uri);
 });
 
-let noneSet = [];
-router.post('/nonce', function (req, res) {
-    let nonce = crypto.randomBytes(5).toString('hex');
-    noneSet.push(nonce);
-    res.json({set: JSON.stringify(noneSet)});
+router.get('/auth/nonce', async function (req, res) {
+    const {org} = req.query;
+    if (!org)
+        return res.json({msg: "address of org is missing."});
+    let nonce;
+    let id;
+    let list;
+    await db.nonce.create({org: org, value: crypto.randomBytes(5).toString('hex')})
+        .then( (data) => {
+                console.log("generate successfully.")
+                id = data.id;
+                nonce = data.value;
+            })
+        .catch( (err) => console.log(err.message));
+
+    await db.nonce.findAll()
+        .then( (data) => list = data)
+        .catch( (err) => console.log(err.message));
+
+    res.json({id: id, nonce: nonce});
 });
 
 
