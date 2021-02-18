@@ -152,19 +152,61 @@ block content
                     });
 
                     $(".request-token-btn").on("click", function(e) {
-                        $.ajax({
-                            url: '/dataSharing/getAccessToken',
-                            type: 'get',
-                            cache: false,
-                            dataType: 'json',
-                            success: function(res) {
-                                alert(res.message);
-                                location.reload();
-                            },
-                            error: function(err) {
-                                console.log(err);
-                            }
+                        contractOrgInstance.methods.getOrgList().call({from: account})
+                        .then( (result) => { // orgList
+
+                            contractOrgInstance.methods.getAccessManagerAddress(account).call({from: account})
+                            .then( (r) => {
+                                contractAccInstance = new web3.eth.Contract(data_acc.abi, r);
+                                console.log("accMgr:"+r);
+                                contractAccInstance.methods.owner().call({from: account})
+                                .then( (r) => {
+                                    console.log("owner:"+r);
+                                });
+                            })
+                            .then( () => {                                
+                                for (let i = 0; i < result.length; ++i) {
+                                    contractAccInstance.methods.validatePermission(target_address, result[i]).call({from: account})
+                                    .then( (r) => {
+                                        if (r) {
+                                            console.log(result[i]);
+                                            $.ajax({
+                                                url: '/dataSharing/getAccessToken',
+                                                type: 'get',
+                                                cache: false,
+                                                data: {
+                                                    provider_address: result[i].toUpperCase()
+                                                },
+                                                success: function(res) {
+                                                    alert(res.message);
+                                                    location.reload();
+                                                },
+                                                error: function(err) {
+                                                    console.log(err);
+                                                }
+                                            });                                            
+                                        }
+                                    });
+                                }  
+                            })
+                        })
+                        .catch( (err) => {
+                            alert(err);
                         });
+
+                        //- $.ajax({
+                        //-     url: '/dataSharing/getAccessToken',
+                        //-     type: 'get',
+                        //-     cache: false,
+                        //-     dataType: 'json',
+                        //-     success: function(res) {
+                        //-         alert(res.message);
+                        //-         location.reload();
+                        //-     },
+                        //-     error: function(err) {
+                        //-         console.log(err);
+                        //-     }
+                        //- });
                     });
                 });
             });
