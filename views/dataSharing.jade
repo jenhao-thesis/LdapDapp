@@ -94,6 +94,7 @@ block content
                         })
                         .then( () => {
                             for (let i = 0; i < result.length; ++i) {
+                                if (result[i] == target_address) continue;
                                 contractAccInstance.methods.validatePermission(target_address, result[i]).call({from: account})
                                 .then( (r) => {
                                     console.log(r);
