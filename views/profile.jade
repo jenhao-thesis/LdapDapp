@@ -20,6 +20,7 @@ block content
                                         td #{idx}
                                         td #{val}
 
+                    button.btn.btn-block.btn-primary(type='button' data-toggle='modal', data-target='#updateModal') 修改
                     br
                     br                    
                     .alert.alert-warning.alert-dismissible.fade.show(role='alert')
@@ -42,7 +43,7 @@ block content
                             span(aria-hidden='true') ×
                 .card-body
                     h5.card-title 
-                    form(action='/users/register' method='post')
+                    form(action='#' method='post')
                         .input-group
                             .input-group-prepend
                                 span.input-group-text(id='') Ethereum address
@@ -55,6 +56,30 @@ block content
 
                         input.btn.btn-info.btn-lg.btn-block.mt-4.submit-bind-btn(type='button' value='送出')
 
+    #updateModal.modal.fade(tabindex='-1' role='dialog' aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .card.text-center
+                    .card-header(style="font-size: 1.5rem; font-weight:bold")
+                        | Profile
+                        button.close(type='button' data-dismiss='modal' aria-label='Close')
+                            span(aria-hidden='true') ×
+                .card-body
+                    h5.card-title 
+                    form(action='#' method='')
+                        .input-group.mt-3
+                            .input-group-prepend
+                                span.input-group-text(id='') 身份證字號
+                            input.form-control#updateIdentityId(type='text' name='identityId' placeholder="Identity card ID" required="required" value="#{user.id}")
+                        .input-group.mt-3
+                            .input-group-prepend
+                                span.input-group-text(id='') 電子郵件
+                            input.form-control#updateEmail(type='email' name='email' placeholder="Email" required="required" value="#{user.mail}")
+                        .input-group.mt-3
+                            .input-group-prepend
+                                span.input-group-text(id='') 行動電話
+                            input.form-control#updatePhone(type='tel' name='phone' placeholder="Phone number" required="required" value="#{user.phone}")
+                        input.btn.btn-info.btn-lg.btn-block.mt-4.submit-update-btn(type='button' value='送出')
 
     script. 
         $(function() {
@@ -125,6 +150,26 @@ block content
                 console.log(status);
             });
         
+            $(".submit-update-btn").on("click", async function(e) {
+                let input_0 = $("#updateIdentityId").val();
+                let input_1 = $("#updateEmail").val();
+                let input_2 = $("#updatePhone").val();
+                $('#updateModal').modal('toggle');
+                await $.ajax({
+                    url: '/api/user/#{user.cn}',
+                    data: { id: input_0, email: input_1, phone: input_2},
+                    type: 'put',
+                    dataType: 'json',
+                    success: function(res) {
+                        alert(res.msg);
+                    },
+                    error: function(err) {
+                        console.log(err);
+                        alert("Error");
+                    }
+                });
+            });
+
             $.getScript("/javascripts/web3_bundle.js", function(data, textStatus, jqxhr) {
                 if (typeof(web3) !== "undefined") {
                     let subscription = web3.eth.subscribe('logs', options, async function(error, result){

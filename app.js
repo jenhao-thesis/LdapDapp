@@ -66,6 +66,7 @@ app.use('/dataSharing', dataSharing);
 
 // api route
 require("./routes/token.routes")(app);
+require("./routes/user.routes")(app);
 
 passport.use(new LdapStrategy(OPTS));
 
