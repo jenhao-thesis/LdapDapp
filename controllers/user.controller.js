@@ -43,6 +43,8 @@ let UserSearch = function(opts, base) {
     });
 }
 
+exports.userSearch = UserSearch;
+
 exports.findOne = async (req, res) => {
     let opts = {
         filter: util.format('(cn=%s)', req.params.cn),
@@ -50,7 +52,7 @@ exports.findOne = async (req, res) => {
     };
     let data = await UserSearch(opts, 'ou=location2,dc=jenhao,dc=com');
     // res.json({msg: data[0]});
-    res.send(data[0]);
+    res.send(JSON.parse(data[0]));
 };
 
 exports.findAll = async (req, res) => {

@@ -3,14 +3,14 @@ var router = express.Router();
 var fs = require('fs')
 var Web3 = require('web3');
 var ldap = require('ldapjs');
+const util = require('util');
+const user = require("../controllers/user.controller.js");
 
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
 const web3 = new Web3(new Web3.providers.HttpProvider(config.web3_provider));
 const admin_address = config.admin_address; // org0
 const contract_address = config.contracts.organizationManagerAddress;
 const client = ldap.createClient(config.ldap.server);
-
-
 var isAuthenticated = function (req,res,next){
     if (req.isAuthenticated()) {
         next();
@@ -23,8 +23,15 @@ var isAuthenticated = function (req,res,next){
     }
 };
 
-router.get('/', isAuthenticated, function(req, res) {
-    res.render('profile', { title: 'Profile ', user: req.user, address: contract_address});
+router.get('/', isAuthenticated, async function(req, res) {
+    let opts = {
+        filter: util.format('(cn=%s)', req.user.cn),
+        scope: 'sub'
+    };
+    let data = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com');
+    let userObject = JSON.parse(data[0]);
+    delete userObject['userpassword'];
+    res.render('profile', { title: 'Profile ', user: userObject, address: contract_address});
 });
 
 router.get('/org.json', function(req, res) {
