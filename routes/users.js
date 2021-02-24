@@ -25,14 +25,6 @@ const contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManag
 const user = require("../controllers/user.controller.js");
 
 var newDN = "cn=%s,ou=location2,dc=jenhao,dc=com";
-var newUser = {
-    cn: '',
-    sn: 'sn',
-    mail: 'qwe@asd',
-    objectClass: 'Person',
-    phone: '0900000000',
-    userPassword: 'default'
-};
 
 var searchDN = "ou=location2,dc=jenhao,dc=com";
 var searchOpts = {
