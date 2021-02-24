@@ -16,22 +16,32 @@ block content
                                     th(scope='col') Value
                             tbody
                                 each val, idx in user
-                                    tr
-                                        td #{idx}
-                                        td #{val}
+                                    if (idx != 'idstatus')
+                                        tr
+                                            td #{idx}
+                                            td 
+                                                span #{val}
+                                                if (idx == 'id' && user.idstatus == 0)
+                                                    span.float-right.px-2(style="color:red; text-decoration: underline dotted; border: solid 1.5px; border-radius: 8px") 尚未驗證
+                                                else if (idx == 'id' && user.idstatus == 1)
+                                                    span.float-right.px-2(style="color:green; text-decoration: underline dotted; border: solid 1.5px; border-radius: 8px") 通過驗證
+                                            
 
                     button.btn.btn-block.btn-primary(type='button' data-toggle='modal', data-target='#updateModal') 修改
                     br
                     br                    
                     .alert.alert-warning.alert-dismissible.fade.show(role='alert')
                         .status
-                            | ...
+                            if (user.hashed == "")
+                                | 尚未完成綁定
+                            else
+                                | 已完成綁定
                         button.close(type='button' data-dismiss='alert' aria-label='Close')
                             span(aria-hidden='true') ×
 
     br
-
-    button.btn.btn-block.btn-outline-info.bind-btn(type='button' data-toggle='modal' data-target='#bindModal') 使用 Metamask 綁定帳號
+    if (user.hashed == "")
+        button.btn.btn-block.btn-outline-info.bind-btn(type='button' data-toggle='modal' data-target='#bindModal') 使用 Metamask 綁定帳號
 
     #bindModal.modal.fade(tabindex='-1' role='dialog' aria-hidden='true')
         .modal-dialog(role='document')
@@ -70,7 +80,10 @@ block content
                         .input-group.mt-3
                             .input-group-prepend
                                 span.input-group-text(id='') 身份證字號
-                            input.form-control#updateIdentityId(type='text' name='identityId' placeholder="Identity card ID" required="required" value="#{user.id}")
+                            if (user.idstatus == 1)
+                                input.form-control#updateIdentityId(type='text' name='identityId' placeholder="Identity card ID" required="required" value="#{user.id}" readonly="readonly" style="background-color: white;")
+                            else
+                                input.form-control#updateIdentityId(type='text' name='identityId' placeholder="Identity card ID" required="required" value="#{user.id}")
                         .input-group.mt-3
                             .input-group-prepend
                                 span.input-group-text(id='') 電子郵件
@@ -131,7 +144,7 @@ block content
                 let input_1 = $("#address").val();
                 $('#bindModal').modal('toggle');
                 await $.ajax({
-                    url: 'bindAccount',
+                    url: "bindAccount",
                     data: { uid: input_0, address: input_1},
                     type: 'post',
                     cache: false,
@@ -151,7 +164,7 @@ block content
             });
         
             $(".submit-update-btn").on("click", async function(e) {
-                let input_0 = $("#updateIdentityId").val();
+                let input_0 = (#{user.idstatus} === 1) ? "#{user.id}" : $("#updateIdentityId").val();
                 let input_1 = $("#updateEmail").val();
                 let input_2 = $("#updatePhone").val();
                 $('#updateModal').modal('toggle');
@@ -215,16 +228,17 @@ block content
                 }
             });
 
-            let id = setInterval(function() {
-                if ("#{user.hashed}" === "") {
-                    $(".status").html("尚未綁定任何區塊鏈帳戶");
-                }
-                else {
-                    $(".status").html("已綁定");
-                    clearInterval(id);
-                    $(".bind-btn").attr("disabled", "disabled");
-                }
-                console.log("checked");
-            }, 1000);
+            //- let id = setInterval(function() {
+            //-     if ("#{user.hashed}" === "") {
+            //-         $(".status").html("尚未綁定任何區塊鏈帳戶");
+            //-     }
+            //-     else {
+            //-         $(".status").html("已綁定");
+            //-         clearInterval(id);
+            //-         //- $(".bind-btn").attr("disabled", "disabled");
+            //-         $(".bind-btn").remove();
+            //-     }
+            //-     console.log("checked");
+            //- }, 1000);
 
         });

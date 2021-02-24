@@ -26,7 +26,8 @@ block content
                             button.func1.btn.btn-primary(type='button') getOrg(onlyOrg)
                     
                     .input-group.mb-3
-                        input.func2-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2')
+                        input.func2-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2' required="required")
+                        input.func2-input1.form-control(type='text' placeholder="Enter cn" aria-label="Parameter" aria-describedby='basic-addon2' required="required")
                         .input-group-append
                             button.func2.btn.btn-secondary(type='button') addUser(onlyOrg)
 
@@ -104,9 +105,10 @@ block content
 
                     $(".func2").on("click", function(e) {
                         let input_0 = $(".func2-input0").val();
+                        let input_1 = $(".func2-input1").val();
                         $.ajax({
                             url: 'metamask-connect/addUser',
-                            data: { uid: input_0},
+                            data: { uid: input_0, cn: input_1},
                             type: 'post',
                             cache: false,
                             dataType: 'json',

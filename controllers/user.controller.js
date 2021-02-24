@@ -13,7 +13,9 @@ let templateUser = {
     mail: 'qwe@asd',
     objectClass: 'Person',
     phone: '0900000000',
-    userPassword: 'default'
+    userPassword: 'default',
+    hashed: '',
+    idStatus: 0
 };
 
 let UserSearch = function(opts, base) {
@@ -110,10 +112,8 @@ exports.update = (req, res) => {
             console.log(err);
             res.status(500).json({msg: "error in modify"});
         }
-            
+        res.json({msg: "Profile was updated successfully."});
     });
-
-    res.json({msg: "Profile was updated successfully."});
 };
 
 exports.delete = (req, res) => {

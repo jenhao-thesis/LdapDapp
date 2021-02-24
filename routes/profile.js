@@ -76,12 +76,13 @@ router.post('/updateUser', isAuthenticated, function(req, res) {
     const {hashed} = req.body;
     let msg = "successfully";
 
-    let change = new ldap.Change({
-        operation: 'add',
+    let change = {
+        operation: 'replace',
         modification: {
-            hashed: hashed
+            hashed: hashed,
+            idStatus: 1
         }
-    });
+    };
     
     client.modify(req.user.dn, change, function(err) {
         console.log("error", err);

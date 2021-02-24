@@ -104,7 +104,8 @@ passport.use('local', new LocalStrategy( {
                 mail: 'new@qwe',
                 objectClass: 'Person',
                 phone: '0900000000',
-                hashed: identity
+                hashed: identity,
+                idStatus: 1
             };
             await client.add(DN, tmpUser, function(err) {
                 if (err) {
