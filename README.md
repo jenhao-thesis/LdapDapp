@@ -60,3 +60,4 @@ call do not alter the state of the contract, send do.
 * [Node v14.15.1](https://nodejs.org/en/)
 * [Web3.js v1.3.0](https://github.com/ChainSafe/web3.js?source=post_page-----70de1c0c035c----------------------)
 * [Express 4.9.0](https://www.npmjs.com/package/express/v/4.9.0)
+* [Redis v=4.0.9](https://www.1ju.org/redis/redis-quick-guide)
