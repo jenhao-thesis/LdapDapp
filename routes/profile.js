@@ -99,13 +99,6 @@ var isAuthenticated = function (req,res,next){
         // res.status(401).json({"message": 'User not authenticated.'});
     }
 };
-router.get('/new', isAuthenticated, async function(req, res) {
-    let job = await subscribeQueue.add({
-        txHash: '0x578f863ce66719719aca31176cf67e00c7f354f523e2b74652f81a521bf11e23',
-        dn: req.user.dn    
-    });
-    res.send(`new job ${job.id}`);
-})
 
 router.get('/', isAuthenticated, async function(req, res) {
     let opts = {
