@@ -24,7 +24,7 @@ module.exports = app => {
     router.post("/", user.create);
   
     // Update a Tutorial
-    router.put("/:cn", user.update);
+    router.put("/:cn", isAuthenticated, user.update);
 
     // Delete a Tutorial with id
     router.delete("/:cn", user.delete);

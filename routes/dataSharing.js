@@ -6,7 +6,7 @@ const fetch = require('node-fetch');
 var Web3 = require('web3');
 
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));
-const web3 = new Web3(new Web3.providers.HttpProvider(config.web3_provider));    
+const web3 = new Web3(new Web3.providers.WebsocketProvider(config.web3_provider));    
 const contract_address = config.contracts.organizationManagerAddress;
 const admin_address = config.admin_address; // org0
 const admin_key = config.admin_key;

@@ -117,5 +117,13 @@ exports.update = (req, res) => {
 };
 
 exports.delete = (req, res) => {
-    
+    let DN = util.format(defaultDN, req.params.cn); 
+    client.del(DN, function(err) {
+        if (err) res.status(500).send({
+            msg: `Could not delete with ${DN}`
+        })
+    });
+    res.send({
+        msg: "User was deleted successfully."
+    })
 };

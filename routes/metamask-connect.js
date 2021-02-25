@@ -6,7 +6,7 @@ const util = require('util');
 const ldap = require('ldapjs');
 
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
-const web3 = new Web3(new Web3.providers.HttpProvider(config.web3_provider));
+const web3 = new Web3(new Web3.providers.WebsocketProvider(config.web3_provider));
 const admin_address = config.admin_address; // org0
 const contract_address = config.contracts.organizationManagerAddress;
 const client = ldap.createClient(config.ldap.server);

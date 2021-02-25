@@ -8,6 +8,7 @@
   "dependencies": {
     "body-parser": "~1.8.1",
     "bootstrap": "^4.5.3",
+    "bull": "^3.20.1",
     "connect-flash": "^0.1.1",
     "cookie-parser": "~1.3.3",
     "cookie-session": "^1.4.0",
