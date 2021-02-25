@@ -6,6 +6,7 @@ const ldap = require('ldapjs');
 const util = require('util');
 const Queue = require('bull');
 const user = require("../controllers/user.controller.js");
+const { resolve } = require('path');
 
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
 const web3 = new Web3(new Web3.providers.WebsocketProvider(config.web3_provider));
@@ -127,20 +128,63 @@ router.post('/bindAccount', isAuthenticated, async function(req, res, next) {
     console.log("profile id", userId);
     console.log("profile address", userAddress);
     
-    await contractInstance.methods.bindAccount(userId, userAddress).send({
-        from: admin_address,
-        gas: 1000000
-    })
-    .then( (result) => {
-        msg = `OK, i got it, this is your transaction hash: ${result.transactionHash}`;
-        hash = result.transactionHash;
-        status = true;
-        console.log(result);
-    })
-    .catch( (err) => {
-        console.log(err);
-        msg = `${err}`;
-    })
+    if (req.user.idstatus === "0") {
+        msg = 'Your identification card number is invalid.';
+    }
+    else {
+        let hashedId = await contractInstance.methods.getId().call({from: userAddress});
+        if (hashedId === "0x0000000000000000000000000000000000000000000000000000000000000000") {
+            console.log("not used before");
+            await contractInstance.methods.bindAccount(userId, userAddress).send({
+                from: admin_address,
+                gas: 1000000
+            })
+            .then( (result) => {
+                msg = `OK, i got it, this is your transaction hash: ${result.transactionHash}`;
+                hash = result.transactionHash;
+                status = true;
+                console.log(result);
+            })
+            .catch( (err) => {
+                console.log(err);
+                msg = `${err}`;
+            })
+        }
+        else {
+            // lookup whether used in DB
+            let opts = {
+                filter: util.format('(hashed=%s)', hashedId),
+                scope: 'sub'
+            };
+            let data = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com');
+            if (data.length === 0) {
+                let actualHashedId = await contractInstance.methods.getId(req.user.id).call({from: admin_address});
+                console.log(`actual hashed id: ${actualHashedId}`);
+                console.log(`account hashed id: ${hashedId}`);
+                if (actualHashedId === hashedId) {
+                    // update hashed to this user
+                    let change = {
+                        operation: 'replace',
+                        modification: {
+                            hashed: hashedId
+                        }
+                    };
+                    
+                    client.modify(req.user.dn, change, function(err) {
+                        if (err) console.log("error", err);
+                    });
+    
+                    msg = `Your account already integrated into ${userAddress}`;
+                }
+                else {
+                    msg = `Your address already binded with other id`;
+                }
+            }
+            else {
+                msg = `Your address already binded in our service.`;
+            }
+        }
+    }
 
     if (status) {
         // create job for polling status of block mined
