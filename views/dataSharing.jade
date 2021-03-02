@@ -30,7 +30,8 @@ block content
                         .row
                             .col-12
                                 .text-right
-                                    button.btn.btn-primary.auth-btn.mr-2(type='button') 授權
+                                    //- button.btn.btn-primary.auth-btn.mr-2(type='button') 授權
+                                    button.btn.btn-primary.mr-2.confirm-btn(type='button' data-toggle='modal', data-target='#infoModal') 授權
                                     button.btn.btn-danger.revoke-btn(type='button') 撤回
                 #data.tab-pane.fade(role='tabpanel' aria-labelledby='data-tab') 
                     div(style='overflow-x:auto;')
@@ -47,6 +48,22 @@ block content
                                         td #{val.createdAt}
                                         td #{val.updatedAt}
                     button.btn.btn-info.request-token-btn(type='button') Get Token
+    #infoModal.modal.fade(tabindex='-1' role='dialog' aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5.modal-title 通知
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') ×
+                .modal-body
+                    | 您是否要授權
+                    span.font-weight-bold
+                        | 當前TSP
+                    | 存取您在下列機構的資料？
+                    .confirm-list.font-weight-bold
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') 取消
+                    button.btn.btn-primary.auth-btn(type='button' data-dismiss='modal') 確認
 
 
     script. 
@@ -120,8 +137,18 @@ block content
                         alert(err);
                     });
 
+                    $(".confirm-btn").on("click", function(e) {
+                        let selected = [];
+                        $(".confirm-list").html("");
+                        $.each($("input[name=orgAddress]:checked"), function() {
+                            selected.push($(this).val());
+                            $(".confirm-list").html($(".confirm-list").html()+"<br>"+$(this).val());
+                        });
+                    });
+
                     $(".auth-btn").on("click", function(e) {
                         let selected = [];
+                        $(".confirm-list").html("");
                         $.each($("input[name=orgAddress]:checked"), function() {
                             selected.push($(this).val());
                             contractAccInstance.methods.authorizeAccess(target_address, $(this).val()).send({from: account})
@@ -133,7 +160,6 @@ block content
                                 console.log("err"+err);
                             })
                         });
-                        //- alert(selected);
                     });
 
                     $(".revoke-btn").on("click", function(e) {
