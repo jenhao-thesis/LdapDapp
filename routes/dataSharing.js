@@ -4,6 +4,7 @@ var fs = require('fs');
 const db = require("../models");
 const fetch = require('node-fetch');
 var Web3 = require('web3');
+const { exception } = require('console');
 
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));
 const web3 = new Web3(new Web3.providers.WebsocketProvider(config.web3_provider));    
@@ -109,6 +110,33 @@ router.get('/getAccessToken', isAuthenticated, async function(req, res) {
     }
 
 
+});
+
+router.get('/getOpenData', isAuthenticated, async function(req, res) {
+    let tokens = await db.tokens.findAll({where: {identity: req.user.hashed}});
+    let data = [];
+    let provider_ip = "";
+    tokens.forEach(async function(value){
+        console.log(value.org);
+        console.log(value.identity);
+        console.log(value.jwt);
+        console.log(config.org_mapping[value.org]);
+        provider_ip = config.org_mapping[value.org];
+        if (provider_ip == null) {
+            console.log("provider ip is not found")
+        }
+        else {
+            await fetch(`http://${provider_ip}/users/protected`, {            
+                headers: {'x-access-token': value.jwt}
+            })
+            .then(res => res.json())
+            .then(json => console.log(json))
+            .catch(err => console.err(err));
+        }
+    })
+
+
+    res.render('dataSharing', {user: req.user, address: contract_address, org_address: admin_address, tokens: tokens});
 });
 
 module.exports = router;
