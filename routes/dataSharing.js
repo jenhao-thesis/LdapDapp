@@ -36,7 +36,7 @@ router.get('/acc.json', function(req, res) {
 /* GET home page. */
 router.get('/', isAuthenticated, async function(req, res) {
     let tokens = await db.tokens.findAll({where: {identity: req.user.hashed}});
-    res.render('dataSharing', {user: req.user, address: contract_address, org_address: admin_address, tokens: tokens});
+    res.render('dataSharing', {user: req.user, address: contract_address, org_address: admin_address, tokens: tokens, data: []});
 });
 
 router.get('/getAccessToken', isAuthenticated, async function(req, res) {
@@ -116,27 +116,30 @@ router.get('/getOpenData', isAuthenticated, async function(req, res) {
     let tokens = await db.tokens.findAll({where: {identity: req.user.hashed}});
     let data = [];
     let provider_ip = "";
-    tokens.forEach(async function(value){
-        console.log(value.org);
-        console.log(value.identity);
-        console.log(value.jwt);
-        console.log(config.org_mapping[value.org]);
-        provider_ip = config.org_mapping[value.org];
+    let result;
+    for (let i = 0; i < tokens.length; ++i) {
+        console.log(tokens[i].org);
+        provider_ip = config.org_mapping[tokens[i].org];
         if (provider_ip == null) {
             console.log("provider ip is not found")
         }
         else {
             await fetch(`http://${provider_ip}/users/protected`, {            
-                headers: {'x-access-token': value.jwt}
+                headers: {'x-access-token': tokens[i].jwt}
             })
             .then(res => res.json())
-            .then(json => console.log(json))
+            .then(json => {
+                if (json.success) {
+                    result = JSON.parse(json.data);
+                    console.log(result);
+                    data.push(result.phone);
+                }
+            })
             .catch(err => console.err(err));
         }
-    })
+    }
 
-
-    res.render('dataSharing', {user: req.user, address: contract_address, org_address: admin_address, tokens: tokens});
+    res.render('dataSharing', {user: req.user, address: contract_address, org_address: admin_address, tokens: tokens, data: data});
 });
 
 module.exports = router;

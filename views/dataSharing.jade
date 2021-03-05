@@ -47,9 +47,21 @@ block content
                                         td #{val.org}
                                         td #{val.createdAt}
                                         td #{val.updatedAt}
-                    button.btn.btn-info.request-token-btn(type='button') Get Token
+                    div
+                        button.btn.btn-info.request-token-btn(type='button') Get Token
+                    br
                     form(action="/dataSharing/getOpenData" method="GET")
                         button.btn.ml-2.btn-primary(type='submit') Get Data
+                    div(style='overflow-x:auto;')
+                        table.mt-2.table.table-striped
+                            thead
+                                tr
+                                    th(scope='col') phone
+                            tbody
+                                each val, idx in data
+                                    tr
+                                        td #{val}
+
     #infoModal.modal.fade(tabindex='-1' role='dialog' aria-hidden='true')
         .modal-dialog(role='document')
             .modal-content

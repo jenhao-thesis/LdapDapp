@@ -109,6 +109,7 @@ router.get('/', isAuthenticated, async function(req, res) {
     let data = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com');
     let userObject = JSON.parse(data[0]);
     delete userObject['userpassword'];
+    req.user = userObject;
     res.render('profile', { title: 'Profile ', user: userObject, address: contract_address});
 });
 
