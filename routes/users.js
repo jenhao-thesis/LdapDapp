@@ -244,8 +244,18 @@ router.post('/authenticate', async function(req, res) {
     })
 });
 
-router.get('/protected', authenticateToken, function(req, res) {
-    res.json({success: true, message: "ok, got token", data: req.decoded});
+router.get('/protected', authenticateToken, async function(req, res) {
+    let data = req.decoded;
+    let hashed = data.hashed;
+    let opts = {
+        filter: `(hashed=${hashed})`,
+        scope: 'one',
+        attributes: ['mail', 'phone'],
+        attrsOnly: true
+    };
+    let specificUser = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com')
+
+    res.json({success: true, message: "ok, got token", data: specificUser});
 });
 
 router.get('/auth', function (req, res) {
