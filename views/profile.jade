@@ -77,13 +77,14 @@ block content
                 .card-body
                     h5.card-title 
                     form(action='#' method='')
-                        .input-group.mt-3
-                            .input-group-prepend
-                                span.input-group-text(id='') 身份證字號
-                            if (user.idstatus == 1)
-                                input.form-control#updateIdentityId(type='text' name='identityId' placeholder="Identity card ID" required="required" value="#{user.id}" readonly="readonly" style="background-color: white;")
-                            else
-                                input.form-control#updateIdentityId(type='text' name='identityId' placeholder="Identity card ID" required="required" value="#{user.id}")
+                        if (user.id)
+                            .input-group.mt-3
+                                .input-group-prepend
+                                    span.input-group-text(id='') 身份證字號
+                                if (user.idstatus === "1")
+                                    input.form-control#updateIdentityId(type='text' name='identityId' placeholder="Identity card ID" required="required" value="#{user.id}" readonly="readonly" style="background-color: white;")
+                                else
+                                    input.form-control#updateIdentityId(type='text' name='identityId' placeholder="Identity card ID" required="required" value="#{user.id}")
                         .input-group.mt-3
                             .input-group-prepend
                                 span.input-group-text(id='') 電子郵件
@@ -164,7 +165,7 @@ block content
             });
         
             $(".submit-update-btn").on("click", async function(e) {
-                let input_0 = (#{user.idstatus} === 1) ? "#{user.id}" : $("#updateIdentityId").val();
+                let input_0 = ("#{user.idstatus}" === "1") ? "#{user.id}" : $("#updateIdentityId").val();       
                 let input_1 = $("#updateEmail").val();
                 let input_2 = $("#updatePhone").val();
                 $('#updateModal').modal('toggle');

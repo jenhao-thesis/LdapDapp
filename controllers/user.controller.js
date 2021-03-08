@@ -98,21 +98,34 @@ exports.create = async (req, res) => {
 exports.update = (req, res) => {
     const {email, phone, id} = req.body;
     let DN = util.format(defaultDN, req.params.cn); 
-    let change = {
-        operation: 'replace',
-        modification: {
-            mail: email,
-            phone: phone,
-            id: id
-        }
-    };
-    
+    let change;
+    console.log("id```"+id);
+    if (id !== "") { // that mean this is TSP, so it doesn't exist id
+        change = {
+            operation: 'replace',
+            modification: {
+                mail: email,
+                phone: phone,
+                id: id    
+            }
+        };
+    }
+    else {
+        change = {
+            operation: 'replace',
+            modification: {
+                mail: email,
+                phone: phone
+            }
+        };
+    }
+
     client.modify(DN, change, function(err) {
         if (err !== null) {
             console.log(err);
             res.status(500).json({msg: "error in modify"});
         }
-        res.json({msg: "Profile was updated successfully."});
+        return res.json({msg: "Profile was updated successfully."});
     });
 };
 
