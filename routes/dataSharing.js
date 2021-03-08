@@ -135,7 +135,7 @@ router.get('/getOpenData', isAuthenticated, async function(req, res) {
                     data.push(result.phone);
                 }
             })
-            .catch(err => console.err(err));
+            .catch(err => console.log(err));
         }
     }
 

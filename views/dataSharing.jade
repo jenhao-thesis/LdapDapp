@@ -220,7 +220,6 @@ block content
                                                 },
                                                 success: function(res) {
                                                     alert(res.message);
-                                                    location.reload();
                                                 },
                                                 error: function(err) {
                                                     console.log(err);
@@ -229,6 +228,7 @@ block content
                                         }
                                     });
                                 }  
+                                location.reload();
                             })
                         })
                         .catch( (err) => {
