@@ -33,6 +33,20 @@ block content
                                     //- button.btn.btn-primary.auth-btn.mr-2(type='button') 授權
                                     button.btn.btn-primary.mr-2.confirm-btn(type='button' data-toggle='modal', data-target='#infoModal') 授權
                                     button.btn.btn-danger.revoke-btn(type='button') 撤回
+                        .row.mt-2
+                            .col-6
+                                .card
+                                    .card-header
+                                        | Deposit
+                                    .card-body
+                                        canvas#myDoughnut(width='400' height='400')
+                            .col-6
+                                .card
+                                    .card-header
+                                        | Some div
+                                    .card-body
+                                        canvas#myLine(width='400' height='400')
+
                 #data.tab-pane.fade(role='tabpanel' aria-labelledby='data-tab') 
                     div(style='overflow-x:auto;')
                         table.mt-2.table.table-striped
@@ -61,6 +75,8 @@ block content
                                 each val, idx in data
                                     tr
                                         td #{val}
+
+
 
     #infoModal.modal.fade(tabindex='-1' role='dialog' aria-hidden='true')
         .modal-dialog(role='document')
@@ -234,20 +250,84 @@ block content
                         .catch( (err) => {
                             alert(err);
                         });
+                    });
 
-                        //- $.ajax({
-                        //-     url: '/dataSharing/getAccessToken',
-                        //-     type: 'get',
-                        //-     cache: false,
-                        //-     dataType: 'json',
-                        //-     success: function(res) {
-                        //-         alert(res.message);
-                        //-         location.reload();
-                        //-     },
-                        //-     error: function(err) {
-                        //-         console.log(err);
-                        //-     }
-                        //- });
+                    // chart
+                    var ctx1 = document.getElementById("myDoughnut").getContext('2d');
+                    var myDoughnutChart = new Chart(ctx1, {
+                        type: "doughnut",
+                        data: {
+                            datasets: [
+                                {
+                                    backgroundColor: [
+                                        'rgba(255, 99, 132, 0.2)',
+                                        'rgba(54, 162, 235, 0.2)',
+                                        'rgba(255, 206, 86, 0.2)',
+                                        'rgba(75, 192, 192, 0.2)',
+                                        'rgba(153, 102, 255, 0.2)',
+                                        'rgba(255, 159, 64, 0.2)'
+                                    ],
+                                    borderColor: [
+                                        'rgba(255,99,132,1)',
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(255, 206, 86, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(153, 102, 255, 1)',
+                                        'rgba(255, 159, 64, 1)'
+                                    ],
+                                    borderWidth: 1,
+                                    hoverBorderWidth: 4,
+                                    data: [1,2,3]
+                                }
+                            ],
+
+                            // These labels appear in the legend and in the tooltips when hovering different arcs
+                            labels: ["Red", "Yellow", "Blue"]
+                        },
+                        options: {}
+                    });
+
+                    var ctx2 = document.getElementById("myLine").getContext('2d');
+                    var myLineChart = new Chart(ctx2, {
+                        type: "line",
+                        data: {
+                            datasets: [
+                                {
+                                    backgroundColor: [
+                                        'rgba(54, 162, 235, 0.2)',
+                                        'rgba(255, 206, 86, 0.2)',
+                                        'rgba(75, 192, 192, 0.2)',
+                                        'rgba(153, 102, 255, 0.2)',
+                                        'rgba(255, 159, 64, 0.2)'
+                                    ],
+                                    borderColor: [
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(255, 206, 86, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(153, 102, 255, 1)',
+                                        'rgba(255, 159, 64, 1)'
+                                    ],
+                                    borderWidth: 1,
+                                    data: [20, 15, 8, 16]
+                                }
+                            ],
+
+                            // These labels appear in the legend and in the tooltips when hovering different arcs
+                            labels: ["Red", "Yellow", "Blue", "Black"]
+                        },
+                        options: {
+                            elements: {
+                                line: {
+                                    tension: 0 // 禁用贝塞尔曲线
+                                }
+                            },
+                            scales: {
+                                yAxes: [{
+                                    ticks: { min: 0, max: 30}
+                                }]
+                            }
+
+                        }
                     });
                 });
             });
