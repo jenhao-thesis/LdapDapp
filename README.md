@@ -1,4 +1,4 @@
-# Blockchain-based identity management and access control with LDAP
+# Blockchain-based Identification and Access Control for OpenBanking Ecosystem
 
 ## Compile cotract
 
