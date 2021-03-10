@@ -14,7 +14,7 @@ const admin_address = config.admin_address; // org0
 const contract_address = config.contracts.organizationManagerAddress;
 const client = ldap.createClient(config.ldap.server);
 
-let subscribeQueue = new Queue('event subscribe');
+let subscribeQueue = new Queue('event subscribe', {redis: {port: config.redis.port, host: config.redis.host}});
 function listenEventByHash(txHash, dn, ms) {
     return new Promise((resolve) => {
     //   setTimeout(resolve, ms);

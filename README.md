@@ -64,7 +64,7 @@ call do not alter the state of the contract, send do.
 
 ## Dockerfile
 ```
-let subscribeQueue = new Queue('event subscribe', "redis://redis:6379");
+"host": "redis",
 "web3_provider": "ws://ganache:8545",
 "url": "ldap://ldap_server:1389",
 ```
