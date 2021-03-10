@@ -61,3 +61,10 @@ call do not alter the state of the contract, send do.
 * [Web3.js v1.3.0](https://github.com/ChainSafe/web3.js?source=post_page-----70de1c0c035c----------------------)
 * [Express 4.9.0](https://www.npmjs.com/package/express/v/4.9.0)
 * [Redis v=4.0.9](https://www.1ju.org/redis/redis-quick-guide)
+
+## Dockerfile
+```
+let subscribeQueue = new Queue('event subscribe', "redis://redis:6379");
+"web3_provider": "ws://ganache:8545",
+"url": "ldap://ldap_server:1389",
+```
