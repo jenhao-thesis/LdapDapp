@@ -47,12 +47,7 @@ services:
                 networks:
                         - my_network
 
-        ganache:
-                image: trufflesuite/ganache-cli:latest
-                ports:
-                        - "7545"
-                networks:
-                        - my_network
-
 networks:
         my_network:
+                external:
+                        name: open_banking_network

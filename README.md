@@ -68,3 +68,9 @@ call do not alter the state of the contract, send do.
 "web3_provider": "ws://ganache:8545",
 "url": "ldap://ldap_server:1389",
 ```
+```
+docker exec -it <name> ash // ctrl+p, ctrl+q then exit
+docker network ls
+docker network inspect
+// if you use host to be Ethereum network, check network gateway.
+```
