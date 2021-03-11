@@ -7,7 +7,7 @@ services:
                 working_dir: /project
                 command: ash -c "npm install nodemon -g && npm install sqlite3 && npm start"
                 volumes:
-                        - /home/jhcheng/Desktop/ldapJStest/ldapApp/:/project
+                        - .:/project
                 depends_on:
                         - openldap
                         - redis
@@ -29,10 +29,12 @@ services:
                 image: "osixia/openldap:latest"
                 ports: 
                         - "8380:389"
-                working_dir: /ldap
+                working_dir: /data
                 command: ash -c "ldapadd -H ldap://ldap_server:1389 -D cn=root -w secret -f qwer.ldif"
                 volumes:
-                        - /home/jhcheng/Desktop/ldapJStest/ldapTest:/ldap
+                        - type: bind
+                          source: /home/jhcheng/Desktop/ldapJStest/ldapTest/qwer.ldif
+                          target: /data/qwer.ldif
                 depends_on: 
                         - ldap_server
                 networks:
