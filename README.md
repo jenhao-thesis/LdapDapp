@@ -74,6 +74,13 @@ docker network ls
 docker network inspect
 // if you use host to be Ethereum network, check network gateway.
 ```
-Before run docker-compose up, please check contract jsob files and server-config.json exist.
-```
-```
+### Multiple organizations: folder structure
+    .
+    ├── orgA
+    │   ├── docker-compose.yml
+    │   ├── LdapDapp                    # Clone repo from github
+    │   │   ├── server-config.json      # Change server config
+    │   │   └── build                   # After truffle compile, generate contracts json file
+    │   └── LdapServer                  # Clone repo from github
+    ├── orgB
+    └── orgC

@@ -7,7 +7,7 @@ services:
                 working_dir: /project
                 command: ash -c "npm install nodemon -g && npm install && npm start"
                 volumes:
-                        - .:/project
+                        - ./LdapDapp:/project
                 depends_on:
                         - openldap
                         - redis
@@ -19,9 +19,9 @@ services:
                 ports:
                         - "1389"
                 working_dir: /ldap
-                command: ash -c "node ldapServer.js"
+                command: ash -c "npm install && node ldapServer.js"
                 volumes:
-                        - /home/jhcheng/Desktop/ldapJStest/ldapTest:/ldap
+                        - ./LdapServer:/ldap
                 networks:
                         - my_network
 
@@ -33,7 +33,7 @@ services:
                 command: ash -c "ldapadd -H ldap://ldap_server:1389 -D cn=root -w secret -f qwer.ldif"
                 volumes:
                         - type: bind
-                          source: /home/jhcheng/Desktop/ldapJStest/ldapTest/qwer.ldif
+                          source: ./LdapServer/qwer.ldif
                           target: /data/qwer.ldif
                 depends_on: 
                         - ldap_server
