@@ -74,3 +74,6 @@ docker network ls
 docker network inspect
 // if you use host to be Ethereum network, check network gateway.
 ```
+Before run docker-compose up, please check contract jsob files and server-config.json exist.
+```
+```
