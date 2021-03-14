@@ -29,5 +29,8 @@ module.exports = app => {
     // Delete a Tutorial with id
     router.delete("/:cn", user.delete);
 
+    // Add a point in balance
+    router.put("/:cn/increase", user.increase);
+
     app.use('/api/user', router);
 };

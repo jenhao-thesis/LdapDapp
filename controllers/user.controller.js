@@ -15,7 +15,8 @@ let templateUser = {
     phone: '0900000000',
     userPassword: 'default',
     hashed: '',
-    idStatus: 0
+    idStatus: 0,
+    balance: 100
 };
 
 let UserSearch = function(opts, base) {
@@ -43,6 +44,10 @@ let UserSearch = function(opts, base) {
             });        
         });
     });
+}
+
+let isNumeric = function(num){
+    return !isNaN(num)
 }
 
 exports.userSearch = UserSearch;
@@ -98,6 +103,9 @@ exports.create = async (req, res) => {
 exports.update = (req, res) => {
     const {email, phone, id} = req.body;
     let DN = util.format(defaultDN, req.params.cn); 
+    if (req.params.cn !== req.user.cn)
+        return res.json({msg: "Can not modify profile."});
+
     let change;
     console.log("id```"+id);
     if (id !== "") { // that mean this is TSP, so it doesn't exist id
@@ -139,4 +147,42 @@ exports.delete = (req, res) => {
     res.send({
         msg: "User was deleted successfully."
     })
+};
+
+exports.increase = async (req, res) => {
+    let DN = util.format(defaultDN, req.params.cn);
+    let opts = {
+        filter: util.format('(cn=%s)', req.params.cn),
+        scope: 'sub',
+        attributes: ['balance']
+    };
+    let banlance = 0;
+    let searchResult = await UserSearch(opts, 'ou=location2,dc=jenhao,dc=com');
+    if (searchResult.length === 1) {
+        let userObject = JSON.parse(searchResult[0]);
+        if (isNumeric(userObject.balance)) {
+            balance = parseInt(userObject.balance);
+        }
+        else {
+            return res.json({msg: "Balance is not number."});
+        }
+    }
+    else {
+        return res.json({msg: "User not found."});
+    }
+    
+    let change = {
+        operation: 'replace',
+        modification: {
+            balance: balance+5
+        }
+    };
+
+    client.modify(DN, change, function(err) {
+        if (err !== null) {
+            console.log(err);
+            res.status(500).json({msg: "error in modify"});
+        }
+        return res.json({msg: "Bank balance updated!"});
+    });
 };

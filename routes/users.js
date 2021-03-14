@@ -105,7 +105,8 @@ passport.use('local', new LocalStrategy( {
                 objectClass: 'Person',
                 phone: '0900000000',
                 hashed: identity,
-                idStatus: 1
+                idStatus: 1,
+                balance: 100
             };
             await client.add(DN, tmpUser, function(err) {
                 if (err) {

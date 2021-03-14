@@ -2,7 +2,7 @@ extends layout
 
 block content
     .row
-        .col
+        .col-md-8.offset-md-2
             .card
                 .card-header
                     h4.font-weight-bold(style="margin:0;")
@@ -40,8 +40,13 @@ block content
                             span(aria-hidden='true') ×
 
     br
-    if (user.hashed == "")
-        button.btn.btn-block.btn-outline-info.bind-btn(type='button' data-toggle='modal' data-target='#bindModal') 使用 Metamask 綁定帳號
+    .row
+        .col-md-8.offset-md-2
+            if (user.hashed == "")
+                button.btn.btn-block.btn-outline-info.bind-btn(type='button' data-toggle='modal' data-target='#bindModal') 使用 Metamask 綁定帳號
+    .row.my-2
+        .col-md-8.offset-md-2
+            button.btn.btn-block.btn-outline-primary.increase-btn(type='button') For test
 
     #bindModal.modal.fade(tabindex='-1' role='dialog' aria-hidden='true')
         .modal-dialog(role='document')
@@ -183,5 +188,20 @@ block content
                         alert("Error");
                     }
                 });
+            });
+
+            $(".increase-btn").on("click", async function(e) {
+                await $.ajax({
+                    url: '/api/user/#{user.cn}/increase',
+                    type: 'put',
+                    success: function(res) {
+                        alert(res.msg);
+                        location.reload();
+                    },
+                    error: function(err) {
+                        console.log(err);
+                        alert("Error");
+                    }
+                })
             });
         });
