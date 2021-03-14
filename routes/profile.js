@@ -125,11 +125,27 @@ router.post('/bindAccount', isAuthenticated, async function(req, res, next) {
     let userId = req.body.uid;
     let userAddress = req.body.address;
     let msg = "", hash = "";
-    let status = false;
+    let status = false; // for check whether need to create subscribe job
+    let idStatus = false;
+
     console.log("profile id", userId);
     console.log("profile address", userAddress);
-    
-    if (req.user.idstatus === "0") {
+
+    let opts = {
+        filter: util.format('(cn=%s)', req.user.cn),
+        scope: 'sub',
+        attributes: ['idstatus']
+    };
+    let searchResult = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com');
+    if (searchResult.length === 1) {
+        let userObject = JSON.parse(searchResult[0]);
+        idStatus = (userObject.idstatus === '0') ? false : true;
+    }
+    else {
+        return res.send({msg: "user search error", status: false, txHash: ""});
+    }
+
+    if (!idStatus) {
         msg = 'Your identification card number is invalid.';
     }
     else {
@@ -178,11 +194,14 @@ router.post('/bindAccount', isAuthenticated, async function(req, res, next) {
                     msg = `Your account already integrated into ${userAddress}`;
                 }
                 else {
-                    msg = `Your address already binded with other id`;
+                    let correctAddress = await contractInstance.methods.getAddress(userId).call({from: admin_address});
+                    // msg = `Your address already binded with other id`;
+                    msg = `Please switch your current Ethereum account to ${correctAddress}`;
+
                 }
             }
             else {
-                msg = `Your address already binded in our service.`;
+                msg = `Your Ethereum account already binded with another ID in our service.`;
             }
         }
     }

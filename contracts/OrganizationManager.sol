@@ -15,7 +15,8 @@ contract OrganizationManager {
     
     struct UserInfo {
         address lastModifyOrg;          // [org2.id]
-        address accessManagerAddress;
+        address accessManagerAddress;   // address of access control manager
+        address userAddress;            // binding addrss
         mapping(address => bool) orgs;  // [org1.id, org2.id]
     }
     
@@ -70,6 +71,7 @@ contract OrganizationManager {
             _uniqueState[hashed] = true;
             UserInfo memory info = UserInfo(
                                         msg.sender,
+                                        address(0),
                                         address(0)
                                     );
             _uniqueIdenity[hashed] = info;
@@ -92,12 +94,19 @@ contract OrganizationManager {
         require(_uniqueState[keccak256(bytes(uniqueId))],
                 "UniqueId invalid.");
         bytes32 hashed = keccak256(bytes(uniqueId));
-        _bindUsers[userAddress] = hashed;    
-        _bindState[hashed] = true;
-        _users[userAddress] = true;
+
+        _bindUsers[userAddress] = hashed;    // for record address <==> hashed id
+        _bindState[hashed] = true;           // for confirm this hashed id already bind before
+        _users[userAddress] = true;          // for modifier onlyUser
+
+        // create contract and transfer ownership to user himself
         AccessManager accessManager = new AccessManager();
         accessManager.transferOwnership(userAddress);
+        
+        // update user info
         _uniqueIdenity[hashed].accessManagerAddress = address(accessManager);
+        _uniqueIdenity[hashed].userAddress = userAddress;
+        
         emit BindUserAccountEvent(msg.sender, userAddress, hashed);
     }
 
@@ -129,6 +138,12 @@ contract OrganizationManager {
     // Get hashed id by etherenum address(msg.sender)
     function getId() public view returns (bytes32) {
         return _bindUsers[msg.sender];
+    }
+
+    // Get address by unique id
+    function getAddress(string memory uniqueId) public onlyOrg view returns (address) {
+        bytes32 hashed = keccak256(bytes(uniqueId));
+        return _uniqueIdenity[hashed].userAddress;
     }
 
     // Get hashed id by orgs

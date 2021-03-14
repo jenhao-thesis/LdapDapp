@@ -78,9 +78,9 @@ docker network inspect
     .
     ├── orgA
     │   ├── docker-compose.yml
-    │   ├── LdapDapp                    # Clone repo from github
+    │   ├── LdapDapp                    # https://github.com/jenhao-thesis/LdapDapp.git
     │   │   ├── server-config.json      # Change server config
     │   │   └── build                   # After truffle compile, generate contracts json file
-    │   └── LdapServer                  # Clone repo from github
+    │   └── LdapServer                  # https://github.com/jenhao-thesis/LdapServer.git
     ├── orgB
     └── orgC

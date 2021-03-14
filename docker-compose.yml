@@ -49,5 +49,3 @@ services:
 
 networks:
         my_network:
-                external:
-                        name: open_banking_network
