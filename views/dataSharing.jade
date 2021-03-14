@@ -175,37 +175,52 @@ block content
                             $(".confirm-list").html($(".confirm-list").html()+"<br>"+$(this).val());
                         });
                     });
+                    
 
                     $(".auth-btn").on("click", function(e) {
-                        let selected = [];
+                        let promises = [];
                         $(".confirm-list").html("");
                         $.each($("input[name=orgAddress]:checked"), function() {
-                            selected.push($(this).val());
-                            contractAccInstance.methods.authorizeAccess(target_address, $(this).val()).send({from: account})
-                            .then( (result) => {
-                                console.log("auth txHash:"+result.transactionHash);
-                                location.reload();
-                            })
-                            .catch( (err) => {
-                                console.log("err"+err);
-                            })
+                            var promise = new Promise( async (resolve, reject) => {
+                                await contractAccInstance.methods.authorizeAccess(target_address, $(this).val()).send({from: account})
+                                .then( (result) => {
+                                    console.log("auth txHash:"+result.transactionHash);
+                                    resolve();    
+                                })
+                                .catch( (err) => {
+                                    console.log("err"+err);
+                                    alert("Authorize failed.");
+                                    reject();
+                                })  
+                            });
+                            promises.push(promise);
                         });
+
+                        var result = Promise.all(promises);
+                        result.then(() => location.reload());
                     });
 
                     $(".revoke-btn").on("click", function(e) {
-                        let selected = [];
+                        let promises = [];
+
                         $.each($("input[name=orgAddress]:checked"), function() {
-                            selected.push($(this).val());
-                            contractAccInstance.methods.revokeAccess(target_address, $(this).val()).send({from: account})
-                            .then( (result) => {
-                                console.log("revoke txHash:"+result.transactionHash);
-                                location.reload();
-                            })
-                            .catch( (err) => {
-                                console.log("err"+err);
-                            })
+                            let promise = new Promise((resolve, reject) => {
+                                contractAccInstance.methods.revokeAccess(target_address, $(this).val()).send({from: account})
+                                .then( (result) => {
+                                    console.log("revoke txHash:"+result.transactionHash);
+                                    resolve();
+                                })
+                                .catch( (err) => {
+                                    console.log("err"+err);
+                                    alert("Revoke failed.");
+                                    reject();
+                                })
+                            });
+                            promises.push(promise);
                         });
-                        //- alert(selected);
+                        
+                        let result = Promise.all(promises);
+                        result.then(() => location.reload());
                     });
 
                     $(".request-token-btn").on("click", function(e) {
