@@ -258,19 +258,6 @@ router.get('/protected', authenticateToken, async function(req, res) {
     res.json({success: true, message: "ok, got token", data: specificUser});
 });
 
-router.get('/auth', function (req, res) {
-    const {client_id, redirect_uri, scope} = req.query;
-    console.log(client_id, redirect_uri, scope);
-    // res.json({msg: "done"});
-    res.render("auth", {id: client_id, scope: scope, uri: redirect_uri});
-});
-
-router.post('/confirmAuth', function (req, res) {
-    const {client_id, redirect_uri, scope} = req.query;
-    console.log("!!! redirect:"+redirect_uri);
-    res.redirect("http://"+redirect_uri);
-});
-
 router.get('/auth/nonce', async function (req, res) {
     const {org} = req.query;
     if (!org)
