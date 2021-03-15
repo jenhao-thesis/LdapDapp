@@ -34,13 +34,14 @@ block content
                                     button.btn.btn-primary.mr-2.confirm-btn(type='button' data-toggle='modal', data-target='#infoModal') 授權
                                     button.btn.btn-danger.revoke-btn(type='button') 撤回
                         .row.mt-2
-                            .col-6
+                            .col-md-6.col.my-2
                                 .card
                                     .card-header
-                                        | Deposit
+                                        | 總資產
                                     .card-body
+                                        h5.total-deposit.text-right.my-3
                                         canvas#myDoughnut(width='400' height='400')
-                            .col-6
+                            .col-md-6.col.my-2
                                 .card
                                     .card-header
                                         | Some div
@@ -265,11 +266,13 @@ block content
                     let orgs = ["#{org_address}".substr(0,5)];
                     let a = JSON.parse("#{data}".replace(/&quot;/g,'"'));
                     let b = JSON.parse("#{orgs}".replace(/&quot;/g,'"'));
+                    let total = 0;
                     for (let i = 0; i < a.length; ++i) {
                         deposit.push(a[i]);
                         orgs.push(b[i]);
                     }
-
+                    total = deposit.reduce((a,b)=>parseInt(a, 0)+parseInt(b,0));
+                    $(".total-deposit").html("$&nbsp"+total);
 
                     // chart
                     var ctx1 = document.getElementById("myDoughnut").getContext('2d');

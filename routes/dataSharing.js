@@ -102,7 +102,7 @@ let getToken = async (req, res) => {
             }
         }
         await db.tokens.bulkCreate(tokens, {updateOnDuplicate: ["jwt", "updatedAt"]});
-        if (errorMsg.length !== "")
+        if (errorMsg.length !== 0)
             return res.json({msg: errorMsg});
         res.json({msg:"oK"});
     }
