@@ -148,7 +148,7 @@ let getProtectedData = async (req, res, next) => {
                     if (json.success) {
                         result = JSON.parse(json.data);
                         console.log(result);
-                        orgs.push(tokens[i].org.sub(0, 5));
+                        orgs.push(tokens[i].org.substr(0, 5));
                         data.push(result.balance);
                     }
                 })
