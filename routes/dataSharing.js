@@ -4,6 +4,7 @@ var fs = require('fs');
 const db = require("../models");
 const fetch = require('node-fetch');
 var Web3 = require('web3');
+const user = require("../controllers/user.controller.js");
 const { exception } = require('console');
 
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));
@@ -107,6 +108,62 @@ let getToken = async (req, res) => {
     }
 };
 
+let getHashed = async (req, res, next) => {
+    let opts = {
+        filter: `(cn=${req.user.cn})`,
+        scope: 'sub',
+        attributes: ['hashed']
+    };
+    let searchResult = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com');
+    if (searchResult.length === 1) {
+        let userObject = JSON.parse(searchResult[0]);
+        req.user.hashed = userObject.hashed;
+        next();
+    }
+    else {
+        return res.send({msg: "user search error", status: false, txHash: ""});
+    }
+}
+
+let getProtectedData = async (req, res, next) => {
+    let tokens = await db.tokens.findAll({where: {identity: req.user.hashed}});
+
+    let data = [];
+    let provider_ip = "";
+    let errorMsg = "";
+    for (let i = 0; i < tokens.length; ++i) {
+        provider_ip = config.org_mapping[tokens[i].org];
+        if (provider_ip === null) {
+            console.log(`IP of current provider ${tokens[i].org} is not found.`)
+        }
+        else {
+            try {
+                let result;
+                await fetch(`http://${provider_ip}/users/protected`, {            
+                    headers: {'x-access-token': tokens[i].jwt}
+                })
+                .then(res => res.json())
+                .then(json => {
+                    if (json.success) {
+                        result = JSON.parse(json.data);
+                        console.log(result);
+                        data.push(result.phone);
+                    }
+                })
+                .catch(err => {
+                    console.log(`Get Data Error`, err);
+                    throw `Get protected data Error with ${tokens[i].org}.`;
+                });
+            } catch (e) {
+                errorMsg += e + "\n\n";
+            }
+        }
+    }
+
+    req.data = data;
+    next();
+};
+
 router.get('/org.json', function(req, res) {
     let contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));
     res.json(contract);
@@ -118,9 +175,9 @@ router.get('/acc.json', function(req, res) {
 });
 
 /* GET home page. */
-router.get('/', isAuthenticated, async function(req, res) {
+router.get('/', isAuthenticated, getHashed, getProtectedData, async function(req, res) {
     let tokens = await db.tokens.findAll({where: {identity: req.user.hashed}});
-    res.render('dataSharing', {user: req.user, address: contract_address, org_address: admin_address, tokens: tokens, data: []});
+    res.render('dataSharing', {user: req.user, address: contract_address, org_address: admin_address, tokens: tokens, data: req.data});
 });
 
 router.get('/getAccessToken', isAuthenticated, getToken);
