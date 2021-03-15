@@ -11,7 +11,7 @@ const web3 = new Web3(new Web3.providers.WebsocketProvider(config.web3_provider)
 const contract_address = config.contracts.organizationManagerAddress;
 const admin_address = config.admin_address; // org0
 const admin_key = config.admin_key;
-var isAuthenticated = function (req,res,next){
+let isAuthenticated = function (req,res,next){
     if (req.isAuthenticated()) {
         next();
     }
@@ -20,6 +20,90 @@ var isAuthenticated = function (req,res,next){
         req.flash('info', 'Login first.');
         res.redirect('/');
         // res.status(401).json({"message": 'User not authenticated.'});
+    }
+};
+
+let getToken = async (req, res) => {
+    let {provider_address, hashed} = req.query;
+    let identity = hashed;
+    if (provider_address.length === 0 || hashed === undefined) {
+        return res.json({msg: "Address of provider is not found."});
+    }
+    else {
+        console.log(provider_address, hashed);
+
+        let cur = "", provider_ip = "";
+        let tokens = [];
+        let errorMsg = "";
+        for (let i = 0; i < provider_address.length; ++i) {
+            cur = '0x' + provider_address[i].substr(2, provider_address[i].length-2);
+            provider_ip = config.org_mapping[cur];
+            if (provider_ip === null) {
+                return res.json({msg: `IP of current provider ${cur} is not found.`})
+            }
+            else {
+                let jwt = "";
+                let signatureObject;
+                let nonceObject;
+                // prove org identity, it should be nonce from provider
+                try {
+                    await fetch(`http://${provider_ip}/users/auth/nonce?org=${admin_address}`)
+                        .then( res => res.json())
+                        .then( json => {
+                            console.log(json);
+                            nonceObject = json;
+                        })
+                        .catch( (err) => {
+                            console.log("GetNonce Error");
+                            throw `Get Nonce Error with ${cur}, Error code:　${err.errno}`;
+                        });
+                } catch (e) {
+                    console.log("contiue.", e);
+                    errorMsg += e + "\n\n";
+                    continue;
+                }
+                signatureObject =  web3.eth.accounts.sign(nonceObject.nonce, admin_key);
+                
+                // get token
+                try {
+                    await fetch(`http://${provider_ip}/users/authenticate`,{ 
+                            method: 'POST',
+                            body: JSON.stringify({
+                                identity: identity,
+                                target_address: admin_address,
+                                signature: signatureObject,
+                                nonce: nonceObject
+                            }),
+                            headers: {'Content-Type': 'application/json'}
+                        })
+                        .then( res => res.json())
+                        .then( json => {
+                            if (!json.success) return res.send({status: false, message: json.message});
+                            jwt = json.token
+                        })
+                        .catch( (err) => {
+                            console.log("Authenticate Error");
+                            throw `Get Nonce Error with ${cur}, Error code:　${err.errno}`
+                        });
+                } catch (e) {
+                    console.log("contiue.", e);
+                    errorMsg += e + "\n\n";
+                    continue;
+                }
+                
+
+                const token = {
+                    identity: identity,
+                    org: cur,
+                    jwt: jwt
+                }
+                tokens.push(token);
+            }
+        }
+        await db.tokens.bulkCreate(tokens, {updateOnDuplicate: ["jwt", "updatedAt"]});
+        if (errorMsg.length !== "")
+            return res.json({msg: errorMsg});
+        res.json({msg:"oK"});
     }
 };
 
@@ -39,7 +123,8 @@ router.get('/', isAuthenticated, async function(req, res) {
     res.render('dataSharing', {user: req.user, address: contract_address, org_address: admin_address, tokens: tokens, data: []});
 });
 
-router.get('/getAccessToken', isAuthenticated, async function(req, res) {
+router.get('/getAccessToken', isAuthenticated, getToken);
+router.get('/1getAccessToken', isAuthenticated, async function(req, res) {
     let {provider_address} = req.query;
     if (!provider_address)
         return res.json({msg: "address of provider is missing."});
@@ -108,8 +193,6 @@ router.get('/getAccessToken', isAuthenticated, async function(req, res) {
         }
         return res.send({status: false, message: "org has no response."});        
     }
-
-
 });
 
 router.get('/getOpenData', isAuthenticated, async function(req, res) {

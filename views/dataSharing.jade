@@ -226,7 +226,7 @@ block content
                     $(".request-token-btn").on("click", function(e) {
                         contractOrgInstance.methods.getOrgList().call({from: account})
                         .then( (result) => { // orgList
-
+                            let validList = [];
                             contractOrgInstance.methods.getAccessManagerAddress(account).call({from: account})
                             .then( (r) => {
                                 contractAccInstance = new web3.eth.Contract(data_acc.abi, r);
@@ -236,30 +236,35 @@ block content
                                     console.log("owner:"+r);
                                 });
                             })
-                            .then( () => {                                
+                            .then( async () => {                                
                                 for (let i = 0; i < result.length; ++i) {
-                                    contractAccInstance.methods.validatePermission(target_address, result[i]).call({from: account})
+                                    await contractAccInstance.methods.validatePermission(target_address, result[i]).call({from: account})
                                     .then( (r) => {
                                         if (r) {
                                             console.log(result[i]);
-                                            $.ajax({
-                                                url: '/dataSharing/getAccessToken',
-                                                type: 'get',
-                                                cache: false,
-                                                data: {
-                                                    provider_address: result[i].toUpperCase()
-                                                },
-                                                success: function(res) {
-                                                    alert(res.message);
-                                                },
-                                                error: function(err) {
-                                                    console.log(err);
-                                                }
-                                            });                                            
+                                            validList.push(result[i].toUpperCase());                                    
                                         }
                                     });
-                                }  
-                                location.reload();
+                                }
+                                alert("Ready to request token.");
+                                let hashed = await contractOrgInstance.methods.getId().call({from: account})
+                                $.ajax({
+                                    url: '/dataSharing/getAccessToken',
+                                    type: 'get',
+                                    cache: false,
+                                    data: {
+                                        provider_address: validList,
+                                        hashed: hashed
+                                    },
+                                    success: (res) => {
+                                        alert(res.msg);
+                                        location.reload();
+                                    },
+                                    error: (e) => {
+                                        alert(e);
+                                        console.log(e);
+                                    }
+                                });
                             })
                         })
                         .catch( (err) => {
