@@ -64,18 +64,6 @@ block content
                     div
                         button.btn.btn-info.request-token-btn(type='button') Get Token
                     br
-                    form(action="/dataSharing/getOpenData" method="GET")
-                        button.btn.ml-2.btn-primary(type='submit') Get Data
-                    div(style='overflow-x:auto;')
-                        table.mt-2.table.table-striped
-                            thead
-                                tr
-                                    th(scope='col') phone
-                            tbody
-                                each val, idx in data
-                                    tr
-                                        td #{val}
-                                        td #{orgs[idx]}
 
 
 
@@ -273,6 +261,16 @@ block content
                         });
                     });
 
+                    let deposit = [#{user.balance}];
+                    let orgs = ["#{org_address}".substr(0,5)];
+                    let a = JSON.parse("#{data}".replace(/&quot;/g,'"'));
+                    let b = JSON.parse("#{orgs}".replace(/&quot;/g,'"'));
+                    for (let i = 0; i < a.length; ++i) {
+                        deposit.push(a[i]);
+                        orgs.push(b[i]);
+                    }
+
+
                     // chart
                     var ctx1 = document.getElementById("myDoughnut").getContext('2d');
                     var myDoughnutChart = new Chart(ctx1, {
@@ -298,12 +296,12 @@ block content
                                     ],
                                     borderWidth: 1,
                                     hoverBorderWidth: 4,
-                                    data: [1,2,3]
+                                    data: deposit
                                 }
                             ],
 
                             // These labels appear in the legend and in the tooltips when hovering different arcs
-                            labels: ["Red", "Yellow", "Blue"]
+                            labels: orgs
                         },
                         options: {}
                     });

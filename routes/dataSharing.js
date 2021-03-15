@@ -180,7 +180,16 @@ router.get('/acc.json', function(req, res) {
 /* GET home page. */
 router.get('/', isAuthenticated, getHashed, getProtectedData, async function(req, res) {
     let tokens = await db.tokens.findAll({where: {identity: req.user.hashed}});
-    res.render('dataSharing', {user: req.user, address: contract_address, org_address: admin_address, tokens: tokens, data: req.data, orgs: req.orgs});
+    let opts = {
+        filter: `(cn=${req.user.cn})`,
+        scope: 'one',
+        attributes: ['mail', 'phone', 'balance'],
+        attrsOnly: true
+    };
+    let data = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com');
+    let userObject = JSON.parse(data);
+    console.log(userObject);
+    res.render('dataSharing', {user: userObject, address: contract_address, org_address: admin_address, tokens: tokens, data: JSON.stringify(req.data), orgs: JSON.stringify(req.orgs)});
 });
 
 router.get('/getAccessToken', isAuthenticated, getToken);
