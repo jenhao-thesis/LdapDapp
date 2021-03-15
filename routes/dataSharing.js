@@ -129,6 +129,7 @@ let getProtectedData = async (req, res, next) => {
     let tokens = await db.tokens.findAll({where: {identity: req.user.hashed}});
 
     let data = [];
+    let orgs = [];
     let provider_ip = "";
     let errorMsg = "";
     for (let i = 0; i < tokens.length; ++i) {
@@ -147,7 +148,8 @@ let getProtectedData = async (req, res, next) => {
                     if (json.success) {
                         result = JSON.parse(json.data);
                         console.log(result);
-                        data.push(result.phone);
+                        orgs.push(tokens[i].org.sub(0, 5));
+                        data.push(result.balance);
                     }
                 })
                 .catch(err => {
@@ -159,8 +161,9 @@ let getProtectedData = async (req, res, next) => {
             }
         }
     }
-
+    req.errorMsg = errorMsg;
     req.data = data;
+    req.orgs = orgs;
     next();
 };
 
@@ -177,7 +180,7 @@ router.get('/acc.json', function(req, res) {
 /* GET home page. */
 router.get('/', isAuthenticated, getHashed, getProtectedData, async function(req, res) {
     let tokens = await db.tokens.findAll({where: {identity: req.user.hashed}});
-    res.render('dataSharing', {user: req.user, address: contract_address, org_address: admin_address, tokens: tokens, data: req.data});
+    res.render('dataSharing', {user: req.user, address: contract_address, org_address: admin_address, tokens: tokens, data: req.data, orgs: req.orgs});
 });
 
 router.get('/getAccessToken', isAuthenticated, getToken);

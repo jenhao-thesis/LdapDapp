@@ -251,7 +251,7 @@ router.get('/protected', authenticateToken, async function(req, res) {
     let opts = {
         filter: `(hashed=${hashed})`,
         scope: 'one',
-        attributes: ['mail', 'phone'],
+        attributes: ['mail', 'phone', 'balance'],
         attrsOnly: true
     };
     let specificUser = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com')
