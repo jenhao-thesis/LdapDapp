@@ -150,6 +150,8 @@ let getProtectedData = async (req, res, next) => {
                         console.log(result);
                         orgs.push(tokens[i].org.substr(0, 5));
                         data.push(result.balance);
+                    } else {
+                        throw `Token expired. Please get token again with ${tokens[i].org}.`;    
                     }
                 })
                 .catch(err => {
@@ -157,7 +159,7 @@ let getProtectedData = async (req, res, next) => {
                     throw `Get protected data Error with ${tokens[i].org}.`;
                 });
             } catch (e) {
-                errorMsg += e + "\n\n";
+                errorMsg += e + ".";
             }
         }
     }
@@ -189,7 +191,7 @@ router.get('/', isAuthenticated, getHashed, getProtectedData, async function(req
     let data = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com');
     let userObject = JSON.parse(data);
     console.log(userObject);
-    res.render('dataSharing', {user: userObject, address: contract_address, org_address: admin_address, tokens: tokens, data: JSON.stringify(req.data), orgs: JSON.stringify(req.orgs)});
+    res.render('dataSharing', {user: userObject, address: contract_address, org_address: admin_address, tokens: tokens, data: JSON.stringify(req.data), orgs: JSON.stringify(req.orgs), errorMsg: req.errorMsg});
 });
 
 router.get('/getAccessToken', isAuthenticated, getToken);

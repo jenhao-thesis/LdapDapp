@@ -273,6 +273,7 @@ block content
                     }
                     total = deposit.reduce((a,b)=>parseInt(a, 0)+parseInt(b,0));
                     $(".total-deposit").html("$&nbsp"+total);
+                    if ("#{errorMsg}" !== "") alert("#{errorMsg}");
 
                     // chart
                     var ctx1 = document.getElementById("myDoughnut").getContext('2d');
