@@ -235,7 +235,9 @@ router.post('/authenticate', async function(req, res) {
     };
     
     let token = jwt.sign(user, admin_key, {
-        expiresIn:60*60*30
+        expiresIn:60*60*30,
+        issuer: admin_address,
+        subject: target_address
     });
 
     return res.json({
