@@ -146,6 +146,11 @@ contract OrganizationManager {
         return _uniqueIdenity[hashed].userAddress;
     }
 
+    // Get address by unique id
+    function getAddressByHashed(bytes32 hashed) public onlyOrg view returns (address) {
+        return _uniqueIdenity[hashed].userAddress;
+    }
+
     // Get hashed id by orgs
     function getIdByOrg(address userAddress) public onlyOrg view returns (bytes32) {
         return _bindUsers[userAddress];
@@ -157,7 +162,7 @@ contract OrganizationManager {
     }
 
     // Get Contract address by UserManager
-    function getAccessManagerAddress(address userAddress) public onlyUser view returns (address) {
+    function getAccessManagerAddress(address userAddress) public view returns (address) {
         return _uniqueIdenity[_bindUsers[userAddress]].accessManagerAddress;
     }
 }

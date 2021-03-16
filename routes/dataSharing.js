@@ -12,6 +12,8 @@ const web3 = new Web3(new Web3.providers.WebsocketProvider(config.web3_provider)
 const contract_address = config.contracts.organizationManagerAddress;
 const admin_address = config.admin_address; // org0
 const admin_key = config.admin_key;
+const contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));
+
 let isAuthenticated = function (req,res,next){
     if (req.isAuthenticated()) {
         next();
@@ -127,7 +129,30 @@ let getHashed = async (req, res, next) => {
 
 let getProtectedData = async (req, res, next) => {
     let tokens = await db.tokens.findAll({where: {identity: req.user.hashed}});
+    
+    let contractInstance = new web3.eth.Contract(contract.abi, contract_address);
+    
+    // First: get user's ethereum address
+    let user_address = "";
+    await contractInstance.methods.getAddressByHashed(req.user.hashed).call({from: admin_address})
+    .then((result) => {
+        user_address = result
+    })
+    .catch((e) => {
+        return res.status(500).json({msg: "failed to get address by hashed"});
+    });
 
+    // Second: get access manager contract of the user
+    let accAddress = "";
+    await contractInstance.methods.getAccessManagerAddress(user_address).call({from: admin_address})
+    .then((result) => {
+        accAddress = result
+    })
+    .catch((err) => {
+        return res.status(500).json({msg: "failed to get acc manager"});
+    });
+
+    // Third: send request to resource provider with token.
     let data = [];
     let orgs = [];
     let provider_ip = "";
@@ -140,7 +165,7 @@ let getProtectedData = async (req, res, next) => {
         else {
             try {
                 let result;
-                await fetch(`http://${provider_ip}/users/protected`, {            
+                await fetch(`http://${provider_ip}/users/protected?acc=${accAddress}`, {            
                     headers: {'x-access-token': tokens[i].jwt}
                 })
                 .then(res => res.json())

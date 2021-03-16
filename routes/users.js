@@ -22,6 +22,7 @@ const admin_key = config.admin_key;
 const contract_address = config.contracts.organizationManagerAddress;
 const client = ldap.createClient(config.ldap.server);
 const contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));
+const acc_contract = JSON.parse(fs.readFileSync('./build/contracts/AccessManager.json', 'utf-8'));
 const user = require("../controllers/user.controller.js");
 
 var newDN = "cn=%s,ou=location2,dc=jenhao,dc=com";
@@ -170,15 +171,23 @@ router.post('/loginWithMetamask', passport.authenticate('local', {
 
 var authenticateToken = function (req, res, next) {
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
+    let {acc} = req.query;
+
     if (token) {
-        jwt.verify(token, admin_key, function (err, decoded) {
+        jwt.verify(token, admin_key, async function(err, decoded) {
             if (err) {
                 return res.status(403).json({success: false, message: 'Failed to authenticate token.'})
             } else {
+                // check with BC
+                let accContractInstance = new web3.eth.Contract(acc_contract.abi, acc);
+                await accContractInstance.methods.validatePermission(decoded.subject, admin_address).call({from: admin_address})
+                .then((r) => {
+                    console.log("PERMISSION:", r);
+                });
                 req.decoded = decoded
                 next();
             }
-        })
+        });
     } else {
         return res.status(403).send({
             success: false,
