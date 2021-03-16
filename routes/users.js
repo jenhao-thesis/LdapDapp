@@ -180,7 +180,7 @@ var authenticateToken = function (req, res, next) {
             } else {
                 // check with BC
                 let accContractInstance = new web3.eth.Contract(acc_contract.abi, acc);
-                await accContractInstance.methods.validatePermission(decoded.subject, admin_address).call({from: admin_address})
+                await accContractInstance.methods.validatePermission(decoded.sub, admin_address).call({from: admin_address})
                 .then((r) => {
                     console.log("PERMISSION:", r);
                 });
