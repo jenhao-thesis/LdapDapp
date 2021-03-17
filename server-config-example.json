@@ -1,7 +1,7 @@
 {
     "ldap": {
         "server": {
-            "url": "ldap://192.168.139.130:1389",
+            "url": "ldap://ldap_server:1389",
             "bindDN": "cn=root",
             "bindCredentials": "secret",
             "searchBase": "ou=location2,dc=jenhao,dc=com",
@@ -10,10 +10,22 @@
           "usernameField": "username",
           "passwordField": "password"
     },
+    "redis": {
+        "host": "redis",
+        "port": 6379
+    },
     "contracts": {
-        "organizationManagerAddress": "0xB0ce44F8e1dD4d20dA0735dd588af30fa19E8651",
+        "organizationManagerAddress": "0x037D2866fC829Aa311a684ea9CE31f7f44E28921",
         "accessManagerAddress": ""
     },
-    "admin_address": "0x56B1817fFa1Ff86ebB922400155CD3bE3F734419",
-    "web3_provider": "http://localhost:7545"
+    "admin_address": "0xF799b4462423B551cF404a3688C03051A2BE7359",
+    "admin_key": "5875dd75849d571cd9029b456fd00b0651e0ce6c9eb9f119d06b9e1b4771985d",
+    "web3_provider": "ws://172.22.0.1:7545",
+    "org_mapping": {
+        "0x1F7F0F7BE634D340EB070F3F3C21B6CE4AB857BD": "172.19.0.1:3001",
+        "0xA3E898C280220BF5FAE9E7E6CEB4F3A6BFA67163": "172.20.0.1:3002",
+        "0x18DB34BAE039C54AA2B56BDF59FF380D29BFFED7": "172.21.0.1:3003",
+        "0xF799B4462423B551CF404A3688C03051A2BE7359": "172.23.0.1:3004",
+        "0x8423B7478160163C6E3319E64A6AD4B77DFB7015": "172.24.0.1:3005"
+    }
 }

@@ -22,6 +22,7 @@ ldapsearch -H ldap://localhost:1389 -x -D "cn=root" -w "secret" -b "ou=location2
 
 ## Config
 [server-config.json](https://github.com/jenhao-thesis/LdapDapp/blob/main/server-config-example.json)
+
 ```json
 {
     "ldap": {
@@ -35,15 +36,23 @@ ldapsearch -H ldap://localhost:1389 -x -D "cn=root" -w "secret" -b "ou=location2
           "usernameField": "username",
           "passwordField": "password"
     },
+    "redis": {
+        "host": "[ip]",
+        "port": "[port]"
+    },
     "contracts": {
         "organizationManagerAddress": "[contract address]",
-        "accessManagerAddress": "[contract address]"
+        "accessManagerAddress": ""
     },
     "admin_address": "[administrator address]",
     "admin_key": "[administrator private key]",
-    "web3_provider": "http://[ip:port]",
+    "web3_provider": "ws://[ip:port]",
     "org_mapping": {
-        "[address of organization]": "[ip of organization]"
+        "[address of organization A(upper case only)]": "[ip:port]",
+        "[address of organization B(upper case only)]": "[ip:port]",
+        "[address of organization C(upper case only)]": "[ip:port]",
+        "[address of organization D(upper case only)]": "[ip:port]",
+        "[address of organization E(upper case only)]": "[ip:port]"
     }
 }
 ```
