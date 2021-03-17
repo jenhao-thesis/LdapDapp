@@ -29,7 +29,7 @@ let isAuthenticated = function (req,res,next){
 let getToken = async (req, res) => {
     let {provider_address, hashed} = req.query;
     let identity = hashed;
-    if (provider_address.length === 0 || hashed === undefined) {
+    if (!provider_address || provider_address.length === 0 || hashed === undefined) {
         return res.json({msg: "Address of provider is not found."});
     }
     else {
