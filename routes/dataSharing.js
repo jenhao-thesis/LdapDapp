@@ -176,12 +176,12 @@ let getProtectedData = async (req, res, next) => {
                         orgs.push(tokens[i].org.substr(0, 5));
                         data.push(result.balance);
                     } else {
-                        throw `Token expired. Please get token again with ${tokens[i].org}.`;    
+                        throw `Token expired. Please get token again with ${tokens[i].org}.${json.message}`;    
                     }
                 })
                 .catch(err => {
                     console.log(`Get Data Error`, err);
-                    throw `Get protected data Error with ${tokens[i].org}.`;
+                    throw `Get protected data Error with ${tokens[i].org}. ${err}`;
                 });
             } catch (e) {
                 errorMsg += e + ".";

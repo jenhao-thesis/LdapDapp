@@ -179,13 +179,24 @@ var authenticateToken = function (req, res, next) {
                 return res.status(403).json({success: false, message: 'Failed to authenticate token.'})
             } else {
                 // check with BC
+                let permit = false;
                 let accContractInstance = new web3.eth.Contract(acc_contract.abi, acc);
                 await accContractInstance.methods.validatePermission(decoded.sub, admin_address).call({from: admin_address})
                 .then((r) => {
                     console.log("PERMISSION:", r);
+                    permit = r;
                 });
-                req.decoded = decoded
-                next();
+
+                if (permit) {
+                    req.decoded = decoded
+                    next();
+                }
+                else {
+                    return res.status(403).send({
+                        success: false,
+                        message: `Already revoke please request token with ${admin_address} again.`
+                    })
+                }
             }
         });
     } else {
