@@ -24,7 +24,7 @@ const client = ldap.createClient(config.ldap.server);
 const contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));
 const acc_contract = JSON.parse(fs.readFileSync('./build/contracts/AccessManager.json', 'utf-8'));
 const user = require("../controllers/user.controller.js");
-
+const contractInstance = new web3.eth.Contract(contract.abi, contract_address);
 var newDN = "cn=%s,ou=location2,dc=jenhao,dc=com";
 
 var searchDN = "ou=location2,dc=jenhao,dc=com";
@@ -50,7 +50,7 @@ passport.use('local', new LocalStrategy( {
         console.log("acc:"+account);
         
         let actualIdentity = "";
-        let contractInstance = new web3.eth.Contract(contract.abi, contract_address);
+        
         await contractInstance.methods.getIdByOrg(req.body.account).call({from: admin_address})
         .then((result) => {
             actualIdentity = result
