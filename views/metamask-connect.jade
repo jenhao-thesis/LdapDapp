@@ -89,7 +89,7 @@ block content
 
                     $(".func1").on("click", function(e) {
                         // get abi of contract
-                        $.getJSON('metamask-connect/org.json', function (data) {
+                        $.getJSON('org.json', function (data) {
                             let contractInstance = new web3.eth.Contract(data.abi, contract_address);
                             let input_0 = $(".func1-input0").val();
 
@@ -107,7 +107,7 @@ block content
                         let input_0 = $(".func2-input0").val();
                         let input_1 = $(".func2-input1").val();
                         $.ajax({
-                            url: 'metamask-connect/addUser',
+                            url: 'addUser',
                             data: { uid: input_0, cn: input_1},
                             type: 'post',
                             cache: false,
@@ -122,7 +122,7 @@ block content
                     });
 
                     $(".func3").on("click", function(e) {
-                        $.getJSON('metamask-connect/org.json', function (data) {
+                        $.getJSON('org.json', function (data) {
                             let contractInstance = new web3.eth.Contract(data.abi, contract_address);
                             let input_0 = $(".func3-input0").val();
                             contractInstance.methods.getId(input_0).call({from: account})
@@ -139,7 +139,7 @@ block content
                         let input_0 = $(".func4-input0").val();
                         let input_1 = $(".func4-input1").val();
                         $.ajax({
-                            url: 'metamask-connect/bindAccount',
+                            url: 'bindAccount',
                             data: { uid: input_0, address: input_1},
                             type: 'post',
                             cache: false,

@@ -59,37 +59,18 @@ passport.use('local', new LocalStrategy( {
             console.log(err);
         });
 
-        let search = function(dn, opts) {
-            return new Promise( (resolve, reject) => {
-                let userObject;
-                
-                client.search(dn, opts, function(err, res) {
-                    if (err) return done(err);
-                    
-                    res.on('searchEntry', function(entry) {
-                        console.log('entry: ' + JSON.stringify(entry.object));
-                        console.log(entry.object);
-                        userObject = entry.object;
-                    });
-                    
-                    res.on('searchReference', function(referral) {
-                        console.log('referral: ' + referral.uris.join());
-                    });
-                    
-                    res.on('error', function(err) {
-                        console.error('error: ' + err.message);
-                    });
-                    
-                    res.on('end', function(result) {
-                        console.log('status: ' + result.status);
-                        resolve(userObject);
-                    });
-        
-                });
-            })
+        let userObject;
+        let opts = {
+            filter: `(hashed=${identity})`,
+            scope: 'one'
+        };
+        let specificUser = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com')
+        if (specificUser && specificUser.length !== 0) {
+            userObject = JSON.parse(specificUser[0]);
+            delete userObject['userpassword'];
+            console.log("specific user:", userObject);
         }
 
-        let userObject = await search(searchDN, searchOpts);
         if (account === signingAccount && actualIdentity === identity && userObject) {
             return done(null, userObject);
         }
@@ -166,7 +147,7 @@ router.post('/login', function(req, res, next) {
 router.post('/loginWithMetamask', passport.authenticate('local', {
     failureRedirect: '/'
 }), function (req, res) {
-    res.redirect("/");
+    res.send({url: "/profile/"});
 });
 
 var authenticateToken = function (req, res, next) {

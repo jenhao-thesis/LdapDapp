@@ -28,7 +28,7 @@ router.post('/addUser', async function(req, res, next) {
     console.log("web3 versin", web3.version);
     let contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));    
     let contractInstance = new web3.eth.Contract(contract.abi, contract_address);
-    let balance;
+    let txHash;
     
     // await web3.eth.getBalance(admin_address).then(function(result) {
     //     balance = result;
@@ -67,13 +67,13 @@ router.post('/addUser', async function(req, res, next) {
         }
     };
     
-    client.modify(DN, change, function(err) {
+    client.modify(DN, change, async function(err) {
         if (err !== null) {
             console.log("error in modify");
-            console.log(err);
+            return res.send({msg: "Common name is invalid."});
         }
         else {
-            contractInstance.methods.addUser(userId).send({
+            await contractInstance.methods.addUser(userId).send({
                 from: admin_address,
                 gas: 6721975
             }, function(error, transactionHash) {
@@ -82,10 +82,11 @@ router.post('/addUser', async function(req, res, next) {
                 }
                 else {
                     console.log("Transaction hash:", transactionHash);
-                    balance = transactionHash;
+                    txHash = transactionHash;
                 }
             })
-            
+
+            return res.send({msg: `${req.body.uid}-${txHash}`});
         }
     });
 
@@ -100,9 +101,6 @@ router.post('/addUser', async function(req, res, next) {
     //         console.log(res);
     //     }
     // });
-
-    console.log(req.body.uid);
-    res.send({msg: req.body.uid+"-backend-return-"+balance});
 });
 
 router.post('/bindAccount', async function(req, res, next) {

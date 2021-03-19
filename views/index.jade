@@ -29,7 +29,7 @@ block content
                         p.mt-2.text-left 還沒有帳戶？ <a href="#" data-toggle='modal' data-target='#registerModal'>立即註冊</a>
                         p 或是
                         button.btn.btn-outline-info.btn-lg.btn-block.loadInfo(type='button' data-toggle='modal' data-target='#confirmModal') 使用 Ethereum 帳戶登入
-                        button.btn.btn-outline-success.btn-lg.btn-block(type='button' onclick="javascript:location.href='/metamask-connect'") Metamask Test Page
+                        button.btn.btn-outline-success.btn-lg.btn-block(type='button' onclick="javascript:location.href='/metamask-connect/'") Metamask Test Page
 
     // Register Modal
     #registerModal.modal.fade(tabindex='-1' role='dialog' aria-hidden='true')
@@ -135,7 +135,10 @@ block content
                                     type: 'post',
                                     success: function(res) {
                                         console.log("success");
-                                        window.location.replace("/profile");
+                                        console.log(res);
+                                        //- window.location.replace("/profile");
+                                        if (res.url)
+                                            window.location.href = res.url;
                                     },
                                     error: function(err) {
                                         console.log("error");

@@ -8,7 +8,7 @@ const contract_address = config.contracts.organizationManagerAddress;
 /* GET home page. */
 router.get('/', function(req, res) {
   if (req.isAuthenticated()) {
-    res.redirect('profile');
+    res.redirect('/profile/');
   }
   else {
     var msg;

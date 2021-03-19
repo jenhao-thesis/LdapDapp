@@ -119,11 +119,15 @@ let getHashed = async (req, res, next) => {
     let searchResult = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com');
     if (searchResult.length === 1) {
         let userObject = JSON.parse(searchResult[0]);
+        console.log("MSG: user is not binding.")
+        if (userObject.hashed === "")
+            return res.redirect("/");
         req.user.hashed = userObject.hashed;
         next();
     }
     else {
-        return res.send({msg: "user search error", status: false, txHash: ""});
+        console.log("MSG: User not found.")
+        return res.redirect("/");
     }
 }
 
@@ -216,7 +220,14 @@ router.get('/', isAuthenticated, getHashed, getProtectedData, async function(req
     let data = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com');
     let userObject = JSON.parse(data);
     console.log(userObject);
-    res.render('dataSharing', {user: userObject, address: contract_address, org_address: admin_address, tokens: tokens, data: JSON.stringify(req.data), orgs: JSON.stringify(req.orgs), errorMsg: req.errorMsg});
+    res.render('dataSharing', {user: userObject,
+                                address: contract_address,
+                                org_address: admin_address,
+                                tokens: tokens,
+                                data: JSON.stringify(req.data),
+                                orgs: JSON.stringify(req.orgs),
+                                errorMsg: req.errorMsg
+                            });
 });
 
 router.get('/getAccessToken', isAuthenticated, getToken);
