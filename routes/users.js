@@ -150,7 +150,28 @@ router.post('/loginWithMetamask', passport.authenticate('local', {
     res.send({url: "/profile/"});
 });
 
-var authenticateToken = function (req, res, next) {
+var verifyToken = function (req, res, next) {
+    var token = req.body.token || req.query.token || req.headers['x-access-token'];
+    let {acc} = req.query;
+
+    if (token) {
+        jwt.verify(token, admin_key, async function(err, decoded) {
+            if (err) {
+                return res.status(403).json({success: false, message: 'Failed to authenticate token.'})
+            } else {
+                req.decoded = decoded
+                next();
+            }
+        });
+    } else {
+        return res.status(403).send({
+            success: false,
+            message: 'No token provided.'
+        })
+    }   
+};
+
+var verifyTokenAndConfirmWithContract = function (req, res, next) {
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
     let {acc} = req.query;
 
@@ -248,7 +269,7 @@ router.post('/authenticate', async function(req, res) {
     })
 });
 
-router.get('/protected', authenticateToken, async function(req, res) {
+router.get('/protected', verifyToken, async function(req, res) {
     let data = req.decoded;
     let hashed = data.hashed;
     let opts = {
