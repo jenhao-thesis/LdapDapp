@@ -228,7 +228,7 @@ block content
                             })
                             .then( async () => {                                
                                 for (let i = 0; i < result.length; ++i) {
-                                    if (target_address === result[i]) contiune;
+                                    if (target_address === result[i]) continue;
                                     await contractAccInstance.methods.validatePermission(target_address, result[i]).call({from: account})
                                     .then( (r) => {
                                         if (true){
