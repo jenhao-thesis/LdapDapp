@@ -86,7 +86,7 @@ let getToken = async (req, res) => {
                         })
                         .catch( (err) => {
                             console.log("Authenticate Error");
-                            throw `Get Nonce Error with ${cur}, Error code:　${err.errno}`
+                            throw `Authenticate Error with ${cur}, Error code:　${err.errno}`
                         });
                 } catch (e) {
                     console.log("contiue.", e);

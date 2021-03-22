@@ -230,7 +230,8 @@ block content
                                 for (let i = 0; i < result.length; ++i) {
                                     await contractAccInstance.methods.validatePermission(target_address, result[i]).call({from: account})
                                     .then( (r) => {
-                                        if (r) {
+                                        if (true){
+                                        //- if (r) {
                                             console.log(result[i]);
                                             validList.push(result[i].toUpperCase());                                    
                                         }
