@@ -201,7 +201,8 @@ router.post('/bindAccount', isAuthenticated, async function(req, res, next) {
                 }
             }
             else {
-                msg = `Your Ethereum account already binded with another ID in our service.`;
+                let correctAddress = await contractInstance.methods.getAddress(userId).call({from: admin_address});
+                msg = `Your Ethereum account already binded with another ID in our service. Please switch to ${correctAddress}`;
             }
         }
     }
