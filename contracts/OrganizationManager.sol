@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.8.0;
 import "./AccessManager.sol";
-
+pragma experimental ABIEncoderV2;
 contract OrganizationManager {
     constructor() public {
          for (uint i = 0; i < _orgsArr.length; i++) {
@@ -27,6 +27,10 @@ contract OrganizationManager {
                             0xF799b4462423B551cF404a3688C03051A2BE7359,
                             0x8423B7478160163c6e3319E64a6Ad4B77dfb7015];
     
+    // Pre-registered attributes
+    string[] _attributes = ["deposit", "test", "aaa"];
+    string[] _oneApprovedAttrs = ["bill", "bbb", "ggg"];
+
     // Permission of user and organization
     mapping (address => bool) _orgs;
     mapping(address => bool) _users;
@@ -159,6 +163,16 @@ contract OrganizationManager {
     // Get Org list by anyone
     function getOrgList() public view returns (address [] memory) {
         return _orgsArr;
+    }
+
+    // Get Org list by anyone
+    function getAttrList() public view returns (string [] memory) {
+        return _attributes;
+    }
+
+    // Get Org list by anyone
+    function getOneApprovedAttrsList() public view returns (string [] memory) {
+        return _oneApprovedAttrs;
     }
 
     // Get Contract address by UserManager

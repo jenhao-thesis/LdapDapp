@@ -154,7 +154,7 @@ router.post('/bindAccount', isAuthenticated, async function(req, res, next) {
             console.log("not used before");
             await contractInstance.methods.bindAccount(userId, userAddress).send({
                 from: admin_address,
-                gas: 1000000
+                gas: 6721975
             })
             .then( (result) => {
                 msg = `OK, i got it, this is your transaction hash: ${result.transactionHash}`;

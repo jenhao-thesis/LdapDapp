@@ -183,7 +183,7 @@ var verifyTokenAndConfirmWithContract = function (req, res, next) {
                 // check with BC
                 let permit = false;
                 let accContractInstance = new web3.eth.Contract(acc_contract.abi, acc);
-                await accContractInstance.methods.validatePermission(decoded.sub, admin_address).call({from: admin_address})
+                await accContractInstance.methods.validatePermission("deposit", decoded.sub, admin_address).call({from: admin_address})
                 .then((r) => {
                     console.log("PERMISSION:", r);
                     permit = r;
@@ -269,7 +269,7 @@ router.post('/authenticate', async function(req, res) {
     })
 });
 
-router.get('/protected', verifyToken, async function(req, res) {
+router.get('/protected', verifyTokenAndConfirmWithContract, async function(req, res) {
     let data = req.decoded;
     let hashed = data.hashed;
     let opts = {

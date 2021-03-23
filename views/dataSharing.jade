@@ -11,35 +11,71 @@ block content
             #myTabContent.tab-content
                 #control.tab-pane.fade.show.active(role='tabpanel' aria-labelledby='control-tab')
                     .container
-                        .row
+                        
+                        .row.my-2
                             .col-12 
                                 .form-group.row
                                     label.col-sm-4.col-form-label.font-weight-bold(for='staticEmail') Address of TSP
                                     .col-sm-8
-                                        input#staticEmail.form-control-plaintext(type='text' readonly='' value="#{org_address}")
+                                        input#staticEmail.form-control-plaintext(type='text' readonly='' value="#{org_address}")                        
+                        
+                        ul#modeTab.nav.nav-tabs(role="tablist")
+                            li.nav-item
+                                a#mode1-tab.nav-link.active(data-toggle='tab' href='#mode1' role='tab' aria-controls='control' aria-selected='true') Mode 1
+                            li.nav-item
+                                a#mode2-tab.nav-link(data-toggle='tab' href='#mode2' role='tab' aria-controls='control' aria-selected='false') Mode 2
+                        #modeTabContent.tab-content
+                            #mode1.tab-pane.fade.show.active(role='tabpanel' aria-labelledby='mode1-tab')
+                                .container.my-2
+                                    .row
+                                        .col-12
+                                            .form-group
+                                                label(for='attrFormControlSelect1') 選擇欲授權的資料
+                                                select#attrFormControlSelect1.form-control
 
-                            .col-12
-                                table.table.table-bordered#org-table
-                                    thead
-                                        tr
-                                            th.text-center(scope='col') Index
-                                            th.text-center(scope='col') Address of data provider
-                                            th.text-center(scope='col') Status
-                                    tbody
+                                        .col-12
+                                            table.table.table-bordered#org-table
+                                                thead
+                                                    tr
+                                                        th.text-center(scope='col') Index
+                                                        th.text-center(scope='col') Address of data provider
+                                                        th.text-center(scope='col') Status
+                                                tbody
 
-                        .row
-                            .col-12
-                                .text-right
-                                    //- button.btn.btn-primary.auth-btn.mr-2(type='button') 授權
-                                    button.btn.btn-primary.mr-2.confirm-btn(type='button' data-toggle='modal', data-target='#infoModal') 授權
-                                    button.btn.btn-danger.revoke-btn(type='button') 撤回
+                                    .row
+                                        .col-12
+                                            .text-right
+                                                //- button.btn.btn-primary.auth-btn.mr-2(type='button') 授權
+                                                button.btn.btn-primary.mr-2.confirm-btn(type='button' data-toggle='modal', data-target='#infoModal') 授權
+                                                button.btn.btn-danger.revoke-btn(type='button') 撤回
+
+                            #mode2.tab-pane.fade(role='tabpanel' aria-labelledby='mode2-tab')
+                                .container
+                                    .row.my-2
+                                        .col-12
+                                            table.table.table-bordered#attr-table
+                                                thead
+                                                    tr
+                                                        th.text-center(scope='col') Index
+                                                        th.text-center(scope='col') Attribute name
+                                                        th.text-center(scope='col') Status
+                                                tbody
+                                    .row
+                                        .col-12
+                                            .text-right
+                                                //- button.btn.btn-primary.auth-btn.mr-2(type='button') 授權
+                                                button.btn.btn-primary.mr-2.confirm-one-approved-btn(type='button' data-toggle='modal', data-target='#infoModal') 授權
+                                                button.btn.btn-danger.revoke-one-approved-btn(type='button') 撤回
+
+
+
                         .row.mt-2
                             .col-md-6.col.my-2
                                 .card
                                     .card-header
                                         | 總資產
                                     .card-body
-                                        h5.total-deposit.text-right.my-2
+                                        h5.total-deposit.text-right.my-1.font-weight-bold
                                         canvas#myDoughnut(width='400' height='400')
                             .col-md-6.col.my-2
                                 .card
@@ -83,7 +119,8 @@ block content
                     .confirm-list.font-weight-bold
                 .modal-footer
                     button.btn.btn-secondary(type='button' data-dismiss='modal') 取消
-                    button.btn.btn-primary.auth-btn(type='button' data-dismiss='modal') 確認
+                    button.btn.btn-info.auth-btn(type='button' data-dismiss='modal') 確認
+                    button.btn.btn-primary.auth-one-approved-btn(type='button' data-dismiss='modal') 確認
 
 
     script. 
@@ -91,6 +128,7 @@ block content
             let account = "";
             let contract_address = "#{address}";
             let target_address = "#{org_address}";
+            let selectAttr = "";                            
             window.ethereum.on('accountsChanged', function(accounts) {
                 account = accounts[0];
                 $(".account").html("Account:" + account);    
@@ -129,10 +167,24 @@ block content
                                 console.log("owner:"+r);
                             });
                         })
-                        .then( () => {
+                        .then(async () => {
+                            // Get Attribute List and pick first attr up
+                            await contractOrgInstance.methods.getAttrList().call()
+                            .then( (r) => {
+                                for (let i = 0; i < r.length; ++i) {
+                                    if (i === 0) {
+                                        $("#attrFormControlSelect1").append(new Option(r[i], r[i], true, true));
+                                        selectAttr = r[i];
+                                    }
+                                    else
+                                        $("#attrFormControlSelect1").append(new Option(r[i], r[i]));
+                                }
+                            });
+
+                            // For initial attribute in mode 1
                             for (let i = 0; i < result.length; ++i) {
                                 if (result[i] == target_address) continue;
-                                contractAccInstance.methods.validatePermission(target_address, result[i]).call({from: account})
+                                contractAccInstance.methods.validatePermission(selectAttr, target_address, result[i]).call({from: account})
                                 .then( (r) => {
                                     console.log(r);
                                     $("#org-table>tbody").append(`
@@ -151,6 +203,58 @@ block content
                                     `);
                                 });
                             }
+
+                            // Add event for dynamic switch to current selected attribute
+                            $("#attrFormControlSelect1").on('change', (e) => {
+                                selectAttr = e.target.value;
+                                $("#org-table>tbody").empty();
+                                for (let i = 0; i < result.length; ++i) {
+                                    if (result[i] == target_address) continue;
+                                    contractAccInstance.methods.validatePermission(selectAttr, target_address, result[i]).call({from: account})
+                                    .then( (r) => {
+                                        console.log(r);
+                                        $("#org-table>tbody").append(`
+                                            <tr>
+                                                <td>
+                                                    <div class="custom-control custom-checkbox text-center">
+                                                        <input class="custom-control-input" id="customCheck${i}" type="checkbox" value="${result[i]}" name="orgAddress"/>
+                                                        <label class="custom-control-label" for="customCheck${i}"></label>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">${result[i]}</td>
+                                                <td class="text-center">`+
+                                                (r == false ? `<i class="fas fa-lock"></i>` : `<i class="fas fa-lock-open"></i>`)
+                                                +`</td>
+                                            </tr>
+                                        `);
+                                    });
+                                }
+                            });
+
+                            // Get "One approved All bank open"
+                            await contractOrgInstance.methods.getOneApprovedAttrsList().call()
+                            .then( async (r) => {
+                                for (let i = 0; i < r.length; ++i) {
+                                    await contractAccInstance.methods.validateOneApproved(r[i]).call()
+                                    .then( (res) => {
+                                        $("#attr-table>tbody").append(`
+                                            <tr>
+                                                <td>
+                                                    <div class="custom-control custom-checkbox text-center">
+                                                        <input class="custom-control-input" id="attrCheck${i}" type="checkbox" value="${r[i]}" name="oneApprovedAttrs"/>
+                                                        <label class="custom-control-label" for="attrCheck${i}"></label>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">${r[i]}</td>
+                                                <td class="text-center">`+
+                                                (res == false ? `<i class="fas fa-lock"></i>` : `<i class="fas fa-lock-open"></i>`)
+                                                +`</td>
+                                            </tr>
+                                        `);
+                                    });
+                                }
+                            });
+
                         });
                     })
                     .catch( (err) => {
@@ -164,15 +268,27 @@ block content
                             selected.push($(this).val());
                             $(".confirm-list").html($(".confirm-list").html()+"<br>"+$(this).val());
                         });
+                        $(".auth-one-approved-btn").hide();
+                        $(".auth-btn").show();
                     });
                     
+                    $(".confirm-one-approved-btn").on("click", function(e) {
+                        let selected = [];
+                        $(".confirm-list").html("");
+                        $.each($("input[name=oneApprovedAttrs]:checked"), function() {
+                            selected.push($(this).val());
+                            $(".confirm-list").html($(".confirm-list").html()+"<br>"+$(this).val());
+                        });
+                        $(".auth-one-approved-btn").show();
+                        $(".auth-btn").hide();
+                    });
 
                     $(".auth-btn").on("click", function(e) {
                         let promises = [];
                         $(".confirm-list").html("");
                         $.each($("input[name=orgAddress]:checked"), function() {
                             var promise = new Promise( async (resolve, reject) => {
-                                await contractAccInstance.methods.authorizeAccess(target_address, $(this).val()).send({from: account})
+                                await contractAccInstance.methods.authorizeAccess(selectAttr, target_address, $(this).val()).send({from: account})
                                 .then( (result) => {
                                     console.log("auth txHash:"+result.transactionHash);
                                     resolve();    
@@ -186,7 +302,31 @@ block content
                             promises.push(promise);
                         });
 
-                        var result = Promise.all(promises);
+                        let result = Promise.all(promises);
+                        result.then(() => location.reload());
+                    });
+
+                    $(".auth-one-approved-btn").on("click", function(e) {
+                        let promises = [];
+                        $(".confirm-list").html("");
+                        $.each($("input[name=oneApprovedAttrs]:checked"), function() {
+                            let attr = $(this).val();
+                            var promise = new Promise( async (resolve, reject) => {
+                                await contractAccInstance.methods.authorizeAll(attr).send({from: account})
+                                .then( (result) => {
+                                    console.log("auth txHash:"+result.transactionHash);
+                                    resolve();    
+                                })
+                                .catch( (err) => {
+                                    console.log("err"+err);
+                                    alert("Authorize failed.");
+                                    reject();
+                                })  
+                            });
+                            promises.push(promise);
+                        });
+
+                        let result = Promise.all(promises);
                         result.then(() => location.reload());
                     });
 
@@ -195,7 +335,7 @@ block content
 
                         $.each($("input[name=orgAddress]:checked"), function() {
                             let promise = new Promise((resolve, reject) => {
-                                contractAccInstance.methods.revokeAccess(target_address, $(this).val()).send({from: account})
+                                contractAccInstance.methods.revokeAccess(selectAttr, target_address, $(this).val()).send({from: account})
                                 .then( (result) => {
                                     console.log("revoke txHash:"+result.transactionHash);
                                     resolve();
@@ -211,6 +351,29 @@ block content
                         
                         let result = Promise.all(promises);
                         result.then(() => location.reload());
+                    });
+
+                    $(".revoke-one-approved-btn").on("click", function(e) {
+                        let promises = [];
+                        $.each($("input[name=oneApprovedAttrs]:checked"), function() {
+                            let attr = $(this).val();
+                            let promise = new Promise((resolve, reject) => {
+                                contractAccInstance.methods.revokeAll(attr).send({from: account})
+                                .then( (result) => {
+                                    console.log("revoke txHash:"+result.transactionHash);
+                                    resolve();
+                                })
+                                .catch( (err) => {
+                                    console.log("err"+err);
+                                    alert("Revoke failed.");
+                                    reject();
+                                })
+                            });
+                            promises.push(promise);
+                        });
+                        
+                        let result = Promise.all(promises);
+                        result.then(() => location.reload());                        
                     });
 
                     $(".request-token-btn").on("click", function(e) {
@@ -229,14 +392,14 @@ block content
                             .then( async () => {                                
                                 for (let i = 0; i < result.length; ++i) {
                                     if (target_address === result[i]) continue;
-                                    await contractAccInstance.methods.validatePermission(target_address, result[i]).call({from: account})
-                                    .then( (r) => {
-                                        if (true){
-                                        //- if (r) {
-                                            console.log(result[i]);
-                                            validList.push(result[i].toUpperCase());                                    
-                                        }
-                                    });
+                                    validList.push(result[i].toUpperCase());
+                                    //- await contractAccInstance.methods.validatePermission(selectAttr, target_address, result[i]).call({from: account})
+                                    //- .then( (r) => {
+                                    //-     if (r) {
+                                    //-         console.log(result[i]);
+                                    //-         validList.push(result[i].toUpperCase());                                    
+                                    //-     }
+                                    //- });
                                 }
                                 alert("Ready to request token.");
                                 let hashed = await contractOrgInstance.methods.getId().call({from: account})
