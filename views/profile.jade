@@ -25,7 +25,6 @@ block content
                                                     span.float-right.px-2(style="color:red; text-decoration: underline dotted; border: solid 1.5px; border-radius: 8px") 尚未驗證
                                                 else if (idx == 'id' && user.idstatus == 1)
                                                     span.float-right.px-2(style="color:green; text-decoration: underline dotted; border: solid 1.5px; border-radius: 8px") 通過驗證
-                                            
 
                     button.btn.btn-block.btn-primary(type='button' data-toggle='modal', data-target='#updateModal') 修改
                     br
@@ -47,6 +46,31 @@ block content
     .row.my-2
         .col-md-8.offset-md-2
             button.btn.btn-block.btn-outline-primary.increase-btn(type='button') For test
+
+    br
+    .row
+        .col-md-8.offset-md-2
+            .card
+                .card-header
+                    h4.font-weight-bold(style="margin:0;")
+                        | Invoice List
+                .card-body
+                    table.table.table-bordered
+                        thead
+                            tr
+                                th(scope='col') 帳單編號
+                                th(scope='col') 客戶名稱
+                                th(scope='col') 描述
+                                th(scope='col') 發票日期
+                                th(scope='col') 總計金額
+                        tbody
+                            each val, idx in invoices
+                                tr
+                                    td #{val.invoiceNo}
+                                    td #{val.name}
+                                    td #{val.description}
+                                    td #{val.invoiceDate}
+                                    td #{val.total}
 
     #bindModal.modal.fade(tabindex='-1' role='dialog' aria-hidden='true')
         .modal-dialog(role='document')

@@ -6,6 +6,7 @@ const ldap = require('ldapjs');
 const util = require('util');
 const Queue = require('bull');
 const user = require("../controllers/user.controller.js");
+const db = require("../models");
 const { resolve } = require('path');
 
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
@@ -102,6 +103,7 @@ var isAuthenticated = function (req,res,next){
 };
 
 router.get('/', isAuthenticated, async function(req, res) {
+    // Find User
     let opts = {
         filter: util.format('(cn=%s)', req.user.cn),
         scope: 'sub'
@@ -110,7 +112,11 @@ router.get('/', isAuthenticated, async function(req, res) {
     let userObject = JSON.parse(data[0]);
     delete userObject['userpassword'];
     req.user = userObject;
-    res.render('profile', { title: 'Profile ', user: userObject, address: contract_address});
+
+    // Find Invoice
+    let invoices = await db.invoice.findAll({where: {name: userObject.cn}});
+
+    res.render('profile', { title: 'Profile ', user: userObject, address: contract_address, invoices: invoices});
 });
 
 router.get('/org.json', function(req, res) {
