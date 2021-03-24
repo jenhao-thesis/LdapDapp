@@ -206,12 +206,13 @@ let getProtectedData = async (req, res, next) => {
                     console.log("GOT INVOICE!!!!");
                     if (json.success) {
                         result = json.data;
+                        console.log(result);
+
                         for (let i = 0; i < result.length; ++i) {
                             date.push(result[i].date);
                             total.push(result[i].total);
                         }
                         // result = JSON.parse(json.data);
-                        // console.log(result);
                         // date.push(result.invoiceDate);
                         // total.push(result.total);
                     }
@@ -225,6 +226,10 @@ let getProtectedData = async (req, res, next) => {
             }
         }
     }
+
+    console.log("current date");
+    console.log(date);
+    console.log("end log");
     req.errorMsg = errorMsg;
     req.data = data;
     req.orgs = orgs;
