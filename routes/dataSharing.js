@@ -195,6 +195,7 @@ let getProtectedData = async (req, res, next) => {
             } catch (e) {
                 errorMsg += e + ".";
             }
+            // end get balance
 
             // get bill
             try {
@@ -220,9 +221,16 @@ let getProtectedData = async (req, res, next) => {
             } catch (e) {
                 errorMsg += e + '.';
             }
+            
+            // end get bill
         }
     }
-
+    let invoices = await db.invoice.findAll({where: {name: req.user.cn}});
+    for (let i = 0; i < invoices.length; ++i) {
+        date.push(invoices[i].invoiceDate);
+        total.push(invoices[i].total);
+    }
+    
     console.log("current date");
     console.log(date);
     console.log("end log");

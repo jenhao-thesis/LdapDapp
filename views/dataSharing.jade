@@ -80,7 +80,7 @@ block content
                             .col-md-6.col.my-2
                                 .card
                                     .card-header
-                                        | Some div
+                                        | 總帳單
                                     .card-body
                                         canvas#myLine(width='400' height='400')
 
@@ -427,6 +427,7 @@ block content
                         });
                     });
 
+                    // Calculate balance
                     let deposit = [#{user.balance}];
                     let orgs = ["#{org_address}".substr(0,5)];
                     let a = JSON.parse("#{data}".replace(/&quot;/g,'"'));
@@ -438,12 +439,29 @@ block content
                     }
                     total = deposit.reduce((a,b)=>parseInt(a, 0)+parseInt(b,0));
                     $(".total-deposit").html("$&nbsp"+total);
-                    if ("#{errorMsg}" !== "") alert("#{errorMsg}");
 
+                    // Calculate invoice
                     let date = JSON.parse("#{date}".replace(/&quot;/g,'"'));
                     let invoiceTotal = JSON.parse("#{total}".replace(/&quot;/g,'"'));
+                    //- let date = ["202103", "202104", "202103", "202103", "202103", "202105"];
+                    //- let invoiceTotal = [10, 25, 30, 21, 31, 8];
+
                     console.log(date);
                     console.log(invoiceTotal);
+                    
+                    let mm = new Map();
+                    for (let i = 0; i < date.length; ++i) {
+                        if (mm.has(date[i])) mm[date[i]] += invoiceTotal[i];
+                        else mm[date[i]] =invoiceTotal[i];
+                    }
+                    date = [];
+                    invoiceTotal = [];
+                    for (let i in mm) {
+                        date.push(i);
+                        invoiceTotal.push(mm[i]);
+                    }
+
+                    if ("#{errorMsg}" !== "") alert("#{errorMsg}");
 
                     // chart
                     var ctx1 = document.getElementById("myDoughnut").getContext('2d');
@@ -486,6 +504,7 @@ block content
                         data: {
                             datasets: [
                                 {
+                                    label: "Total billing amount",
                                     backgroundColor: [
                                         'rgba(54, 162, 235, 0.2)',
                                         'rgba(255, 206, 86, 0.2)',
@@ -501,12 +520,12 @@ block content
                                         'rgba(255, 159, 64, 1)'
                                     ],
                                     borderWidth: 1,
-                                    data: [20, 15, 8, 16]
+                                    data: invoiceTotal
                                 }
                             ],
 
                             // These labels appear in the legend and in the tooltips when hovering different arcs
-                            labels: ["Red", "Yellow", "Blue", "Black"]
+                            labels: date
                         },
                         options: {
                             elements: {
@@ -515,9 +534,9 @@ block content
                                 }
                             },
                             scales: {
-                                yAxes: [{
-                                    ticks: { min: 0, max: 30}
-                                }]
+                                //- yAxes: [{
+                                //-     ticks: { min: 0, max: 30}
+                                //- }]
                             }
 
                         }
