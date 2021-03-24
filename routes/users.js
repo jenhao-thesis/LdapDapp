@@ -312,9 +312,14 @@ router.get('/protectedInvoice', verifyToken, async function(req, res) {
         attrsOnly: true
     };
     let specificUser = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com')
-    console.log(specificUser);
-    console.log(`CN: ${specificUser.cn}`);
-    let invoices = await db.invoice.findAll({where: {name: specificUser.cn}});
+    let userObject = JSON.parse(specificUser);
+
+    console.log(userObject);
+    console.log(`CN: ${userObject.cn}`);
+
+    let invoices = await db.invoice.findAll({where: {name: userObject.cn}});
+    console.log(invoices);
+    
     if (invoices)
         return res.json({success: true, message: "ok, got token", data: invoices});
     else
