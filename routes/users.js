@@ -320,8 +320,10 @@ router.get('/protectedInvoice', verifyToken, async function(req, res) {
     let invoices = await db.invoice.findAll({where: {name: userObject.cn}});
     console.log(invoices);
 
-    if (invoices.length !== 0)
+    if (invoices.length !== 0) {
+        console.log("Found record and return.");
         return res.json({success: true, message: "ok, got token", data: invoices});
+    }
     else
         return res.json({success: false, message: "not found", data: []});    
 });
