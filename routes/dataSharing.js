@@ -203,7 +203,7 @@ let getProtectedData = async (req, res, next) => {
                 })
                 .then(res => res.json())
                 .then(json => {
-                    console.lop("GOT INVOICE!!!!");
+                    console.log("GOT INVOICE!!!!");
                     if (json.success) {
                         console.log(json.data);
                         // result = JSON.parse(json.data);
