@@ -211,9 +211,6 @@ let getProtectedData = async (req, res, next) => {
                             date.push(result[i].invoiceDate);
                             total.push(result[i].total);
                         }
-                        // result = JSON.parse(json.data);
-                        // date.push(result.invoiceDate);
-                        // total.push(result.total);
                     }
                 })
                 .catch(err => {

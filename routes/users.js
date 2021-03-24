@@ -150,7 +150,7 @@ router.post('/loginWithMetamask', passport.authenticate('local', {
     res.send({url: "/profile/"});
 });
 
-var verifyToken = function (req, res, next) {
+var verifyTokenForInvoice = function (req, res, next) {
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
     let {acc} = req.query;
 
@@ -188,7 +188,7 @@ var verifyToken = function (req, res, next) {
     }   
 };
 
-var verifyTokenAndConfirmWithContract = function (req, res, next) {
+var verifyTokenForDeposit = function (req, res, next) {
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
     let {acc} = req.query;
     console.log(`current accMgr address: ${acc}`);
@@ -286,7 +286,7 @@ router.post('/authenticate', async function(req, res) {
     })
 });
 
-router.get('/protected', verifyTokenAndConfirmWithContract, async function(req, res) {
+router.get('/protected', verifyTokenForDeposit, async function(req, res) {
     let data = req.decoded;
     let hashed = data.hashed;
     let opts = {
@@ -302,7 +302,7 @@ router.get('/protected', verifyTokenAndConfirmWithContract, async function(req, 
         return res.json({success: false, message: "not found", data: []});
 });
 
-router.get('/protectedInvoice', verifyToken, async function(req, res) {
+router.get('/protectedInvoice', verifyTokenForInvoice, async function(req, res) {
     let data = req.decoded;
     let hashed = data.hashed;
     let opts = {
