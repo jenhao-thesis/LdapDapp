@@ -159,8 +159,25 @@ var verifyToken = function (req, res, next) {
             if (err) {
                 return res.status(403).json({success: false, message: 'Failed to authenticate token.'})
             } else {
-                req.decoded = decoded
-                next();
+                // check with BC
+                let permit = false;
+                let accContractInstance = new web3.eth.Contract(acc_contract.abi, acc);
+                await accContractInstance.methods.validateOneApproved("bill").call({from: admin_address})
+                .then((r) => {
+                    console.log("PERMISSION:", r);
+                    permit = r;
+                });
+
+                if (permit) {
+                    req.decoded = decoded
+                    next();
+                }
+                else {
+                    return res.status(403).send({
+                        success: false,
+                        message: `((bill)), Already revoke please request token with ${admin_address} again.`
+                    })
+                }
             }
         });
     } else {
@@ -196,7 +213,7 @@ var verifyTokenAndConfirmWithContract = function (req, res, next) {
                 else {
                     return res.status(403).send({
                         success: false,
-                        message: `Already revoke please request token with ${admin_address} again.`
+                        message: `((deposit)), Already revoke please request token with ${admin_address} again.`
                     })
                 }
             }
@@ -279,8 +296,28 @@ router.get('/protected', verifyTokenAndConfirmWithContract, async function(req, 
         attrsOnly: true
     };
     let specificUser = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com')
+    if (specificUser)
+        return res.json({success: true, message: "ok, got token", data: specificUser});
+    else 
+        return res.json({success: false, message: "not found", data: []});
+});
 
-    res.json({success: true, message: "ok, got token", data: specificUser});
+router.get('/protectedInvoice', verifyToken, async function(req, res) {
+    let data = req.decoded;
+    let hashed = data.hashed;
+    let opts = {
+        filter: `(hashed=${hashed})`,
+        scope: 'one',
+        attributes: ['cn'],
+        attrsOnly: true
+    };
+    let specificUser = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com')
+    console.log(`CN: ${specificUser.cn}`);
+    let invoices = await db.invoice.findAll({where: {name: specificUser.cn}});
+    if (invoices)
+        return res.json({success: true, message: "ok, got token", data: invoices});
+    else
+        return res.json({success: false, message: "not found", data: []});    
 });
 
 router.get('/auth/nonce', async function (req, res) {

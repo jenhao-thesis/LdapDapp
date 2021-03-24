@@ -159,6 +159,10 @@ let getProtectedData = async (req, res, next) => {
     // Third: send request to resource provider with token.
     let data = [];
     let orgs = [];
+
+    let date = [];
+    let total = [];
+
     let provider_ip = "";
     let errorMsg = "";
     for (let i = 0; i < tokens.length; ++i) {
@@ -167,6 +171,7 @@ let getProtectedData = async (req, res, next) => {
             console.log(`IP of current provider ${tokens[i].org} is not found.`)
         }
         else {
+            // get balance
             try {
                 let result;
                 await fetch(`http://${provider_ip}/users/protected?acc=${accAddress}`, {            
@@ -190,11 +195,36 @@ let getProtectedData = async (req, res, next) => {
             } catch (e) {
                 errorMsg += e + ".";
             }
+
+            // get bill
+            try {
+                let result;
+                await fetch(`http://${provider_ip}/users/protectedInvoice?acc=${accAddress}`, {
+                    headers: {'x-access-token': tokens[i].jwt}
+                })
+                .then(res => res.json())
+                .then(json => {
+                    if (json.success) {
+                        result = JSON.parse(json.data);
+                        console.log(result);
+                        date.push(result.invoiceDate);
+                        total.push(result.total);
+                    }
+                })
+                .catch(err => {
+                    console.log(`Get Data Error`, err);
+                    throw `Get protected invoice Error with ${tokens[i].org}. ${err}`;
+                });
+            } catch (e) {
+                errorMsg += e + '.';
+            }
         }
     }
     req.errorMsg = errorMsg;
     req.data = data;
     req.orgs = orgs;
+    req.date = date;
+    req.total = req.total;
     next();
 };
 
@@ -226,6 +256,8 @@ router.get('/', isAuthenticated, getHashed, getProtectedData, async function(req
                                 tokens: tokens,
                                 data: JSON.stringify(req.data),
                                 orgs: JSON.stringify(req.orgs),
+                                date: JSON.stringify(req.date),
+                                total: JSON.stringify(req.total),
                                 errorMsg: req.errorMsg
                             });
 });
