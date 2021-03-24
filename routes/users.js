@@ -191,7 +191,7 @@ var verifyToken = function (req, res, next) {
 var verifyTokenAndConfirmWithContract = function (req, res, next) {
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
     let {acc} = req.query;
-
+    console.log(`current accMgr address: ${acc}`);
     if (token) {
         jwt.verify(token, admin_key, async function(err, decoded) {
             if (err) {
