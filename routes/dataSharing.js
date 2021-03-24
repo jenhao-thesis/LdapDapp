@@ -196,28 +196,27 @@ let getProtectedData = async (req, res, next) => {
                 errorMsg += e + ".";
             }
 
-            // get bill
-            try {
-                let result;
-                await fetch(`http://${provider_ip}/users/protectedInvoice?acc=${accAddress}`, {
-                    headers: {'x-access-token': tokens[i].jwt}
-                })
-                .then(res => res.json())
-                .then(json => {
-                    if (json.success) {
-                        result = JSON.parse(json.data);
-                        console.log(result);
-                        date.push(result.invoiceDate);
-                        total.push(result.total);
-                    }
-                })
-                .catch(err => {
-                    console.log(`Get Data Error`, err);
-                    throw `Get protected invoice Error with ${tokens[i].org}. ${err}`;
-                });
-            } catch (e) {
-                errorMsg += e + '.';
-            }
+            // // get bill
+            // try {
+            //     await fetch(`http://${provider_ip}/users/protectedInvoice?acc=${accAddress}`, {
+            //         headers: {'x-access-token': tokens[i].jwt}
+            //     })
+            //     .then(res => res.json())
+            //     .then(json => {
+            //         if (json.success) {
+            //             result = JSON.parse(json.data);
+            //             console.log(result);
+            //             date.push(result.invoiceDate);
+            //             total.push(result.total);
+            //         }
+            //     })
+            //     .catch(err => {
+            //         console.log(`Get Data Error`, err);
+            //         throw `Get protected invoice Error with ${tokens[i].org}. ${err}`;
+            //     });
+            // } catch (e) {
+            //     errorMsg += e + '.';
+            // }
         }
     }
     req.errorMsg = errorMsg;
