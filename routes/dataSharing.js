@@ -204,10 +204,11 @@ let getProtectedData = async (req, res, next) => {
                 .then(res => res.json())
                 .then(json => {
                     if (json.success) {
-                        result = JSON.parse(json.data);
-                        console.log(result);
-                        date.push(result.invoiceDate);
-                        total.push(result.total);
+                        console.log(json.data);
+                        // result = JSON.parse(json.data);
+                        // console.log(result);
+                        // date.push(result.invoiceDate);
+                        // total.push(result.total);
                     }
                 })
                 .catch(err => {

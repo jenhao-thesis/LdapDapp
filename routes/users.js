@@ -296,7 +296,7 @@ router.get('/protected', verifyTokenAndConfirmWithContract, async function(req, 
         attrsOnly: true
     };
     let specificUser = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com')
-    if (specificUser)
+    if (specificUser.length !== 0)
         return res.json({success: true, message: "ok, got token", data: specificUser});
     else 
         return res.json({success: false, message: "not found", data: []});
@@ -319,8 +319,8 @@ router.get('/protectedInvoice', verifyToken, async function(req, res) {
 
     let invoices = await db.invoice.findAll({where: {name: userObject.cn}});
     console.log(invoices);
-    
-    if (invoices)
+
+    if (invoices.length !== 0)
         return res.json({success: true, message: "ok, got token", data: invoices});
     else
         return res.json({success: false, message: "not found", data: []});    
