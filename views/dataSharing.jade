@@ -440,6 +440,11 @@ block content
                     $(".total-deposit").html("$&nbsp"+total);
                     if ("#{errorMsg}" !== "") alert("#{errorMsg}");
 
+                    let date = [#{date}];
+                    let total = [#{total}];
+                    console.log(date);
+                    console.log(total);
+
                     // chart
                     var ctx1 = document.getElementById("myDoughnut").getContext('2d');
                     var myDoughnutChart = new Chart(ctx1, {
