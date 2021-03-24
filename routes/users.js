@@ -312,6 +312,7 @@ router.get('/protectedInvoice', verifyToken, async function(req, res) {
         attrsOnly: true
     };
     let specificUser = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com')
+    console.log(specificUser);
     console.log(`CN: ${specificUser.cn}`);
     let invoices = await db.invoice.findAll({where: {name: specificUser.cn}});
     if (invoices)
