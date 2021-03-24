@@ -440,8 +440,8 @@ block content
                     $(".total-deposit").html("$&nbsp"+total);
                     if ("#{errorMsg}" !== "") alert("#{errorMsg}");
 
-                    let date = [#{date}];
-                    let invoiceTotal = [#{total}];
+                    let date = JSON.parse("#{date}".replace(/&quot;/g,'"'));
+                    let invoiceTotal = JSON.parse("#{total}".replace(/&quot;/g,'"'));
                     console.log(date);
                     console.log(invoiceTotal);
 

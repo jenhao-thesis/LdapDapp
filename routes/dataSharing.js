@@ -233,7 +233,7 @@ let getProtectedData = async (req, res, next) => {
     req.data = data;
     req.orgs = orgs;
     req.date = date;
-    req.total = req.total;
+    req.total = total;
     next();
 };
 
