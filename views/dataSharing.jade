@@ -451,7 +451,7 @@ block content
                     
                     let mm = new Map();
                     for (let i = 0; i < date.length; ++i) {
-                        if (mm.has(date[i])) mm[date[i]] += invoiceTotal[i];
+                        if (mm[date[i]] !== undefined) mm[date[i]] += invoiceTotal[i];
                         else mm[date[i]] =invoiceTotal[i];
                     }
                     date = [];
