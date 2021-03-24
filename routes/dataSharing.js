@@ -208,7 +208,7 @@ let getProtectedData = async (req, res, next) => {
                         result = json.data;
                         for (let i = 0; i < result.length; ++i) {
                             console.log(result[i]);
-                            date.push(result[i].date);
+                            date.push(result[i].invoiceDate);
                             total.push(result[i].total);
                         }
                         // result = JSON.parse(json.data);
