@@ -68,6 +68,7 @@ app.use('/dataSharing', dataSharing);
 require("./routes/token.routes")(app);
 require("./routes/user.routes")(app);
 require("./routes/invoice.routes")(app);
+require("./routes/test.routes")(app);
 
 passport.use(new LdapStrategy(OPTS));
 
