@@ -439,27 +439,61 @@ block content
                     }
                     total = deposit.reduce((a,b)=>parseInt(a, 0)+parseInt(b,0));
                     $(".total-deposit").html("$&nbsp"+total);
+                    // End calculate balance
 
                     // Calculate invoice
+                    let onlyUnique = (v, idx, self) => {
+                        return self.indexOf(v) === idx;
+                    }
+
                     let date = JSON.parse("#{date}".replace(/&quot;/g,'"'));
                     let invoiceTotal = JSON.parse("#{total}".replace(/&quot;/g,'"'));
+                    let resOrg = JSON.parse("#{resOrg}".replace(/&quot;/g,'"'));
                     //- let date = ["202103", "202104", "202103", "202103", "202103", "202105"];
                     //- let invoiceTotal = [10, 25, 30, 21, 31, 8];
+                    //- let resOrg = ["0x123", "0x234", "0x123", "0x123", "0x456", "0x234"];
 
                     console.log(date);
                     console.log(invoiceTotal);
-                    
+                    console.log(resOrg);
+
                     let mm = new Map();
                     for (let i = 0; i < date.length; ++i) {
                         if (mm[date[i]] !== undefined) mm[date[i]] += invoiceTotal[i];
-                        else mm[date[i]] =invoiceTotal[i];
+                        else mm[date[i]] = invoiceTotal[i];
                     }
-                    date = [];
-                    invoiceTotal = [];
+                    let uniqueDate = [];
+                    let invoiceTotalByDate = [];
                     for (let i in mm) {
-                        date.push(i);
-                        invoiceTotal.push(mm[i]);
+                        uniqueDate.push(i);
+                        invoiceTotalByDate.push(mm[i]);
                     }
+
+                    let uniqueOrg = resOrg.filter(onlyUnique);
+                    let orgTotalDataset = [];
+                    for (let i = 0; i < uniqueOrg.length; ++i) {
+                        // inital 
+                        let tmp = [];
+                        for (let j = 0; j < uniqueDate.length; ++j) {
+                            tmp.push(0);
+                        }
+
+                        // calculate
+                        for (let k = 0; k < invoiceTotal.length; k++) {
+                            for (let m = 0; m < uniqueDate.length; m++) {
+                                if (uniqueDate[m] === date[k] && resOrg[k] == uniqueOrg[i]) {
+                                    tmp[m] += invoiceTotal[k];
+                                }
+                            }
+                        }
+
+                        // push into dataset
+                        orgTotalDataset.push(tmp);
+                    }
+
+                    orgTotalDataset.push(invoiceTotalByDate);
+                    uniqueOrg.push("Total billing amount");
+                    // End calculate invoice
 
                     if ("#{errorMsg}" !== "") alert("#{errorMsg}");
 
@@ -498,34 +532,32 @@ block content
                         options: {}
                     });
 
+                    let bcolor = [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(254, 67, 101, 1)'
+                    ];
+                    let ds = [];
+                    for (let i = 0; i < uniqueOrg.length; i++) {
+                        ds.push({
+                            label: uniqueOrg[i],
+                            backgroundColor: ['rgba(0, 0, 0, 0)'],
+                            borderColor:[bcolor[i]],
+                            borderWidth: 1,
+                            data: orgTotalDataset[i]
+                        });
+                    }
+
                     var ctx2 = document.getElementById("myLine").getContext('2d');
                     var myLineChart = new Chart(ctx2, {
                         type: "line",
                         data: {
-                            datasets: [
-                                {
-                                    label: "Total billing amount",
-                                    backgroundColor: [
-                                        'rgba(54, 162, 235, 0.2)',
-                                        'rgba(255, 206, 86, 0.2)',
-                                        'rgba(75, 192, 192, 0.2)',
-                                        'rgba(153, 102, 255, 0.2)',
-                                        'rgba(255, 159, 64, 0.2)'
-                                    ],
-                                    borderColor: [
-                                        'rgba(54, 162, 235, 1)',
-                                        'rgba(255, 206, 86, 1)',
-                                        'rgba(75, 192, 192, 1)',
-                                        'rgba(153, 102, 255, 1)',
-                                        'rgba(255, 159, 64, 1)'
-                                    ],
-                                    borderWidth: 1,
-                                    data: invoiceTotal
-                                }
-                            ],
-
+                            datasets: ds ,
                             // These labels appear in the legend and in the tooltips when hovering different arcs
-                            labels: date
+                            labels: uniqueDate
                         },
                         options: {
                             elements: {

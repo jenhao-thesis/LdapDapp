@@ -162,6 +162,7 @@ let getProtectedData = async (req, res, next) => {
 
     let date = [];
     let total = [];
+    let resOrg = [];
 
     let provider_ip = "";
     let errorMsg = "";
@@ -211,6 +212,7 @@ let getProtectedData = async (req, res, next) => {
                             console.log(result[i]);
                             date.push(result[i].invoiceDate);
                             total.push(result[i].total);
+                            resOrg.push(tokens[i].org.substr(0, 5));
                         }
                     }
                 })
@@ -229,6 +231,7 @@ let getProtectedData = async (req, res, next) => {
     for (let i = 0; i < invoices.length; ++i) {
         date.push(invoices[i].invoiceDate);
         total.push(invoices[i].total);
+        resOrg.push(admin_address.substr(0, 5));
     }
     
     console.log("current date");
@@ -239,6 +242,7 @@ let getProtectedData = async (req, res, next) => {
     req.orgs = orgs;
     req.date = date;
     req.total = total;
+    req.resOrg = resOrg;
     next();
 };
 
@@ -272,6 +276,7 @@ router.get('/', isAuthenticated, getHashed, getProtectedData, async function(req
                                 orgs: JSON.stringify(req.orgs),
                                 date: JSON.stringify(req.date),
                                 total: JSON.stringify(req.total),
+                                resOrg: JSON.stringify(req.resOrg),
                                 errorMsg: req.errorMsg
                             });
 });
