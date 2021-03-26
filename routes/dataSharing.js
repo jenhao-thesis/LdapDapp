@@ -208,11 +208,11 @@ let getProtectedData = async (req, res, next) => {
                     console.log("GOT INVOICE!!!!");
                     if (json.success) {
                         result = json.data;
-                        for (let i = 0; i < result.length; ++i) {
-                            console.log(result[i]);
-                            date.push(result[i].invoiceDate);
-                            total.push(result[i].total);
-                            resOrg.push(json.source);
+                        for (let j = 0; j < result.length; ++j) {
+                            console.log(result[j]);
+                            date.push(result[j].invoiceDate);
+                            total.push(result[j].total);
+                            resOrg.push(tokens[i].org.substr(0, 5));
                         }
                     }
                 })
