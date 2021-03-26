@@ -212,7 +212,7 @@ let getProtectedData = async (req, res, next) => {
                             console.log(result[i]);
                             date.push(result[i].invoiceDate);
                             total.push(result[i].total);
-                            resOrg.push(tokens[i].org.substr(0, 5));
+                            resOrg.push(json.source);
                         }
                     }
                 })
