@@ -95,7 +95,7 @@ let getToken = async (req, res) => {
                 }
                 
 
-                const token = {
+                let token = {
                     identity: identity,
                     org: cur,
                     jwt: jwt
