@@ -18,7 +18,7 @@ exports.thirdPartyLogin = async (req, res) => {
 
     if (account !== undefined) {
         try {
-            await contractInstance.methods.getIdByOrg(account).call()
+            await contractInstance.methods.getIdByOrg(account).call({from: admin_address})
             .then((result) => {
                 // if (result === invalidAdd) 
                 //     return res.status(500).send({msg: `Please bind first.`});
