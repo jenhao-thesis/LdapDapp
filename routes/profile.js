@@ -155,6 +155,7 @@ router.post('/bindAccount', isAuthenticated, async function(req, res, next) {
         msg = 'Your identification card number is invalid.';
     }
     else {
+        web3.eth.personal.unlockAccount(admin_address, "12345678", 15000);
         let hashedId = await contractInstance.methods.getId().call({from: userAddress});
         if (hashedId === "0x0000000000000000000000000000000000000000000000000000000000000000") {
             console.log("not used before");

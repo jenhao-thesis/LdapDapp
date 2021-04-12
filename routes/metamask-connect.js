@@ -14,7 +14,7 @@ const client = ldap.createClient(config.ldap.server);
 let defaultDN = "cn=%s,ou=location2,dc=jenhao,dc=com";
 
 router.get('/', function(req, res) {
-    console.log("web3 versin", web3.version);
+    console.log("web3 version", web3.version);
     res.render('metamask-connect', { title: 'Metamask connection',
                                      address: contract_address});
 });
@@ -25,7 +25,9 @@ router.get('/org.json', function(req, res) {
 });
 
 router.post('/addUser', async function(req, res, next) {
-    console.log("web3 versin", web3.version);
+    console.log("web3 version", web3.version);
+    // web3.eth.personal.unlockAccount(admin_address, "12345678", 15000);
+    // web3.eth.defaultAccount = admin_address;
     let contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));    
     let contractInstance = new web3.eth.Contract(contract.abi, contract_address);
     let txHash;
