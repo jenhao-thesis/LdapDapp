@@ -23,30 +23,34 @@ block content
                     .input-group.mb-3
                         input.func1-input0.form-control(type='number' placeholder="Enter org index" aria-label="Parameter" aria-describedby='basic-addon2', value="0")
                         .input-group-append
-                            button.func1.btn.btn-primary(type='button') getOrg(onlyOrg)
+                            button.func1.btn.btn-primary(type='button') 取得Org位址
                     
                     .input-group.mb-3
                         input.func2-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2' required="required")
                         input.func2-input1.form-control(type='text' placeholder="Enter cn" aria-label="Parameter" aria-describedby='basic-addon2' required="required")
                         .input-group-append
-                            button.func2.btn.btn-secondary(type='button') addUser(onlyOrg)
+                            button.func2.btn.btn-secondary(type='button') 驗證用戶身份
 
                     .input-group.mb-3
                         input.func3-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2')
                         .input-group-append
-                            button.func3.btn.btn-info(type='button') getId  
+                            button.func3.btn.btn-info(type='button') 取得用戶DI
+
+                    //- .input-group.mb-3
+                    //-     input.func4-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2' required="required")
+                    //-     input.func4-input1.form-control(type='text' placeholder="Enter ethereum address" aria-label="Parameter" aria-describedby='basic-addon2' required="required")
+                    //-     .input-group-append
+                    //-         button.func4.btn.btn-success(type='button') bindAccount(onlyOrg)
+
+                    //- .input-group.mb-3
+                    //-     input.func5-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2')
+                    //-     .input-group-append
+                    //-         button.func5.btn.btn-info(type='button') sign data
 
                     .input-group.mb-3
-                        input.func4-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2' required="required")
-                        input.func4-input1.form-control(type='text' placeholder="Enter ethereum address" aria-label="Parameter" aria-describedby='basic-addon2' required="required")
+                        input.func6-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2')
                         .input-group-append
-                            button.func4.btn.btn-success(type='button') bindAccount(onlyOrg)
-
-                    .input-group.mb-3
-                        input.func5-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2')
-                        .input-group-append
-                            button.func5.btn.btn-info(type='button') sign data
-
+                            button.func6.btn.btn-danger(type='button') 解除用戶綁定                    
 
                     button.btn.btn-block.btn-warning.check-log(type='button') Stop log        
 
@@ -158,10 +162,16 @@ block content
                         await web3.eth.sign(web3.utils.utf8ToHex(input_0), account)
                         .then( (data) => {
                             console.log(data);
+                            alert(`Your signature: ${data}`);
                         })
                         .catch( (err) => {
                             alert("sign fail");
                         })
+                    });
+
+                    $(".func6").on("click", async function(e) {
+                        let input_0 = $(".func6-input0").val();
+                        alert(input_0);
                     });
 
                     $(".check-log").on("click", async function(e) {

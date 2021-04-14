@@ -114,6 +114,40 @@ contract OrganizationManager {
         emit BindUserAccountEvent(msg.sender, userAddress, hashed);
     }
 
+    function rebindAccount(
+        string memory uniqueId,
+        address newAddress
+    )
+        public onlyOrg
+    {
+        require(_bindUsers[newAddress] == 0,
+                "This address already binded.");
+        require(_bindState[keccak256(bytes(uniqueId))] == true,
+                "This UniqueId does not yet bind.");
+        require(_uniqueState[keccak256(bytes(uniqueId))],
+                "UniqueId invalid.");
+        bytes32 hashed = keccak256(bytes(uniqueId));
+        
+        // unbind old one
+        address oldAddress = _uniqueIdenity[hashed].userAddress;
+        _bindUsers[oldAddress] = 0;
+        _users[oldAddress] = false;
+        
+        //bind new one
+        _bindUsers[newAddress] = hashed; 
+        _users[newAddress] = true;
+        
+        // create contract and transfer ownership to user himself
+        AccessManager accessManager = new AccessManager();
+        accessManager.transferOwnership(newAddress);
+        
+        // update user info
+        _uniqueIdenity[hashed].accessManagerAddress = address(accessManager);
+        _uniqueIdenity[hashed].userAddress = newAddress;
+        
+        emit ReBindUserAccountEvent(msg.sender, oldAddress, newAddress, hashed);        
+    }
+
     function checkLastModify(string memory uniqueId) public view returns (address){
         return (_uniqueIdenity[keccak256(bytes(uniqueId))]).lastModifyOrg;
     }
