@@ -44,6 +44,7 @@ contract OrganizationManager {
     // Events
     event AddUserEvent(address orgAddress, uint status);
     event BindUserAccountEvent(address orgAddress, address userAccount, bytes32 hashed);
+    event ReBindUserAccountEvent(address orgAddress, address oldAccount, address userAccount, bytes32 hashed);
 
     uint256 _state;
     

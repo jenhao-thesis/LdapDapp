@@ -49,8 +49,9 @@ block content
 
                     .input-group.mb-3
                         input.func6-input0.form-control(type='text' placeholder="Enter unique id" aria-label="Parameter" aria-describedby='basic-addon2')
+                        input.func6-input1.form-control(type='text' placeholder="Enter Ethereum address" aria-label="Parameter" aria-describedby='basic-addon2')
                         .input-group-append
-                            button.func6.btn.btn-danger(type='button') 解除用戶綁定                    
+                            button.func6.btn.btn-danger(type='button') 重新綁定用戶                    
 
                     button.btn.btn-block.btn-warning.check-log(type='button') Stop log        
 
@@ -171,7 +172,20 @@ block content
 
                     $(".func6").on("click", async function(e) {
                         let input_0 = $(".func6-input0").val();
-                        alert(input_0);
+                        let input_1 = $(".func6-input1").val();
+                        alert(`${input_0}, ${input_1}`);
+                        
+                        $.getJSON('org.json', function (data) {
+                            let contractInstance = new web3.eth.Contract(data.abi, contract_address);
+                            contractInstance.methods.rebindAccount(input_0, input_1).send({from: account})
+                            .then( (result) => {
+                                alert(`Tx: ${result.transactionHash}`);
+                                console.log("object:", result);
+                            })
+                            .catch( (err) => {
+                                alert(err);
+                            }); 
+                        });
                     });
 
                     $(".check-log").on("click", async function(e) {
