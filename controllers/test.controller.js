@@ -37,3 +37,45 @@ exports.thirdPartyLogin = async (req, res) => {
         return res.status(500).send({msg: "Please provide account"});
     }
 };
+
+exports.addUser = async (req, res) => {
+    const {id} = req.query;
+
+    if (id !== undefined) {
+        await web3.eth.personal.unlockAccount(admin_address, "12345678", 15000);
+        let txHash = "";
+        // await contractInstance.methods.addUser(id).send({
+        //     from: admin_address,
+        //     gas: 6721975
+        // }, function(error, transactionHash) {
+        //     if (error) {
+        //         console.log("err", error);
+        //     }
+        //     else {
+        //         console.log("Transaction hash:", transactionHash);
+        //         txHash = transactionHash;
+        //     }
+        // })
+
+        contractInstance.methods.addUser(id).send({from: admin_address})
+        .on('transactionHash', function(hash){
+            console.log(`transactionHash: ${hash}.`);
+            return res.send({tx: hash});
+        })
+        .on('receipt', function(receipt){
+            console.log(`receipt: ${receipt}`);
+        })
+        .on('confirmation', function(confirmationNumber, receipt){
+            console.log(`confirmation: ${confirmationNumber} ${receipt}`);
+        })
+        .on('error', function(error, receipt) {
+            console.log(`error: ${error} ${receipt}`);
+        });        
+
+    }
+    else {
+        return res.status(500).send({msg: "Please provide id."})
+    }
+
+
+}
