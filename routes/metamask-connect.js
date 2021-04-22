@@ -26,7 +26,7 @@ router.get('/org.json', function(req, res) {
 
 router.post('/addUser', async function(req, res, next) {
     console.log("web3 version", web3.version);
-    web3.eth.personal.unlockAccount(admin_address, "12345678", 15000);
+    await web3.eth.personal.unlockAccount(admin_address, "12345678", 15000);
     // web3.eth.defaultAccount = admin_address;
     let contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));    
     let contractInstance = new web3.eth.Contract(contract.abi, contract_address);

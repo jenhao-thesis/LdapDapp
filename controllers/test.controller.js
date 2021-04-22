@@ -60,16 +60,18 @@ exports.addUser = async (req, res) => {
         contractInstance.methods.addUser(id).send({from: admin_address})
         .on('transactionHash', function(hash){
             console.log(`transactionHash: ${hash}.`);
-            return res.send({tx: hash});
+            // return res.send({tx: hash});
         })
         .on('receipt', function(receipt){
-            console.log(`receipt: ${receipt}`);
+            console.log(`receipt:`, receipt);
+            // console.log(`Get log:`, receipt.events.AddUserEvent.returnValues);
+            return res.send({msg: "OK"});
         })
-        .on('confirmation', function(confirmationNumber, receipt){
-            console.log(`confirmation: ${confirmationNumber} ${receipt}`);
-        })
+        // .on('confirmation', function(confirmationNumber, receipt){
+        //     console.log(`confirmation: ${confirmationNumber}`, receipt);
+        // })
         .on('error', function(error, receipt) {
-            console.log(`error: ${error} ${receipt}`);
+            console.log(`error: ${error}`, receipt);
         });        
 
     }
