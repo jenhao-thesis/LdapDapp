@@ -7,6 +7,9 @@ const contract_address = config.contracts.organizationManagerAddress;
 const contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));
 const contractInstance = new web3.eth.Contract(contract.abi, contract_address);
 
+const contract_ACM = JSON.parse(fs.readFileSync('./build/contracts/AccessManager.json', 'utf-8'));
+const contractInstanceACM = new web3.eth.Contract(contract_ACM.abi, "0x1416D0865BFDe818E8fe96d5521C7903CF12126e");
+
 let invalidAdd = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 exports.testResponse = (req, res) => {
@@ -34,7 +37,7 @@ exports.thirdPartyLogin = async (req, res) => {
         }
     }
     else {
-        return res.status(500).send({msg: "Please provide account"});
+        res.status(500).send({msg: "Please provide account"});
     }
 };
 
@@ -43,28 +46,15 @@ exports.addUser = async (req, res) => {
 
     if (id !== undefined) {
         await web3.eth.personal.unlockAccount(admin_address, "12345678", 15000);
-        let txHash = "";
-        // await contractInstance.methods.addUser(id).send({
-        //     from: admin_address,
-        //     gas: 6721975
-        // }, function(error, transactionHash) {
-        //     if (error) {
-        //         console.log("err", error);
-        //     }
-        //     else {
-        //         console.log("Transaction hash:", transactionHash);
-        //         txHash = transactionHash;
-        //     }
-        // })
 
-        contractInstance.methods.addUser(id).send({from: admin_address})
+        let a = contractInstance.methods.addUser(id).send({from: admin_address})
         .on('transactionHash', function(hash){
             console.log(`transactionHash: ${hash}.`);
             // return res.send({tx: hash});
         })
         .on('receipt', function(receipt){
             console.log(`receipt:`, receipt);
-            // console.log(`Get log:`, receipt.events.AddUserEvent.returnValues);
+            console.log(`Get log:`, receipt.events.AddUserEvent.returnValues);
             return res.send({msg: "OK"});
         })
         // .on('confirmation', function(confirmationNumber, receipt){
@@ -73,11 +63,123 @@ exports.addUser = async (req, res) => {
         .on('error', function(error, receipt) {
             console.log(`error: ${error}`, receipt);
         });        
-
     }
     else {
-        return res.status(500).send({msg: "Please provide id."})
+        res.status(500).send({msg: "Please provide id."})
     }
+}
 
+exports.bindAccount = async (req, res) => {
+    const {id, userAddress} = req.query;
+    if (id !== undefined && userAddress !== undefined) {
+        await web3.eth.personal.unlockAccount(admin_address, "12345678", 15000);
+        contractInstance.methods.bindAccount(id, userAddress).send({from: admin_address})
+        .on('transactionHash', function(hash){
+            console.log(`transactionHash: ${hash}.`);
+        })
+        .on('receipt', function(receipt){
+            console.log(`receipt:`, receipt);
+            console.log(`Get log:`, receipt.events.BindUserAccountEvent.returnValues);
+            return res.send({msg: "OK"});
+        })
+        .on('error', function(error, receipt) {
+            console.log(`error: ${error}`, receipt);
+            return res.status(500).send({msg: "Error occur."});
+        });        
+    }
+    else {
+        return res.status(500).send({msg: "Please provide id and userAddress"});
+    }
+}
 
+exports.authorize = async (req, res) => {
+    const {attr, target, org} = req.query;
+    if (attr !== undefined && target !== undefined && org !== undefined) {
+        await web3.eth.personal.unlockAccount("0xdda40158A7d802AB0D1CaB76a2371bD04A78f26C", "12345678");
+        contractInstanceACM.methods.authorizeAccess(attr, target, org).send({from: "0xdda40158A7d802AB0D1CaB76a2371bD04A78f26C"})
+        .on('transactionHash', function(hash){
+            console.log(`transactionHash: ${hash}.`);
+        })
+        .on('receipt', function(receipt){
+            console.log(`receipt:`, receipt);
+            console.log(`Get log:`, receipt.events.AccessAuthorization.returnValues);
+            return res.send({msg: "OK"});
+        })
+        .on('error', function(error, receipt) {
+            console.log(`error: ${error}`, receipt);
+            return res.status(500).send({msg: "Error occur."});
+        });                
+    }
+    else {
+        res.status(500).send({msg: "Please provide attr, target, org"});
+    }
+}
+
+exports.revoke = async (req, res) => {
+    const {attr, target, org} = req.query;
+    if (attr !== undefined && target !== undefined && org !== undefined) {
+        await web3.eth.personal.unlockAccount("0xdda40158A7d802AB0D1CaB76a2371bD04A78f26C", "12345678");
+        contractInstanceACM.methods.revokeAccess(attr, target, org).send({from: "0xdda40158A7d802AB0D1CaB76a2371bD04A78f26C"})
+        .on('transactionHash', function(hash){
+            console.log(`transactionHash: ${hash}.`);
+        })
+        .on('receipt', function(receipt){
+            console.log(`receipt:`, receipt);
+            console.log(`Get log:`, receipt.events.AccessRevocation.returnValues);
+            return res.send({msg: "OK"});
+        })
+        .on('error', function(error, receipt) {
+            console.log(`error: ${error}`, receipt);
+            return res.status(500).send({msg: "Error occur."});
+        });                
+    }
+    else {
+        res.status(500).send({msg: "Please provide attr, target, org"});
+    }    
+}
+
+exports.authorizeAll = async (req, res) => {
+    const {attr} = req.query;
+    if (attr !== undefined) {
+        await web3.eth.personal.unlockAccount("0xdda40158A7d802AB0D1CaB76a2371bD04A78f26C", "12345678");
+        contractInstanceACM.methods.authorizeAll(attr).send({from: "0xdda40158A7d802AB0D1CaB76a2371bD04A78f26C"})
+        .on('transactionHash', function(hash){
+            console.log(`transactionHash: ${hash}.`);
+        })
+        .on('receipt', function(receipt){
+            console.log(`receipt:`, receipt);
+            console.log(`Get log:`, receipt.events.ApprovedAuthorization.returnValues);
+            return res.send({msg: "OK"});
+        })
+        .on('error', function(error, receipt) {
+            console.log(`error: ${error}`, receipt);
+            return res.status(500).send({msg: "Error occur."});
+        });                
+    }
+    else {
+        res.status(500).send({msg: "Please provide attr"});
+    }    
+}
+
+exports.revokeAll = async (req, res) => {
+    const {attr} = req.query;
+    if (attr !== undefined) {
+        await web3.eth.personal.unlockAccount("0xdda40158A7d802AB0D1CaB76a2371bD04A78f26C", "12345678");
+        contractInstanceACM.methods.revokeAll(attr).send({from: "0xdda40158A7d802AB0D1CaB76a2371bD04A78f26C"})
+        .on('transactionHash', function(hash){
+            console.log(`transactionHash: ${hash}.`);
+        })
+        .on('receipt', function(receipt){
+            console.log(`receipt:`, receipt);
+            console.log(`Get log:`, receipt.events.ApprovedRevocation.returnValues);
+            return res.send({msg: "OK"});
+        })
+        .on('error', function(error, receipt) {
+            console.log(`error: ${error}`, receipt);
+            return res.status(500).send({msg: "Error occur."});
+        });                
+    }
+    else {
+        res.status(500).send({msg: "Please provide attr"});
+    }        
 }
