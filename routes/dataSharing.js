@@ -40,7 +40,7 @@ let getToken = async (req, res) => {
         let errorMsg = "";
         for (let i = 0; i < provider_address.length; ++i) {
             cur = '0x' + provider_address[i].substr(2, provider_address[i].length-2);
-            provider_ip = config.org_mapping[cur];
+            provider_ip = config.org_mapping[cur][0];
             if (provider_ip === null) {
                 return res.json({msg: `IP of current provider ${cur} is not found.`})
             }
@@ -167,7 +167,7 @@ let getProtectedData = async (req, res, next) => {
     let provider_ip = "";
     let errorMsg = "";
     for (let i = 0; i < tokens.length; ++i) {
-        provider_ip = config.org_mapping[tokens[i].org];
+        provider_ip = config.org_mapping[tokens[i].org][0];
         if (provider_ip === null) {
             console.log(`IP of current provider ${tokens[i].org} is not found.`)
         }
@@ -277,7 +277,8 @@ router.get('/', isAuthenticated, getHashed, getProtectedData, async function(req
                                 date: JSON.stringify(req.date),
                                 total: JSON.stringify(req.total),
                                 resOrg: JSON.stringify(req.resOrg),
-                                errorMsg: req.errorMsg
+                                errorMsg: req.errorMsg,
+                                org_mapping: JSON.stringify(config.org_mapping)
                             });
 });
 
@@ -290,7 +291,7 @@ router.get('/getOpenData', isAuthenticated, async function(req, res) {
     let result;
     for (let i = 0; i < tokens.length; ++i) {
         console.log(tokens[i].org);
-        provider_ip = config.org_mapping[tokens[i].org];
+        provider_ip = config.org_mapping[tokens[i].org][0];
         if (provider_ip == null) {
             console.log("provider ip is not found")
         }

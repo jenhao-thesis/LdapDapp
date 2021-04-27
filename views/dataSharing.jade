@@ -129,6 +129,7 @@ block content
             let contract_address = "#{address}";
             let target_address = "#{org_address}";
             let selectAttr = "";                            
+            let org_mapping = JSON.parse("#{org_mapping}".replace(/&quot;/g,'"'));
             window.ethereum.on('accountsChanged', function(accounts) {
                 account = accounts[0];
                 $(".account").html("Account:" + account);    
@@ -139,6 +140,7 @@ block content
                 let data_org, data_acc;
                 let contractAccInstance;
                 let contractOrgInstance;
+            
                 $.when(
                     $.getJSON('/dataSharing/org.json', function(data) {
                         data_org = data;
@@ -184,6 +186,7 @@ block content
                             // For initial attribute in mode 1
                             for (let i = 0; i < result.length; ++i) {
                                 if (result[i] == target_address) continue;
+                                let fullName = org_mapping["0x"+result[i].substr(2).toUpperCase()][1]
                                 contractAccInstance.methods.validatePermission(selectAttr, target_address, result[i]).call({from: account})
                                 .then( (r) => {
                                     console.log(r);
@@ -195,7 +198,7 @@ block content
                                                     <label class="custom-control-label" for="customCheck${i}"></label>
                                                 </div>
                                             </td>
-                                            <td class="text-center">${result[i]}</td>
+                                            <td class="text-center">${fullName}</td>
                                             <td class="text-center">`+
                                             (r == false ? `<i class="fas fa-lock"></i>` : `<i class="fas fa-lock-open"></i>`)
                                             +`</td>
@@ -263,10 +266,12 @@ block content
 
                     $(".confirm-btn").on("click", function(e) {
                         let selected = [];
+                        let fullName = "";
                         $(".confirm-list").html("");
                         $.each($("input[name=orgAddress]:checked"), function() {
                             selected.push($(this).val());
-                            $(".confirm-list").html($(".confirm-list").html()+"<br>"+$(this).val());
+                            fullName = org_mapping["0x"+($(this).val()).substr(2).toUpperCase()][1];
+                            $(".confirm-list").html($(".confirm-list").html()+"<br>"+fullName);
                         });
                         $(".auth-one-approved-btn").hide();
                         $(".auth-btn").show();
