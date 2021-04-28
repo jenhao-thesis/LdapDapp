@@ -46,23 +46,46 @@ exports.addUser = async (req, res) => {
 
     if (id !== undefined) {
         await web3.eth.personal.unlockAccount(admin_address, "12345678", 15000);
-
-        let a = contractInstance.methods.addUser(id).send({from: admin_address})
-        .on('transactionHash', function(hash){
-            console.log(`transactionHash: ${hash}.`);
-            // return res.send({tx: hash});
-        })
-        .on('receipt', function(receipt){
-            console.log(`receipt:`, receipt);
-            console.log(`Get log:`, receipt.events.AddUserEvent.returnValues);
-            return res.send({msg: "OK"});
-        })
+        let amount = 5000;
+        let idBase = 0;
+        let start = Date.now();
+        let spendTime = 0;
+        for (let i = 0; i < amount; ++i) {
+            if (i == amount-1) {
+                contractInstance.methods.addUser((idBase+i).toString()).send({from: admin_address})
+                .on('transactionHash', function(hash){
+                    console.log(`${i} transactionHash: ${hash}.`);
+                })
+                .on('receipt', function(receipt){
+                    console.log(`receipt:`, receipt);
+                    console.log(`Get log:`, receipt.events.AddUserEvent.returnValues);
+                    spendTime = (Date.now()-start)/1000;
+                    return res.send({msg: "OK", spendTime: spendTime});
+                })                
+            }
+            else {
+                contractInstance.methods.addUser((idBase+i).toString()).send({from: admin_address})
+                .on('transactionHash', function(hash){
+                    console.log(`${i} transactionHash: ${hash}.`);
+                })                
+            }
+        }
+        // contractInstance.methods.addUser(id).send({from: admin_address})
+        // .on('transactionHash', function(hash){
+        //     console.log(`transactionHash: ${hash}.`);
+        //     return res.send({tx: hash});
+        // })
+        // .on('receipt', function(receipt){
+        //     console.log(`receipt:`, receipt);
+        //     console.log(`Get log:`, receipt.events.AddUserEvent.returnValues);
+        //     return res.send({msg: "OK"});
+        // })
         // .on('confirmation', function(confirmationNumber, receipt){
         //     console.log(`confirmation: ${confirmationNumber}`, receipt);
         // })
-        .on('error', function(error, receipt) {
-            console.log(`error: ${error}`, receipt);
-        });        
+        // .on('error', function(error, receipt) {
+        //     console.log(`error: ${error}`, receipt);
+        // });        
     }
     else {
         res.status(500).send({msg: "Please provide id."})

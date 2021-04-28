@@ -289,96 +289,115 @@ block content
                     });
 
                     $(".auth-btn").on("click", function(e) {
-                        let promises = [];
                         $(".confirm-list").html("");
+                        let selected = []
                         $.each($("input[name=orgAddress]:checked"), function() {
-                            var promise = new Promise( async (resolve, reject) => {
-                                await contractAccInstance.methods.authorizeAccess(selectAttr, target_address, $(this).val()).send({from: account})
-                                .then( (result) => {
-                                    console.log("auth txHash:"+result.transactionHash);
-                                    resolve();    
-                                })
-                                .catch( (err) => {
-                                    console.log("err"+err);
-                                    alert("Authorize failed.");
-                                    reject();
-                                })  
-                            });
-                            promises.push(promise);
+                            selected.push($(this).val());
                         });
-
-                        let result = Promise.all(promises);
-                        result.then(() => location.reload());
+                        
+                        for (let i = 0; i < selected.length; i++) {
+                            if (i === selected.length-1) {
+                                contractAccInstance.methods.authorizeAccess(selectAttr, target_address, selected[i]).send({from: account})
+                                .on('transactionHash', function(hash){
+                                    console.log(`${i} transactionHash: ${hash}.`);                            
+                                })
+                                .on('receipt', function(receipt){
+                                    console.log(`receipt:`, receipt);
+                                    console.log(`log got:`, receipt.events.AccessAuthorization.returnValues);
+                                    alert("Authorize done!");
+                                    location.reload()
+                                })
+                            }
+                            else {
+                                contractAccInstance.methods.authorizeAccess(selectAttr, target_address, selected[i]).send({from: account})
+                                .on('transactionHash', function(hash){
+                                    console.log(`${i} transactionHash: ${hash}.`);                            
+                                })                                
+                            }
+                        }
                     });
 
                     $(".auth-one-approved-btn").on("click", function(e) {
-                        let promises = [];
                         $(".confirm-list").html("");
+                        let selected = [];
                         $.each($("input[name=oneApprovedAttrs]:checked"), function() {
-                            let attr = $(this).val();
-                            var promise = new Promise( async (resolve, reject) => {
-                                await contractAccInstance.methods.authorizeAll(attr).send({from: account})
-                                .then( (result) => {
-                                    console.log("auth txHash:"+result.transactionHash);
-                                    resolve();    
-                                })
-                                .catch( (err) => {
-                                    console.log("err"+err);
-                                    alert("Authorize failed.");
-                                    reject();
-                                })  
-                            });
-                            promises.push(promise);
+                            selected.push($(this).val());
                         });
-
-                        let result = Promise.all(promises);
-                        result.then(() => location.reload());
+                        for (let i = 0; i < selected.length; i++) {
+                            if (i === selected.length-1) {
+                                contractAccInstance.methods.authorizeAll(selected[i]).send({from: account})
+                                .on('transactionHash', function(hash){
+                                    console.log(`${i} transactionHash: ${hash}.`);                            
+                                })
+                                .on('receipt', function(receipt){
+                                    console.log(`receipt:`, receipt);
+                                    console.log(`log got:`, receipt.events.ApprovedAuthorization.returnValues);
+                                    alert("Authorize attributes done!");
+                                    location.reload()
+                                })                                
+                            }
+                            else {
+                                contractAccInstance.methods.authorizeAll(selected[i]).send({from: account})                                
+                                .on('transactionHash', function(hash){
+                                    console.log(`${i} transactionHash: ${hash}.`);                            
+                                })                                
+                            }
+                        }
                     });
 
                     $(".revoke-btn").on("click", function(e) {
-                        let promises = [];
-
+                        let selected = []
                         $.each($("input[name=orgAddress]:checked"), function() {
-                            let promise = new Promise((resolve, reject) => {
-                                contractAccInstance.methods.revokeAccess(selectAttr, target_address, $(this).val()).send({from: account})
-                                .then( (result) => {
-                                    console.log("revoke txHash:"+result.transactionHash);
-                                    resolve();
-                                })
-                                .catch( (err) => {
-                                    console.log("err"+err);
-                                    alert("Revoke failed.");
-                                    reject();
-                                })
-                            });
-                            promises.push(promise);
+                            selected.push($(this).val());
                         });
                         
-                        let result = Promise.all(promises);
-                        result.then(() => location.reload());
+                        for (let i = 0; i < selected.length; i++) {
+                            if (i === selected.length-1) {
+                                contractAccInstance.methods.revokeAccess(selectAttr, target_address, selected[i]).send({from: account})
+                                .on('transactionHash', function(hash){
+                                    console.log(`${i} transactionHash: ${hash}.`);                            
+                                })
+                                .on('receipt', function(receipt){
+                                    console.log(`receipt:`, receipt);
+                                    console.log(`log got:`, receipt.events.AccessRevocation.returnValues);
+                                    alert("Revoke done!");
+                                    location.reload()
+                                })
+                            }
+                            else {
+                                contractAccInstance.methods.revokeAccess(selectAttr, target_address, selected[i]).send({from: account})
+                                .on('transactionHash', function(hash){
+                                    console.log(`${i} transactionHash: ${hash}.`);                            
+                                })                                
+                            }
+                        }                        
                     });
 
                     $(".revoke-one-approved-btn").on("click", function(e) {
-                        let promises = [];
+                        let selected = [];
                         $.each($("input[name=oneApprovedAttrs]:checked"), function() {
-                            let attr = $(this).val();
-                            let promise = new Promise((resolve, reject) => {
-                                contractAccInstance.methods.revokeAll(attr).send({from: account})
-                                .then( (result) => {
-                                    console.log("revoke txHash:"+result.transactionHash);
-                                    resolve();
-                                })
-                                .catch( (err) => {
-                                    console.log("err"+err);
-                                    alert("Revoke failed.");
-                                    reject();
-                                })
-                            });
-                            promises.push(promise);
+                            selected.push($(this).val());
                         });
-                        
-                        let result = Promise.all(promises);
-                        result.then(() => location.reload());                        
+                        for (let i = 0; i < selected.length; i++) {
+                            if (i === selected.length-1) {
+                                contractAccInstance.methods.revokeAll(selected[i]).send({from: account})
+                                .on('transactionHash', function(hash){
+                                    console.log(`${i} transactionHash: ${hash}.`);                            
+                                })
+                                .on('receipt', function(receipt){
+                                    console.log(`receipt:`, receipt);
+                                    console.log(`log got:`, receipt.events.ApprovedRevocation.returnValues);
+                                    alert("Revoke attributes done!");
+                                    location.reload()
+                                })                                
+                            }
+                            else {
+                                contractAccInstance.methods.revokeAll(selected[i]).send({from: account})                                
+                                .on('transactionHash', function(hash){
+                                    console.log(`${i} transactionHash: ${hash}.`);                            
+                                })                                
+                            }
+                        }                       
                     });
 
                     $(".request-token-btn").on("click", function(e) {
