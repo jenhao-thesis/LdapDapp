@@ -7,19 +7,28 @@ const util = require('util');
 const Queue = require('bull');
 const user = require("../controllers/user.controller.js");
 const db = require("../models");
-const { resolve } = require('path');
+const {
+    resolve
+} = require('path');
 
-const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
+const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));
 const web3 = new Web3(new Web3.providers.WebsocketProvider(config.web3_provider));
 const admin_address = config.admin_address; // org0
 const contract_address = config.contracts.organizationManagerAddress;
 const client = ldap.createClient(config.ldap.server);
 
-let subscribeQueue = new Queue('event subscribe', {redis: {port: config.redis.port, host: config.redis.host}});
+let subscribeQueue = new Queue('event subscribe', {
+    redis: {
+        port: config.redis.port,
+        host: config.redis.host
+    }
+});
+
 function listenEventByHash(txHash, dn, ms) {
     return new Promise((resolve) => {
-    //   setTimeout(resolve, ms);
-        let i = 0, limitCount = 5; // wait 100 
+        //   setTimeout(resolve, ms);
+        let i = 0,
+            limitCount = 100; // wait 100 
         let log;
         let s = setInterval(async () => {
             i++;
@@ -37,10 +46,13 @@ function listenEventByHash(txHash, dn, ms) {
             }
         }, ms);
     });
-  }  
+}
 subscribeQueue.process(async (job) => {
     try {
-        const { txHash, dn } = job.data;
+        const {
+            txHash,
+            dn
+        } = job.data;
         let result = await listenEventByHash(txHash, dn, 1000);
         return Promise.resolve(result);
     } catch (err) {
@@ -50,7 +62,10 @@ subscribeQueue.process(async (job) => {
 
 subscribeQueue.on('completed', (job, result) => {
     let receipt = result.log;
-    const {status, dn} = result;
+    const {
+        status,
+        dn
+    } = result;
     console.log(dn);
     if (status) {
         let arrayData = [];
@@ -58,8 +73,8 @@ subscribeQueue.on('completed', (job, result) => {
             console.log(i);
             if (receipt.logs[i].data !== "0x") {
                 let start = 2; // "0x"
-                while(start < receipt.logs[i].data.length) {
-                    arrayData.push(receipt.logs[i].data.substring(start, start+64));    
+                while (start < receipt.logs[i].data.length) {
+                    arrayData.push(receipt.logs[i].data.substring(start, start + 64));
                     start += 64;
                 }
             }
@@ -74,27 +89,25 @@ subscribeQueue.on('completed', (job, result) => {
                     idStatus: 1
                 }
             };
-            
-            client.modify(dn, change, function(err) {
+
+            client.modify(dn, change, function (err) {
                 if (err) console.log("error", err);
             });
             // update user end
-        }
-        else {
+        } else {
             console.log("logs is wrong.");
         }
     }
-    
+
     console.log(`Done, subsrcibe status:${status}, jobId:${job.id}`);
 });
 
 
 
-var isAuthenticated = function (req,res,next){
+var isAuthenticated = function (req, res, next) {
     if (req.isAuthenticated()) {
         next();
-    }
-    else {
+    } else {
         // alert("Login first");
         req.flash('info', 'Login first.');
         res.redirect('/');
@@ -102,7 +115,7 @@ var isAuthenticated = function (req,res,next){
     }
 };
 
-router.get('/', isAuthenticated, async function(req, res) {
+router.get('/', isAuthenticated, async function (req, res) {
     // Find User
     let opts = {
         filter: util.format('(cn=%s)', req.user.cn),
@@ -114,24 +127,33 @@ router.get('/', isAuthenticated, async function(req, res) {
     req.user = userObject;
 
     // Find Invoice
-    let invoices = await db.invoice.findAll({where: {name: userObject.cn}});
+    let invoices = await db.invoice.findAll({
+        where: {
+            name: userObject.cn
+        }
+    });
 
-    res.render('profile', { title: 'Profile ', user: userObject, address: contract_address, invoices: invoices});
+    res.render('profile', {
+        title: 'Profile ',
+        user: userObject,
+        address: contract_address,
+        invoices: invoices
+    });
 });
 
-router.get('/org.json', function(req, res) {
+router.get('/org.json', function (req, res) {
     let contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));
     res.json(contract);
 });
 
-router.post('/bindAccount', isAuthenticated, async function(req, res, next) {
-    let contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));    
+router.post('/bindAccount', isAuthenticated, async function (req, res, next) {
+    let contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));
     let contractInstance = new web3.eth.Contract(contract.abi, contract_address);
-    
+
     let userId = req.body.uid;
     let userAddress = req.body.address;
-    let msg = "", hash = "";
-    let status = false; // for check whether need to create subscribe job
+    let msg = "",
+        hash = "";
     let idStatus = false;
 
     console.log("profile id", userId);
@@ -146,35 +168,75 @@ router.post('/bindAccount', isAuthenticated, async function(req, res, next) {
     if (searchResult.length === 1) {
         let userObject = JSON.parse(searchResult[0]);
         idStatus = (userObject.idstatus === '0') ? false : true;
-    }
-    else {
-        return res.send({msg: "user search error", status: false, txHash: ""});
+    } else {
+        return res.send({
+            msg: "user search error",
+            status: false,
+            txHash: ""
+        });
     }
 
     if (!idStatus) {
         msg = 'Your identification card number is invalid.';
-    }
-    else {
-        web3.eth.personal.unlockAccount(admin_address, "12345678", 15000);
-        let hashedId = await contractInstance.methods.getId().call({from: userAddress});
+        res.send({
+            msg: msg,
+            status: false,
+            txHash: hash
+        });        
+    } else {
+        let hashedId = await contractInstance.methods.getId().call({
+            from: userAddress
+        });
         if (hashedId === "0x0000000000000000000000000000000000000000000000000000000000000000") {
             console.log("not used before");
-            await contractInstance.methods.bindAccount(userId, userAddress).send({
+
+            // 對要發送出去的交易做簽名
+            let signedTxObj;
+            let tx_builder = contractInstance.methods.bindAccount(userId, userAddress);
+            let encode_tx = tx_builder.encodeABI();
+            let transactionObject = {
+                gas: 6721975,
+                data: encode_tx,
                 from: admin_address,
-                gas: 6721975
+                to: contract_address
+            }
+            await web3.eth.accounts.signTransaction(transactionObject, config.admin_key, async function (error, signedTx) {
+                if (error) {
+                    console.log("sign error");
+                } else {
+                    signedTxObj = signedTx;
+                }
             })
-            .then( (result) => {
-                msg = `OK, i got it, this is your transaction hash: ${result.transactionHash}`;
-                hash = result.transactionHash;
-                status = true;
-                console.log(result);
-            })
-            .catch( (err) => {
-                console.log(err);
-                msg = `${err}`;
-            })
-        }
-        else {
+
+            // 發送交易
+            web3.eth.sendSignedTransaction(signedTxObj.rawTransaction)
+                // .on('receipt', function (receipt) {
+                //     console.log(receipt);
+                //     return res.send({
+                //         msg: `${req.body.uid}-${receipt.transactionHash}`
+                //     });
+                // })
+                .on('transactionHash', async function(hash){
+                    let job = await subscribeQueue.add({
+                        txHash: hash,
+                        dn: req.user.dn
+                    });
+                    console.log(`Create a job, jodId: ${job.id}`);     
+                    msg = `OK, i got it, this is your transaction hash: ${hash}`;
+                    res.send({
+                        msg: msg,
+                        status: true,
+                        txHash: hash
+                    });               
+                })
+                .on('error', function (error) {
+                    console.log(`Send signed transaction failed.`);
+                    console.log(error)
+                    return res.status(500).send({
+                        msg: "error"
+                    });
+                })
+        } else {
             // lookup whether used in DB
             let opts = {
                 filter: util.format('(hashed=%s)', hashedId),
@@ -182,7 +244,9 @@ router.post('/bindAccount', isAuthenticated, async function(req, res, next) {
             };
             let data = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com');
             if (data.length === 0) {
-                let actualHashedId = await contractInstance.methods.getId(req.user.id).call({from: admin_address});
+                let actualHashedId = await contractInstance.methods.getId(req.user.id).call({
+                    from: admin_address
+                });
                 console.log(`actual hashed id: ${actualHashedId}`);
                 console.log(`account hashed id: ${hashedId}`);
                 if (actualHashedId === hashedId) {
@@ -193,36 +257,31 @@ router.post('/bindAccount', isAuthenticated, async function(req, res, next) {
                             hashed: hashedId
                         }
                     };
-                    
-                    client.modify(req.user.dn, change, function(err) {
+
+                    client.modify(req.user.dn, change, function (err) {
                         if (err) console.log("error", err);
                     });
-    
+
                     msg = `Your account already integrated into ${userAddress}`;
-                }
-                else {
-                    let correctAddress = await contractInstance.methods.getAddress(userId).call({from: admin_address});
+                } else {
+                    let correctAddress = await contractInstance.methods.getAddress(userId).call({
+                        from: admin_address
+                    });
                     // msg = `Your address already binded with other id`;
                     msg = `Please switch your current Ethereum account to ${correctAddress}`;
 
                 }
-            }
-            else {
+            } else {
                 msg = `Your Ethereum account already binded with another ID in our service. Please switch to new one.`;
             }
+
+            res.send({
+                msg: msg,
+                status: false,
+                txHash: hash
+            });
         }
     }
-
-    if (status) {
-        // create job for polling status of block mined
-        let job = await subscribeQueue.add({
-            txHash: hash,
-            dn: req.user.dn    
-        });
-        console.log(`Create a job, jodId: ${job.id}`);
-    }
-    
-    res.send({msg: msg, status: status, txHash: hash});
 });
 
 module.exports = router;
