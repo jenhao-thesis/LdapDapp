@@ -183,7 +183,7 @@ let getProtectedData = async (req, res, next) => {
                     if (json.success) {
                         result = JSON.parse(json.data);
                         console.log(result);
-                        orgs.push(tokens[i].org.substr(0, 5));
+                        orgs.push(tokens[i].org);
                         data.push(result.balance);
                     } else {
                         throw `Token expired. Please get token again with ${tokens[i].org}.${json.message}`;    
@@ -212,7 +212,7 @@ let getProtectedData = async (req, res, next) => {
                             console.log(result[j]);
                             date.push(result[j].invoiceDate);
                             total.push(result[j].total);
-                            resOrg.push(tokens[i].org.substr(0, 5));
+                            resOrg.push(tokens[i].org);
                         }
                     }
                 })
@@ -231,7 +231,7 @@ let getProtectedData = async (req, res, next) => {
     for (let i = 0; i < invoices.length; ++i) {
         date.push(invoices[i].invoiceDate);
         total.push(invoices[i].total);
-        resOrg.push(admin_address.substr(0, 5));
+        resOrg.push(admin_address);
     }
     
     console.log("current date");

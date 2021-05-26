@@ -174,7 +174,7 @@ exports.increase = async (req, res) => {
     let change = {
         operation: 'replace',
         modification: {
-            balance: balance+5
+            balance: balance + Math.floor(Math.random() * 100001 + 50000)
         }
     };
 

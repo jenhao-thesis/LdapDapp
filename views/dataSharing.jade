@@ -453,14 +453,20 @@ block content
 
                     // Calculate balance
                     let deposit = [#{user.balance}];
-                    let orgs = ["#{org_address}".substr(0,5)];
+                    //- let orgs = ["#{org_address}".substr(0,5)];
+                    let orgs = [org_mapping["0x"+"#{org_address}".substr(2).toUpperCase()][1]];
+                    
+
+
                     let a = JSON.parse("#{data}".replace(/&quot;/g,'"'));
                     let b = JSON.parse("#{orgs}".replace(/&quot;/g,'"'));
                     let total = 0;
                     for (let i = 0; i < a.length; ++i) {
                         deposit.push(a[i]);
-                        orgs.push(b[i]);
+                        //- orgs.push(b[i]);
+                        orgs.push(org_mapping["0x"+b[i].substr(2).toUpperCase()][1]);
                     }
+
                     total = deposit.reduce((a,b)=>parseInt(a, 0)+parseInt(b,0));
                     $(".total-deposit").html("$&nbsp"+total);
                     // End calculate balance
@@ -516,6 +522,13 @@ block content
                     }
 
                     orgTotalDataset.push(invoiceTotalByDate);
+
+                    // replace with fullname
+                    for (let i = 0; i < uniqueOrg.length; ++i) {
+                        uniqueOrg[i] = org_mapping["0x"+uniqueOrg[i].substr(2).toUpperCase()][1]
+                    }
+
+
                     uniqueOrg.push("Total billing amount");
                     // End calculate invoice
 
