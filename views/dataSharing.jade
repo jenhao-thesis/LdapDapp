@@ -468,7 +468,7 @@ block content
                     }
 
                     total = deposit.reduce((a,b)=>parseInt(a, 0)+parseInt(b,0));
-                    $(".total-deposit").html("$&nbsp"+total);
+                    $(".total-deposit").html("NT$&nbsp"+total.toLocaleString('en-US'));
                     // End calculate balance
 
                     // Calculate invoice
