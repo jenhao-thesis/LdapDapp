@@ -35,7 +35,7 @@ function listenEventByHash(txHash, dn, ms) {
             console.log(`try ${i}.`);
 
             log = await web3.eth.getTransactionReceipt(txHash);
-
+            
             if (i == limitCount || log !== null) {
                 resolve({
                     status: (log === null) ? false : true,
@@ -67,6 +67,7 @@ subscribeQueue.on('completed', (job, result) => {
         dn
     } = result;
     console.log(dn);
+    console.log(receipt);
     if (status) {
         let arrayData = [];
         for (let i = 0; i < receipt.logs.length; ++i) {
@@ -187,8 +188,23 @@ router.post('/bindAccount', isAuthenticated, async function (req, res, next) {
         let hashedId = await contractInstance.methods.getId().call({
             from: userAddress
         });
+        // 檢查欲綁定的ADD是否未曾使用過
         if (hashedId === "0x0000000000000000000000000000000000000000000000000000000000000000") {
             console.log("not used before");
+
+            // 檢查當前使用者ID是否已經有對應ADD了
+            let correctAddress = await contractInstance.methods.getAddress(userId).call({
+                from: admin_address
+            });
+            console.log(`-----> ${correctAddress}`);
+            if (correctAddress !== "0x0000000000000000000000000000000000000000000000000000000000000000" && correctAddress !== userAddress) {
+                msg = `Please switch your current Ethereum account to ${correctAddress}`;
+                return res.send({
+                    msg: msg,
+                    status: false,
+                    txHash: ""
+                });                           
+            }
 
             // 對要發送出去的交易做簽名
             let signedTxObj;
@@ -216,7 +232,7 @@ router.post('/bindAccount', isAuthenticated, async function (req, res, next) {
                 //         msg: `${req.body.uid}-${receipt.transactionHash}`
                 //     });
                 // })
-                .on('transactionHash', async function(hash){
+                .once('transactionHash', async function(hash){
                     let job = await subscribeQueue.add({
                         txHash: hash,
                         dn: req.user.dn
@@ -230,25 +246,28 @@ router.post('/bindAccount', isAuthenticated, async function (req, res, next) {
                     });               
                 })
                 .on('error', function (error) {
-                    console.log(`Send signed transaction failed.`);
+                    console.log(`Send signed transaction failed! Error message as follows.`);
                     console.log(error)
-                    return res.status(500).send({
-                        msg: "error"
-                    });
+                    // return res.status(500).send({
+                    //     msg: "error"
+                    // });
                 })
         } else {
-            // lookup whether used in DB
+            // ADD 曾經使用過
+            // 查找LDAP SERVER DB是否有出現過這組ID
             let opts = {
                 filter: util.format('(hashed=%s)', hashedId),
                 scope: 'sub'
             };
             let data = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com');
+            // DB有出現過該ID的紀錄
             if (data.length === 0) {
                 let actualHashedId = await contractInstance.methods.getId(req.user.id).call({
                     from: admin_address
                 });
                 console.log(`actual hashed id: ${actualHashedId}`);
                 console.log(`account hashed id: ${hashedId}`);
+                // 檢查當前使用者的ID是否跟欲綁定的ADD對應的ID一致
                 if (actualHashedId === hashedId) {
                     // update hashed to this user
                     let change = {
@@ -278,7 +297,7 @@ router.post('/bindAccount', isAuthenticated, async function (req, res, next) {
             res.send({
                 msg: msg,
                 status: false,
-                txHash: hash
+                txHash: ""
             });
         }
     }
