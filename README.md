@@ -16,9 +16,20 @@ truffle migrate --reset
 
 ## LDAP server setup
 
+Start LDAP server
+```
 node ldapServer.js
+```
+
+Initial a hierarchical directory structure for user data
+```
 ldapadd -H ldap://localhost:1389 -D "cn=root" -w secret -f qwer.ldif
+```
+
+Search specific user
+```
 ldapsearch -H ldap://localhost:1389 -x -D "cn=root" -w "secret" -b "ou=location2,dc=jenhao,dc=com"
+```
 
 ## Config
 [server-config.json](https://github.com/jenhao-thesis/LdapDapp/blob/main/server-config-example.json)
@@ -89,7 +100,7 @@ docker network inspect
     ├── orgA
     │   ├── docker-compose.yml
     │   ├── LdapDapp                    # Pull repo from https://github.com/jenhao-thesis/LdapDapp.git
-    │   │   ├── server-config.json      # Change server config
+    │   │   ├── server-config.json      # Server configuration
     │   │   └── build                   # 1) truffle compile, generate contracts json file. 2) compile contracts via Remix
     │   │       └── contracts
     │   │           ├── AccessManager.json
