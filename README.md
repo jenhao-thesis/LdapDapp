@@ -48,11 +48,11 @@ ldapsearch -H ldap://localhost:1389 -x -D "cn=root" -w "secret" -b "ou=location2
     "admin_key": "[administrator private key]",
     "web3_provider": "ws://[ip:port]",
     "org_mapping": {
-        "[address of organization A(upper case only)]": "[ip:port]",
-        "[address of organization B(upper case only)]": "[ip:port]",
-        "[address of organization C(upper case only)]": "[ip:port]",
-        "[address of organization D(upper case only)]": "[ip:port]",
-        "[address of organization E(upper case only)]": "[ip:port]"
+        "[address of organization A(upper case only)]": ["[ip:port]", "[organization name for display on website]"],
+        "[address of organization B(upper case only)]": ["[ip:port]", "[organization name for display on website]"],
+        "[address of organization C(upper case only)]": ["[ip:port]", "[organization name for display on website]"],
+        "[address of organization D(upper case only)]": ["[ip:port]", "[organization name for display on website]"],
+        "[address of organization E(upper case only)]": ["[ip:port]", "[organization name for display on website]"]
     }
 }
 ```
@@ -70,6 +70,7 @@ call do not alter the state of the contract, send do.
 * [Web3.js v1.3.0](https://github.com/ChainSafe/web3.js?source=post_page-----70de1c0c035c----------------------)
 * [Express 4.9.0](https://www.npmjs.com/package/express/v/4.9.0)
 * [Redis v=4.0.9](https://www.1ju.org/redis/redis-quick-guide)
+* [OpenLDAP](https://www.techrepublic.com/article/how-to-install-openldap-on-ubuntu-18-04/)
 
 ## Dockerfile
 ```
@@ -87,9 +88,12 @@ docker network inspect
     .
     ├── orgA
     │   ├── docker-compose.yml
-    │   ├── LdapDapp                    # https://github.com/jenhao-thesis/LdapDapp.git
+    │   ├── LdapDapp                    # Pull repo from https://github.com/jenhao-thesis/LdapDapp.git
     │   │   ├── server-config.json      # Change server config
-    │   │   └── build                   # After truffle compile, generate contracts json file
-    │   └── LdapServer                  # https://github.com/jenhao-thesis/LdapServer.git
+    │   │   └── build                   # 1) truffle compile, generate contracts json file. 2) compile contracts via Remix
+    │   │       └── contracts
+    │   │           ├── AccessManager.json
+    │   │           └── OrganizationManager.json
+    │   └── LdapServer                  # Pull repo from https://github.com/jenhao-thesis/LdapServer.git
     ├── orgB
     └── orgC
