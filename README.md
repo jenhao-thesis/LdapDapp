@@ -1,5 +1,20 @@
 # Blockchain-based Identification and Access Control for OpenBanking Ecosystem
 
+<!-- ABOUT THE PROJECT -->
+## About The Project
+
+[![DApp Screen Shot][dapp-screenshot]](images/homepage.png)
+
+### Built With
+
+* [Node v14.15.1](https://nodejs.org/en/)
+* [Web3.js v1.3.0](https://github.com/ChainSafe/web3.js?source=post_page-----70de1c0c035c----------------------)
+* [Express 4.9.0](https://www.npmjs.com/package/express/v/4.9.0)
+* [Redis v=4.0.9](https://www.1ju.org/redis/redis-quick-guide)
+* [OpenLDAP](https://www.techrepublic.com/article/how-to-install-openldap-on-ubuntu-18-04/)
+* [Truffle v5.1.57](https://www.trufflesuite.com/docs/truffle/testing/writing-tests-in-solidity) or [Remix - Ethereum IDE](https://remix.ethereum.org/)
+* [Solidity v0.5.16](https://docs.soliditylang.org/en/v0.5.16/genindex.html)
+
 ## Compile cotract
 
 browserify: convert web3_init.js to web3_bundle.js
@@ -73,15 +88,6 @@ ldapsearch -H ldap://localhost:1389 -x -D "cn=root" -w "secret" -b "ou=location2
 call() or send()
 call do not alter the state of the contract, send do.
 
-## Tools
-
-* [Truffle v5.1.57](https://www.trufflesuite.com/docs/truffle/testing/writing-tests-in-solidity)
-* [Solidity v0.5.16](https://docs.soliditylang.org/en/v0.5.16/genindex.html)
-* [Node v14.15.1](https://nodejs.org/en/)
-* [Web3.js v1.3.0](https://github.com/ChainSafe/web3.js?source=post_page-----70de1c0c035c----------------------)
-* [Express 4.9.0](https://www.npmjs.com/package/express/v/4.9.0)
-* [Redis v=4.0.9](https://www.1ju.org/redis/redis-quick-guide)
-* [OpenLDAP](https://www.techrepublic.com/article/how-to-install-openldap-on-ubuntu-18-04/)
 
 ## Dockerfile
 ```
