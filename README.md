@@ -89,15 +89,10 @@ Before getting started, you should build [the blockchain environment](https://gi
   ```
 
 * truffle
-After compiling contracts, you will get `build` folder including contract `.json` files. And get the contract address (OMgr) when migration complete.
   ```sh
   npm install -g truffle
-
-  truffle init
-  truffle compile
-  truffle migrate --reset
   ```
-  PS. If it is failed, just update the `node` version to `14.15.1`.
+  
 * (optional) Remix
 If you don't have `truffle` toolkit, you also can compile your contract code by online IDE, e.g., [Remix](https://remix.ethereum.org/).
 
@@ -124,7 +119,16 @@ If you don't have `truffle` toolkit, you also can compile your contract code by 
     ```sh
     npm install
     ```
-3. Setup configuration ([server-config.json](https://github.com/jenhao-thesis/LdapDapp/blob/main/server-config-example.json))
+
+3. Compile smart contract code
+    ```sh
+    truffle init
+    truffle compile
+    truffle migrate --reset
+    ```
+    After compiling contracts, you will get `build` folder including contract `.json` files. And copy the contract address (<em>OMgr</em>) after migration complete.
+    PS. If it is failed, just update the `node` version to `14.15.1`.
+4. Setup configuration ([server-config.json](https://github.com/jenhao-thesis/LdapDapp/blob/main/server-config-example.json))
     ```sh
     cp server-config-example.json server-config.json
     ```
@@ -164,14 +168,14 @@ If you don't have `truffle` toolkit, you also can compile your contract code by 
     }
     ```
 
-4. Enter your the contract address (<em>OMgr</em>) in `server-config.json`.
+5. Enter your the contract address (<em>OMgr</em>) in `server-config.json`.
 
-5. (optional) Convert `web3_init.js` to `web3_bundle.js`
+6. (optional) Convert `web3_init.js` to `web3_bundle.js`
     ```sh
     browserify web3_init.js -o web3_bundle.js
     ```
 
-6. Launch Dapp.
+7. Launch Dapp.
     ```sh
     npm start
     ```
@@ -188,7 +192,7 @@ When we build and run 3 organizations follows five steps.
 2. Clone two repos in each directory separately.
     ```sh
     git clone https://github.com/jenhao-thesis/LdapDapp.git
-    git clone from https://github.com/jenhao-thesis/LdapServer.git
+    git clone https://github.com/jenhao-thesis/LdapServer.git
     ```
 3. Copy `docker-compose.yml` from `LdapDapp` folder.
     ```sh
