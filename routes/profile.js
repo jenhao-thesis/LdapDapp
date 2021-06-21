@@ -197,7 +197,7 @@ router.post('/bindAccount', isAuthenticated, async function (req, res, next) {
                 from: admin_address
             });
             console.log(`-----> ${correctAddress}`);
-            if (correctAddress !== "0x0000000000000000000000000000000000000000000000000000000000000000" && correctAddress !== userAddress) {
+            if (correctAddress !== "0x0000000000000000000000000000000000000000" && correctAddress !== userAddress) {
                 msg = `Please switch your current Ethereum account to ${correctAddress}`;
                 return res.send({
                     msg: msg,
