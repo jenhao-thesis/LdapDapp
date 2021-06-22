@@ -6,7 +6,7 @@
     <a href="https://drive.google.com/file/d/1Oy2c6UEhvYYy8UY-V62xqaSsTx5YmXaB/view?usp=sharing"><strong>Explore the full thesis »</strong></a>
     <br />
     <br />
-    <a href="#">View Demo</a>
+    <a href="https://youtu.be/5TMVQ9uqhVk">View Demo</a>
     ·
     <a href="https://github.com/jenhao-thesis/LdapDapp/issues">Report Bug</a>
     ·
