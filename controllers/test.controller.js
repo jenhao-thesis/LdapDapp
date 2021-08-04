@@ -525,3 +525,65 @@ exports.revokeAll = async (req, res) => {
         });
     }
 }
+
+exports.testOnce = async (req, res) => {
+    let attr = 'deposit';
+    let target = '0x1F7F0F7BE634D340EB070F3F3C21B6CE4AB857BD';
+    let org = '0xA3E898C280220BF5FAE9E7E6CEB4F3A6BFA67163';
+
+    let amount = 1;
+    let idBase = 0;
+    let start = 0;
+    let spendTime = 0;
+
+    let ACMAddresses = ['0x251Ac9a7eB10561445a1EFAb33e365Dba6EdeE18'];
+    // 對要發送出去的交易做簽名
+    let signedTxs = [];
+    for (let i = 0; i < amount; ++i) {
+        let private_key = '661de2b371b992c50a1f041169dc0557a1709788f91556bb2a1cbf60e7acf89e';
+        let tx_builder = contractInstanceACM.methods.authorizeAccess(attr, target, org);
+        let encode_tx = tx_builder.encodeABI();
+        let transactionObject = {
+            gas: 49263,
+            data: encode_tx,
+            from: '0x2580Ca0Bebe1A25191c0C950fd9839a5f3cFF172',
+            to: ACMAddresses[idBase + i]
+        }
+        await web3.eth.accounts.signTransaction(transactionObject, private_key, async function (error, signedTx) {
+            if (error) {
+                console.log("sign error");
+            } else {
+                signedTxs.push(signedTx);
+            }
+        })
+    }
+
+    // 發送交易
+    start = Date.now()
+    for (let i = 0; i < amount; ++i) {
+        if (i == amount - 1) {
+            web3.eth.sendSignedTransaction(signedTxs[i].rawTransaction)
+                .on('receipt', function (receipt) {
+                    spendTime = (Date.now() - start) / 1000;
+                    res.send({
+                        msg: "OK",
+                        spendTime: spendTime
+                    });
+                })
+                .on('error', function (error) {
+                    console.log(`${i} Send signed transaction failed.`, error);
+                    res.status(500).send({
+                        msg: "error"
+                    });
+                })
+        } else {
+            web3.eth.sendSignedTransaction(signedTxs[i].rawTransaction)
+                .on('error', function (error) {
+                    console.log(`${i} Send signed transaction failed.`, error);
+                })
+        }
+        console.log(`${i} transaction send.`);
+    }
+
+
+}

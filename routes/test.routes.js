@@ -19,5 +19,7 @@ module.exports = app => {
 
     router.get("/revokeAll", test.revokeAll);
 
+    router.get("/testOnce", test.testOnce);
+
     app.use('/api/test', router);
   };
