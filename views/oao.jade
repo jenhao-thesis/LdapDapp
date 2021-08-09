@@ -1,0 +1,60 @@
+extends layout
+
+block content
+    .col-md-6.center-block.offset-md-3
+        .card.text-center
+            .card-header(style="font-size: 1.5rem; font-weight:bold")
+                | 我要開戶
+            .card-body.text-left
+                form(action='/test' method='post')
+                    .col-12                   
+                        label.form-label(for='account')
+                            | 區塊鏈帳戶
+                            span.text-muted (Current Ethereum address)
+                        input.form-control.current-account(type='text' value='...' readonly style='background-color:white') 
+                    .col-12.mt-3
+                        label.form-label(for='select')
+                            | 選擇他行銀行
+                        .input-group
+                            select#inputGroupSelect02.custom-select(required)
+                                option(value='') 選擇銀行...
+                                option(value='1') One
+                                option(value='2') Two
+                                option(value='3') Three
+                    .col-12.mt-3
+                        label.form-label(for='select')
+                            | 上傳身份證件
+                        .input-group
+                            .custom-file
+                                input#inputGroupFile01.custom-file-input(type='file' required)
+                                label.custom-file-label(for='inputGroupFile01') 選擇檔案
+
+                    .col-6.mt-3.offset-md-3
+                        input.btn.btn-outline-info.btn-block(type='submit' value="開戶&授權") 
+            .card-footer.text-muted.text-left(style="font-size: 0.875rem;")
+                .mb-2.pl-2
+                    | 開戶＆授權前的準備提醒
+                .mb-2.pl-2                    
+                    i.far.fa-star
+                        | &nbsp 開戶：身分證件(健保卡、駕照、學生證或護照正面照片)。
+                .mb-2.pl-2                    
+                    i.far.fa-star
+                        | &nbsp 授權：透過區塊鏈授權取得他行銀行帳戶資料。
+    script. 
+        $(function() {
+            let account = "";
+            window.ethereum.on('accountsChanged', function(accounts) {
+                account = accounts[0];
+                $(".current-account").val(account);
+            });
+
+             // for web3_bundle.js
+            $.getScript( "/javascripts/web3_bundle.js", async function(data, textStatus, jqxhr) {
+                if (typeof(web3) !== "undefined") {
+                    web3.eth.getAccounts().then((accounts) => {
+                        account = accounts[0];
+                        $(".current-account").val(account);
+                    });
+                }
+            });                                       
+        });

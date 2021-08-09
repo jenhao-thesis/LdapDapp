@@ -18,4 +18,13 @@ router.get('/', function(req, res) {
   }
 });
 
+router.get('/online-account-opening', function(req, res) {
+  if (req.isAuthenticated()) {
+    res.redirect('/profile');
+  }
+  else {
+    res.render('oao', { title: 'Online account opening'});
+  }
+});
+
 module.exports = router;
