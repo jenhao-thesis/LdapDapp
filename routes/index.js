@@ -13,7 +13,8 @@ router.get('/', function(req, res) {
   else {
     var msg;
     msg = req.flash('info')[0];
-    res.render('index', { title: 'Homepage', info: msg, address: contract_address});
+    // res.render('index', { title: 'Homepage', info: msg, address: contract_address});
+    res.render('homepage', { title: 'Homepage_new', info: msg, address: contract_address});
   }
 });
 

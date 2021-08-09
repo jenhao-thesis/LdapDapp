@@ -12,34 +12,42 @@ html
     script(src='https://unpkg.com/bootstrap-show-password@1.2.1/dist/bootstrap-show-password.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js' integrity='sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==' crossorigin='anonymous')
 
-    nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
+    nav.navbar.navbar-expand-lg.navbar-light.bg-light
       .container
-        a.navbar-brand(href='/') NCTU DCSLAB
+        a.navbar-brand(href='#')
+          img.d-inline-block.align-text-top(src='/images/ethereum.png' alt='' width='14' height='24')
+          |  Bank-A
+        
         button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarNav' aria-controls='navbarNav' aria-expanded='false' aria-label='Toggle navigation')
           span.navbar-toggler-icon
-        #navbarNav.collapse.navbar-collapse
+        #navbarNav.collapse.navbar-collapse.justify-content-end
           ul.navbar-nav
-            li.nav-item.active
+            li.nav-item.px-2.active
               a.nav-link(href='/')
-                | Home 
+                | 首頁
                 span.sr-only (current)
             if !user
-              li.nav-item
-                a.nav-link(href='#') Introduction
+              li.nav-item.px-2
+                a.nav-link(href='#') 教學指南
+              li.nav-item.px-2
+                a.nav-link(href='#') 最新消息                
+              li.nav-item.px-2
+                a.button.btn.btn-danger(type='submit' style="background-color: #de5858 border-color: #de5858" href='/qwe') 線上開戶
 
             if user
-              li.nav-item
-                a.nav-link(href='/profile/') Profile         
-              li.nav-item
-                a.nav-link(href='/dataSharing/') Data sharing
-              li.nav-item
-                a.nav-link(href='/users/logout') Logout
+              li.nav-item.px-2
+                a.nav-link(href='/profile/') 個人檔案        
+              li.nav-item.px-2
+                a.nav-link(href='/dataSharing/') 資料共享
+              li.nav-item.px-2
+                a.nav-link(href='/users/logout') 登出
 
     .container.mt-2
       block content
       
+
     footer.my-5.pt-5.text-muted.text-center.text-small
-      p.mb-1 © 2021 NCTU DCSLAB
+      p.mb-1 © 2020–2021 Bank-A
       ul.list-inline
         li.list-inline-item
           a(href='#') Privacy
@@ -47,4 +55,7 @@ html
           a(href='#') Terms
         li.list-inline-item
           a(href='#') Support
+
+
+
 
