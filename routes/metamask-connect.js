@@ -84,9 +84,12 @@ router.post('/addUser', async function (req, res, next) {
         } else {
             signedTxObj = signedTx;
         }
+    }).catch((error) => {
+        console.log("```");
+        console.error(error);
+        console.log("```");
+        return res.send({msg:error})
     })
-
-
 
     client.modify(DN, change, async function (err) {
         if (err !== null) {
@@ -109,6 +112,12 @@ router.post('/addUser', async function (req, res, next) {
                     return res.status(500).send({
                         msg: "error"
                     });
+                })
+                .catch((error) => {
+                    console.error(error);
+                    return res.send({
+                        msg:error
+                    })
                 })
         }
     });
