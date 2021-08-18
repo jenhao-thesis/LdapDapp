@@ -44,6 +44,83 @@ block content
                 .mb-2.pl-2                    
                     i.far.fa-star
                         | &nbsp 授權：透過區塊鏈授權取得他行銀行帳戶資料。
+
+    .col-md-6.center-block.offset-md-3(style="display: none;")
+        .card.text-center
+            .card-header(style="font-size: 1.5rem; font-weight:bold")
+                | 我要開戶
+            .card-body.text-left                
+                form#msform(action='/users/oao' enctype="multipart/form-data" method='post')
+                    // progressbar
+                    ul#progressbar
+                        li#account.icon.active
+                            strong 填寫個人資料
+                        li#auth.icon
+                            strong 授權銀行存取資料
+                        li#confirm.icon
+                            strong 完成
+                    // fieldsets
+                    fieldset
+                        .form-card
+                            .col-12                   
+                                label.form-label(for='account')
+                                    | 區塊鏈帳戶
+                                    span.text-muted (Current Ethereum address)
+                                input.form-control.current-account(type='text' name='ethAccount' value='...' readonly style='background-color:white') 
+                            .col-12.mt-3
+                                label.form-label(for='select')
+                                    | 選擇他行銀行
+                                .input-group
+                                    select#inputGroupSelect02.custom-select(name='selectedBank' required)
+                                        option(value='') 選擇銀行...
+                                        option(value='1') One
+                                        option(value='2') Two
+                                        option(value='3') Three
+                            .col-12.mt-3
+                                label.form-label(for='select')
+                                    | 上傳身份證件
+                                .input-group
+                                    .custom-file
+                                        input#id-doc-input.custom-file-input(type='file' name="idDoc" accept="image/png, image/jpeg" required)
+                                        label.custom-file-label(for='id-doc-input') 選擇檔案
+                            hr.my-4
+                            .col-12.mt-3 
+                                .input-group
+                                    .form-check
+                                        input.form-check-input(type="checkbox" style="display: inline-block" required)
+                                        label.form-check-label(for='checkregulation') 我已詳閱並同意 OOO 條款
+                        input.next.action-button(type='button' name='next' value='下一步')
+                    fieldset
+                        .form-card
+                            input(type='text' name='fname' placeholder='First Name')
+                            input(type='text' name='lname' placeholder='Last Name')
+                            input(type='text' name='phno' placeholder='Contact No.')
+                            input(type='text' name='phno_2' placeholder='Alternate Contact No.')
+                        input.previous.action-button-previous(type='button' name='previous' value='上一步')
+                        input.next.action-button(type='button' name='make_payment' value='確認')
+                    fieldset
+                        .form-card
+                            h2.fs-title.text-center Success !
+                            br
+                            br
+                            .row.justify-content-center
+                                .col-3
+                                    img.fit-image(src='https://img.icons8.com/color/96/000000/ok--v2.png')
+                            br
+                            br
+                            .row.justify-content-center
+                                .col-7.text-center
+                                    h5 已完成線上開戶
+            .card-footer.text-muted.text-left(style="font-size: 0.875rem;")
+                .mb-2.pl-2
+                    | 開戶＆授權前的準備提醒
+                .mb-2.pl-2                    
+                    i.far.fa-star
+                        | &nbsp 開戶：身分證件(健保卡、駕照、學生證或護照正面照片)。
+                .mb-2.pl-2                    
+                    i.far.fa-star
+                        | &nbsp 授權：透過區塊鏈授權取得他行銀行帳戶資料。                                    
+
     script. 
         $(function() {
             let account = "";
@@ -68,5 +145,66 @@ block content
                 var fileName = e.target.files[0].name;                
                 //replace the "Choose a file" label
                 $(this).next('.custom-file-label').html(fileName);
-            })                                             
+            })
+
+
+            // ----------- multistep start -----------------
+            var current_fs, next_fs, previous_fs; //fieldsets
+            var opacity;
+
+            $(".next").click(function(){
+
+            current_fs = $(this).parent();
+            next_fs = $(this).parent().next();
+
+            //Add Class Active
+            $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+
+            //show the next fieldset
+            next_fs.show();
+            //hide the current fieldset with style
+            current_fs.animate({opacity: 0}, {
+                step: function(now) {
+                    // for making fielset appear animation
+                    opacity = 1 - now;
+
+                    current_fs.css({
+                        'display': 'none',
+                        'position': 'relative'
+                    });
+                    next_fs.css({'opacity': opacity});
+                },
+                duration: 600
+            });
+            });
+
+            $(".previous").click(function(){
+                current_fs = $(this).parent();
+                previous_fs = $(this).parent().prev();
+
+                //Remove class active
+                $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+
+                //show the previous fieldset
+                previous_fs.show();
+
+                //hide the current fieldset with style
+                current_fs.animate({opacity: 0}, {
+                    step: function(now) {
+                        // for making fielset appear animation
+                        opacity = 1 - now;
+                        current_fs.css({
+                            'display': 'none',
+                            'position': 'relative'
+                        });
+                        previous_fs.css({'opacity': opacity});
+                    },
+                    duration: 600
+                });
+            });
+
+            $(".submit").click(function(){
+                return false;
+            })            
+            // ----------- multistep end   -----------------
         });
