@@ -32,3 +32,7 @@ build/
 # config
 server-config.json
 database.sqlite
+
+# upload image folder only
+uploads/*
+!uploads/.gitkeep 

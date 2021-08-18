@@ -14,6 +14,8 @@ var jwt = require('jsonwebtoken');
 const { route } = require('./profile');
 var crypto = require("crypto");
 const db = require("../models");
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' }).single('idDoc')
 
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
 const web3 = new Web3(new Web3.providers.WebsocketProvider(config.web3_provider));
@@ -350,5 +352,31 @@ router.get('/auth/nonce', async function (req, res) {
     res.json({id: id, nonce: nonce});
 });
 
+router.post('/oao', function(req, res) {
+    
+    upload(req, res, function(err) {
+        if (err instanceof multer.MulterError) {
+            console.log('A Multer error occurred when uploading.', err);
+            res.status(500).send({ error: 'Something failed!'});
+        }
+        else if (err) {
+            console.log('An unknown error occurred when uploading.', err);
+            res.status(500).send({ error: 'Something failed!'});            
+        }
+        else {
+            // id Doc information
+            console.log("upload successfully.");
+            console.log(req.file);
+
+            // other information
+            console.log(req.body.ethAccount);
+            console.log(req.body.selectedBank);
+
+            
+
+            res.send({msg: "got file."});
+        }
+    })
+})
 
 module.exports = router;
