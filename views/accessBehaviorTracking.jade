@@ -1,0 +1,36 @@
+extends layout
+
+block content
+    .row
+        .col-12
+            .container
+            form(action='/accessBehaviorTracking' method='get')
+                input(type='text' placeholder='Identity' name='identity')
+                input(type='text' placeholder='OrgA' name='orgA')
+                input(type='text' placeholder='OrgB' name='orgB')
+                input.textbox-n(placeholder='DateStart' type='text' onfocus="(this.type='date')" onblur="(this.type='text')" name='dateStart')
+                input.textbox-n(placeholder='DateEnd' type='text' onfocus="(this.type='date')" onblur="(this.type='text')" name='dateEnd')
+                button(type='submit') Filter
+
+            div(style='overflow-x:auto;')
+                table.mt-2.table.table-striped
+                    thead
+                        tr
+                            th(scope='col') Identity
+                            th(scope='col') Attribute
+                            th(scope='col') Address of orgA
+                            th(scope='col') Address of orgB
+                            th(scope='col') Timestamp
+                    tbody
+                        each val, idx in accessBehaviors
+                            tr
+                                td #{val.identity}
+                                td #{val.attribute}
+                                td #{val.orgA}
+                                td #{val.orgB}
+                                td #{val.timestamp}
+            div
+            
+
+
+   
