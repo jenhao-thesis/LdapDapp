@@ -186,3 +186,14 @@ exports.increase = async (req, res) => {
         return res.json({msg: "Bank balance updated!"});
     });
 };
+
+exports.create_oao = async (req, res) => {
+    
+    console.log("```controller```");
+    console.log(req.file);
+    console.log(req.body.ethAccount);
+    console.log(req.body.selectedBank);    
+    console.log("```controller```");
+
+    res.send({msg: "from controller"});
+};

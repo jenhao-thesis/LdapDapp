@@ -352,9 +352,9 @@ router.get('/auth/nonce', async function (req, res) {
     res.json({id: id, nonce: nonce});
 });
 
-router.post('/oao', function(req, res) {
+router.post('/oao', function(req, res, next) {
     
-    upload(req, res, function(err) {
+    upload(req, res, async function(err) {
         if (err instanceof multer.MulterError) {
             console.log('A Multer error occurred when uploading.', err);
             res.status(500).send({ error: 'Something failed!'});
@@ -372,11 +372,11 @@ router.post('/oao', function(req, res) {
             console.log(req.body.ethAccount);
             console.log(req.body.selectedBank);
 
-            
+            // TODO: check content
 
-            res.send({msg: "got file."});
+            next()
         }
     })
-})
+}, user.create_oao)
 
 module.exports = router;

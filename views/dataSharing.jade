@@ -142,10 +142,10 @@ block content
                 let contractOrgInstance;
             
                 $.when(
-                    $.getJSON('/dataSharing/org.json', function(data) {
+                    $.getJSON('/contracts/OrganizationManager.json', function(data) {
                         data_org = data;
                     }),
-                    $.getJSON('/dataSharing/acc.json', function(data) {
+                    $.getJSON('/contracts/AccessManager.json', function(data) {
                         data_acc = data;
                     })
                 ).done(function() {

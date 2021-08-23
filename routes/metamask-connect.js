@@ -21,11 +21,6 @@ router.get('/', function (req, res) {
     });
 });
 
-router.get('/org.json', function (req, res) {
-    let contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));
-    res.json(contract);
-});
-
 router.post('/addUser', async function (req, res, next) {
     let contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));
     let contractInstance = new web3.eth.Contract(contract.abi, contract_address);

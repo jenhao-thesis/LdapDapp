@@ -1,7 +1,7 @@
 extends layout
 
 block content
-    .col-md-6.center-block.offset-md-3
+    .col-md-6.center-block.offset-md-3(style="display: none;")
         .card.text-center
             .card-header(style="font-size: 1.5rem; font-weight:bold")
                 | 我要開戶
@@ -24,10 +24,11 @@ block content
                     .col-12.mt-3
                         label.form-label(for='select')
                             | 上傳身份證件
-                        .input-group
-                            .custom-file
-                                input#id-doc-input.custom-file-input(type='file' name="idDoc" accept="image/png, image/jpeg" required)
-                                label.custom-file-label(for='id-doc-input') 選擇檔案
+                        //    
+                            .input-group
+                                .custom-file
+                                    input#id-doc-input.custom-file-input(type='file' name="idDoc" accept="image/png, image/jpeg" required)
+                                    label.custom-file-label(for='id-doc-input') 選擇檔案
                     hr.my-4
                     .col-12.mt-3 
                         .form-check 
@@ -45,12 +46,12 @@ block content
                     i.far.fa-star
                         | &nbsp 授權：透過區塊鏈授權取得他行銀行帳戶資料。
 
-    .col-md-6.center-block.offset-md-3(style="display: none;")
+    .col-md-6.center-block.offset-md-3
         .card.text-center
             .card-header(style="font-size: 1.5rem; font-weight:bold")
                 | 我要開戶
             .card-body.text-left                
-                form#msform(action='/users/oao' enctype="multipart/form-data" method='post')
+                form#msform.needs-validation(action='/users/oao' enctype="multipart/form-data" method='post' novalidate)
                     // progressbar
                     ul#progressbar
                         li#account.icon.active
@@ -70,25 +71,30 @@ block content
                             .col-12.mt-3
                                 label.form-label(for='select')
                                     | 選擇他行銀行
-                                .input-group
-                                    select#inputGroupSelect02.custom-select(name='selectedBank' required)
+                                .input-group.has-validation
+                                    select#inputGroupSelect02.custom-select.form-select(name='selectedBank' required)
                                         option(value='') 選擇銀行...
                                         option(value='1') One
                                         option(value='2') Two
                                         option(value='3') Three
+                                    .invalid-feedback
+                                        | 請選擇任一間擁有帳戶之銀行
                             .col-12.mt-3
                                 label.form-label(for='select')
-                                    | 上傳身份證件
-                                .input-group
+                                    | 上傳身份證件                   
                                     .custom-file
                                         input#id-doc-input.custom-file-input(type='file' name="idDoc" accept="image/png, image/jpeg" required)
                                         label.custom-file-label(for='id-doc-input') 選擇檔案
+                                        .invalid-feedback
+                                            | 請上傳您的身份證件                                        
                             hr.my-4
                             .col-12.mt-3 
                                 .input-group
                                     .form-check
                                         input.form-check-input(type="checkbox" style="display: inline-block" required)
                                         label.form-check-label(for='checkregulation') 我已詳閱並同意 OOO 條款
+                                        .invalid-feedback
+                                            | 送出前，請勾選並遵守以上條款
                         input.next.action-button(type='button' name='next' value='下一步')
                     fieldset
                         .form-card
@@ -123,6 +129,7 @@ block content
 
     script. 
         $(function() {
+            let contract_address = "#{address}";
             let account = "";
             window.ethereum.on('accountsChanged', function(accounts) {
                 account = accounts[0];
@@ -137,10 +144,28 @@ block content
                         $(".current-account").val(account);
                     });
                 }
+
+                $.when(
+                    $.getJSON('/contracts/OrganizationManager.json', function(data) {
+                        data_org = data;
+                    }),
+                    $.getJSON('/contracts/AccessManager.json', function(data) {
+                        data_acc = data;
+                    })
+                ).done(function() {
+                    contractOrgInstance = new web3.eth.Contract(data_org.abi, contract_address);
+
+                    contractOrgInstance.methods.getOrgList().call({from: account})
+                    .then( (orgs) => { // orgList      
+                        console.log('org list', orgs);
+                        
+                    })              
+                });         
             });
 
             // for show image name
             $('#id-doc-input').on('change',function(e){
+                
                 //get the file name
                 var fileName = e.target.files[0].name;                
                 //replace the "Choose a file" label
@@ -151,31 +176,37 @@ block content
             // ----------- multistep start -----------------
             var current_fs, next_fs, previous_fs; //fieldsets
             var opacity;
+            var forms = document.querySelectorAll('.needs-validation')
 
             $(".next").click(function(){
 
-            current_fs = $(this).parent();
-            next_fs = $(this).parent().next();
+                if (!forms[0].checkValidity()) {
+                    forms[0].classList.add('was-validated')
+                    return;        
+                }
 
-            //Add Class Active
-            $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                current_fs = $(this).parent();
+                next_fs = $(this).parent().next();
 
-            //show the next fieldset
-            next_fs.show();
-            //hide the current fieldset with style
-            current_fs.animate({opacity: 0}, {
-                step: function(now) {
-                    // for making fielset appear animation
-                    opacity = 1 - now;
+                //Add Class Active
+                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
 
-                    current_fs.css({
-                        'display': 'none',
-                        'position': 'relative'
-                    });
-                    next_fs.css({'opacity': opacity});
-                },
-                duration: 600
-            });
+                //show the next fieldset
+                next_fs.show();
+                //hide the current fieldset with style
+                current_fs.animate({opacity: 0}, {
+                    step: function(now) {
+                        // for making fielset appear animation
+                        opacity = 1 - now;
+
+                        current_fs.css({
+                            'display': 'none',
+                            'position': 'relative'
+                        });
+                        next_fs.css({'opacity': opacity});
+                    },
+                    duration: 600
+                });
             });
 
             $(".previous").click(function(){
@@ -207,4 +238,5 @@ block content
                 return false;
             })            
             // ----------- multistep end   -----------------
+
         });

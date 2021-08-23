@@ -111,7 +111,7 @@ block content
 
             $(".loginWithMetamask").on('click', function(e) {
                 $.getScript( "/javascripts/web3_bundle.js", async function(data, textStatus, jqxhr) {
-                    $.getJSON('metamask-connect/org.json', function (data) {
+                    $.getJSON('/contracts/OrganizationManager.json', function (data) {
                         console.log(data);
                         let contractInstance = new web3.eth.Contract(data.abi, contract_address);
                         contractInstance.methods.getId().call({from: account})

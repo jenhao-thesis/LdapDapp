@@ -94,7 +94,7 @@ block content
 
                     $(".func1").on("click", function(e) {
                         // get abi of contract
-                        $.getJSON('org.json', function (data) {
+                        $.getJSON('/contracts/OrganizationManager.json', function (data) {
                             let contractInstance = new web3.eth.Contract(data.abi, contract_address);
                             let input_0 = $(".func1-input0").val();
 
@@ -127,7 +127,7 @@ block content
                     });
 
                     $(".func3").on("click", function(e) {
-                        $.getJSON('org.json', function (data) {
+                        $.getJSON('/contracts/OrganizationManager.json', function (data) {
                             let contractInstance = new web3.eth.Contract(data.abi, contract_address);
                             let input_0 = $(".func3-input0").val();
                             contractInstance.methods.getId(input_0).call({from: account})
@@ -175,7 +175,7 @@ block content
                         let input_1 = $(".func6-input1").val();
                         alert(`${input_0}, ${input_1}`);
                         
-                        $.getJSON('org.json', function (data) {
+                        $.getJSON('/contracts/OrganizationManager.json', function (data) {
                             let contractInstance = new web3.eth.Contract(data.abi, contract_address);
                             contractInstance.methods.rebindAccount(input_0, input_1).send({from: account})
                             .then( (result) => {

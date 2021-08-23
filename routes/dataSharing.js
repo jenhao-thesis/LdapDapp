@@ -246,16 +246,6 @@ let getProtectedData = async (req, res, next) => {
     next();
 };
 
-router.get('/org.json', function(req, res) {
-    let contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));
-    res.json(contract);
-});
-
-router.get('/acc.json', function(req, res) {
-    let contract = JSON.parse(fs.readFileSync('./build/contracts/AccessManager.json', 'utf-8'));
-    res.json(contract);
-});
-
 /* GET home page. */
 router.get('/', isAuthenticated, getHashed, getProtectedData, async function(req, res) {
     let tokens = await db.tokens.findAll({where: {identity: req.user.hashed}});
