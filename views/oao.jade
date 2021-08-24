@@ -71,12 +71,8 @@ block content
                             .col-12.mt-3
                                 label.form-label(for='select')
                                     | 選擇他行銀行
-                                .input-group.has-validation
-                                    select#inputGroupSelect02.custom-select.form-select(name='selectedBank' required)
-                                        option(value='') 選擇銀行...
-                                        option(value='1') One
-                                        option(value='2') Two
-                                        option(value='3') Three
+                                .input-group
+                                    select#inputBankSelect.custom-select.form-select(name='selectedBank' required)
                                     .invalid-feedback
                                         | 請選擇任一間擁有帳戶之銀行
                             .col-12.mt-3
@@ -87,6 +83,17 @@ block content
                                         label.custom-file-label(for='id-doc-input') 選擇檔案
                                         .invalid-feedback
                                             | 請上傳您的身份證件                                        
+                            .col-12.mt-3      
+                                label.form-label(for='account')
+                                    | 聯絡資訊
+                                .input-group 
+                                    input.form-control(type='text', name='phone', placeholder='手機號碼' required)
+                                    .invalid-feedback
+                                        | 請輸入手機號碼
+                                .input-group.mt-2
+                                    input.form-control(type='email', name='email', placeholder='電子郵件' required)
+                                    .invalid-feedback
+                                        | 請輸入電子郵件                                                                    
                             hr.my-4
                             .col-12.mt-3 
                                 .input-group
@@ -98,15 +105,15 @@ block content
                         input.next.action-button(type='button' name='next' value='下一步')
                     fieldset
                         .form-card
-                            input(type='text' name='fname' placeholder='First Name')
-                            input(type='text' name='lname' placeholder='Last Name')
-                            input(type='text' name='phno' placeholder='Contact No.')
-                            input(type='text' name='phno_2' placeholder='Alternate Contact No.')
+                            .col-12                   
+                                label.form-label(for='bank')
+                                    | 當前選擇之銀行
+                                input.form-control.current-bank(type='text' name='bank' value='...' readonly style='background-color:white')                             
                         input.previous.action-button-previous(type='button' name='previous' value='上一步')
                         input.next.action-button(type='button' name='make_payment' value='確認')
                     fieldset
                         .form-card
-                            h2.fs-title.text-center Success !
+                            h2.fs-title.text-center 申請成功 !
                             br
                             br
                             .row.justify-content-center
@@ -116,7 +123,7 @@ block content
                             br
                             .row.justify-content-center
                                 .col-7.text-center
-                                    h5 已完成線上開戶
+                                    h5 已送件，待帳戶啟用。
             .card-footer.text-muted.text-left(style="font-size: 0.875rem;")
                 .mb-2.pl-2
                     | 開戶＆授權前的準備提醒
@@ -130,6 +137,7 @@ block content
     script. 
         $(function() {
             let contract_address = "#{address}";
+            let target_address = "#{org_address}";
             let account = "";
             window.ethereum.on('accountsChanged', function(accounts) {
                 account = accounts[0];
@@ -156,9 +164,19 @@ block content
                     contractOrgInstance = new web3.eth.Contract(data_org.abi, contract_address);
 
                     contractOrgInstance.methods.getOrgList().call({from: account})
-                    .then( (orgs) => { // orgList      
-                        console.log('org list', orgs);
-                        
+                    .then( async (orgs) => { // orgList      
+                        $("#inputBankSelect").append(new Option("選擇銀行..", '', true, true));
+                        for (var i = 0; i < orgs.length; i++) {
+                            console.log(i, orgs[i]);
+                            await contractOrgInstance.methods.isRegistered(orgs[i]).call({from: account})
+                            .then ( (r) => { // boolean
+                                console.log(orgs[i], r);
+                                if (r) {
+                                    $("#inputBankSelect").append(new Option(`銀行 ${orgs[i]}`, orgs[i]));
+                                }
+
+                            })
+                        }
                     })              
                 });         
             });
@@ -170,8 +188,11 @@ block content
                 var fileName = e.target.files[0].name;                
                 //replace the "Choose a file" label
                 $(this).next('.custom-file-label').html(fileName);
-            })
+            });
 
+            $('#inputBankSelect').on('change', function(e) {
+                $('.current-bank').val(this.value);
+            });
 
             // ----------- multistep start -----------------
             var current_fs, next_fs, previous_fs; //fieldsets

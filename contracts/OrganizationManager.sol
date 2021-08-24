@@ -157,6 +157,12 @@ contract OrganizationManager {
         return _uniqueIdenity[keccak256(bytes(uniqueId))].orgs[msg.sender];
     }
     
+    function isRegistered(address orgAddress) public view returns (bool) {
+        require(_bindUsers[msg.sender] != 0,
+                "Binding before account opening.");
+        return _uniqueIdenity[_bindUsers[msg.sender]].orgs[orgAddress];
+    }
+    
     function getIdentity(string memory userId) public view returns (string memory) {
         // if (keccak256(bytes(_userOrgMap[userId])) == keccak256(bytes(""))) return "Not found";
         // return _userOrgMap[userId];

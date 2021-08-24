@@ -4,6 +4,7 @@ var fs = require('fs');
 
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
 const contract_address = config.contracts.organizationManagerAddress;
+const admin_address = config.admin_address;
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -23,7 +24,7 @@ router.get('/online-account-opening', function(req, res) {
     res.redirect('/profile');
   }
   else {
-    res.render('oao', { title: 'Online account opening', address: contract_address});
+    res.render('oao', { title: 'Online account opening', address: contract_address, org_address: admin_address});
   }
 });
 
