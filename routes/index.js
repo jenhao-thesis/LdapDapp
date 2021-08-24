@@ -24,7 +24,11 @@ router.get('/online-account-opening', function(req, res) {
     res.redirect('/profile');
   }
   else {
-    res.render('oao', { title: 'Online account opening', address: contract_address, org_address: admin_address});
+    res.render('oao', { title: 'Online account opening',
+                        address: contract_address,
+                        org_address: admin_address,
+                        org_mapping: JSON.stringify(config.org_mapping)
+                      });
   }
 });
 

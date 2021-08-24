@@ -105,12 +105,23 @@ block content
                         input.next.action-button(type='button' name='next' value='下一步')
                     fieldset
                         .form-card
-                            .col-12                   
-                                label.form-label(for='bank')
-                                    | 當前選擇之銀行
-                                input.form-control.current-bank(type='text' name='bank' value='...' readonly style='background-color:white')                             
+                            .col-12.text-center      
+                                p 
+                                    | 當前&nbsp 
+                                    span.current-bank(style="font-weight:bold; box-shadow: 0 1px; padding-bottom:2px") ...
+                                    | &nbsp將收到來自&nbsp 
+                                    span.selected-bank(style="font-weight:bold; box-shadow: 0 1px; padding-bottom:2px") ...
+                                    | &nbsp的個人資料(PII)等資訊。
+                                p 
+                                    | 目前授權狀態為&nbsp 
+                                    span.current-state(style="color: red; font-weight:bold; box-shadow: 0 1px; padding-bottom:2px") 未授權
+                                    | &nbsp。
+                                    span.text-muted (若已授權，無須再次授權)
+                            .col-6.offset-3
+                                button.btn.btn-primary.btn-block(type='button') 授權
+                        hr.my-4
                         input.previous.action-button-previous(type='button' name='previous' value='上一步')
-                        input.next.action-button(type='button' name='make_payment' value='確認')
+                        input.next.action-button(type='button' name='make_payment' value='確認送出')
                     fieldset
                         .form-card
                             h2.fs-title.text-center 申請成功 !
@@ -138,6 +149,7 @@ block content
         $(function() {
             let contract_address = "#{address}";
             let target_address = "#{org_address}";
+            let org_mapping = JSON.parse("#{org_mapping}".replace(/&quot;/g,'"'));
             let account = "";
             window.ethereum.on('accountsChanged', function(accounts) {
                 account = accounts[0];
@@ -191,7 +203,11 @@ block content
             });
 
             $('#inputBankSelect').on('change', function(e) {
-                $('.current-bank').val(this.value);
+                let currentFullName = org_mapping["0x"+target_address.substr(2).toUpperCase()][1];
+                let selectedFullName = org_mapping["0x"+this.value.substr(2).toUpperCase()][1];
+                $('.current-bank').text(currentFullName);
+                $('.selected-bank').text(selectedFullName);
+
             });
 
             // ----------- multistep start -----------------
