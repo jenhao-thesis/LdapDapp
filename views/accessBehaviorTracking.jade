@@ -5,30 +5,37 @@ block content
         .col-12
             .container
             form(action='/accessBehaviorTracking' method='get')
-                input(type='text' placeholder='Identity' name='identity')
-                input(type='text' placeholder='OrgA' name='orgA')
-                input(type='text' placeholder='OrgB' name='orgB')
-                input.textbox-n(placeholder='DateStart' type='text' onfocus="(this.type='date')" onblur="(this.type='text')" name='dateStart')
-                input.textbox-n(placeholder='DateEnd' type='text' onfocus="(this.type='date')" onblur="(this.type='text')" name='dateEnd')
-                button(type='submit') Filter
+                .form-row 
+                    .col-auto
+                        input(type='text' placeholder='身份' name='identity')
+                    .col-auto
+                        input(type='text' placeholder='存取資料的其他組織' name='orgA')
+                    .col-auto
+                        input(type='text' placeholder='提供資料的組織' name='orgB')
+                    .col-auto
+                        input.textbox-n(placeholder='開始日期' type='text' onfocus="(this.type='date')" onblur="(this.type='text')" name='dateStart')
+                    .col-auto
+                        input.textbox-n(placeholder='結束日期' type='text' onfocus="(this.type='date')" onblur="(this.type='text')" name='dateEnd')
+                    .col-auto
+                        button.btn.btn-primary.mb-2(type='submit') 篩選
 
             div(style='overflow-x:auto;')
-                table.mt-2.table.table-striped
+                table.mt-2.table.table-striped(style='table-layout: fixed;')
                     thead
                         tr
-                            th(scope='col') Identity
-                            th(scope='col') Attribute
-                            th(scope='col') Address of orgA
-                            th(scope='col') Address of orgB
-                            th(scope='col') Timestamp
+                            th(scope='col') 身份
+                            th(scope='col') 資料屬性
+                            th(scope='col') 存取資料的其他組織
+                            th(scope='col') 提供資料的組織
+                            th(scope='col') 時間戳記
                     tbody
                         each val, idx in accessBehaviors
                             tr
-                                td #{val.identity}
-                                td #{val.attribute}
-                                td #{val.orgA}
-                                td #{val.orgB}
-                                td #{val.timestamp}
+                                td(style='word-wrap:break-word;') #{val.identity}
+                                td(style='word-wrap:break-word;') #{val.attribute}
+                                td(style='word-wrap:break-word;') #{val.orgA}
+                                td(style='word-wrap:break-word;') #{val.orgB}
+                                td(style='word-wrap:break-word;') #{val.timestamp}
             div
             
 

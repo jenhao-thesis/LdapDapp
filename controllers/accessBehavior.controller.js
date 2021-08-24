@@ -18,7 +18,7 @@ exports.create = (req, res) => {
     timestamp: timestamp
   }
 
-  AccessBehavior.upsert(accessBehavior)
+  AccessBehavior.create(accessBehavior)
     .then(data => {
       res.send(data)
     })
@@ -35,7 +35,7 @@ exports.findAll = async (req, res) => {
   AccessBehavior.findAll({
     where: {
       [Op.and]: [
-        {identity: req.user.hashed},
+        {identity: req.query.identity},
         req.query.orgA ? {orgA: req.query.orgA} : null,
         req.query.orgB ? {orgA: req.query.orgNB} : null,
         req.query.dateStart && req.query.dateEnd ? {timestamp: {[Op.between]: [req.query.dateStart, req.query.dateEnd]}} : null
@@ -43,7 +43,6 @@ exports.findAll = async (req, res) => {
     }
   })
   .then(data => {
-    //res.locals.accessBehaviors = data;
     res.send(data);
   })
   .catch(err => {

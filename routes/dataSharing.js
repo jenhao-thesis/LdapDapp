@@ -6,7 +6,6 @@ const fetch = require('node-fetch');
 var Web3 = require('web3');
 const user = require("../controllers/user.controller.js");
 const { exception } = require('console');
-//const { DATE } = require('sequelize/types');
 
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));
 const web3 = new Web3(new Web3.providers.WebsocketProvider(config.web3_provider));
@@ -198,11 +197,11 @@ let getProtectedData = async (req, res, next) => {
                             const accessBehavior = {
                                 identity: req.user.hashed,
                                 attribute: 'balance',
-                                orgA: admin_address,
-                                orgB: tokens[i].org,
+                                orgA: config.org_mapping[admin_address][1],
+                                orgB: config.org_mapping[tokens[i].org][1],
                                 timestamp: formatDate(date)
                             }
-                            db.accessBehaviors.upsert(accessBehavior);
+                            db.accessBehaviors.create(accessBehavior);
 
                         } else {
                             throw `Token expired. Please get token again with ${tokens[i].org}.${json.message}`;
@@ -239,11 +238,11 @@ let getProtectedData = async (req, res, next) => {
                                 const accessBehavior = {
                                     identity: req.user.hashed,
                                     attribute: 'bill',
-                                    orgA: admin_address,
-                                    orgB: tokens[i].org,
+                                    orgA: config.org_mapping[admin_address][1],
+                                    orgB: config.org_mapping[tokens[i].org][1],
                                     timestamp: formatDate(date)
                                 }
-                                db.accessBehaviors.upsert(accessBehavior);
+                                db.accessBehaviors.create(accessBehavior);
                             }
                         }
                     })

@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
+const db = require("../models");
 const user = require("../controllers/user.controller.js");
+const Op = db.Sequelize.Op;
 
 let isAuthenticated = function (req, res, next) {
     if (req.isAuthenticated()) {
@@ -14,27 +16,6 @@ let isAuthenticated = function (req, res, next) {
     }
 };
 
-let getHashed = async (req, res, next) => {
-    let opts = {
-        filter: `(cn=${req.user.cn})`,
-        scope: 'sub',
-        attributes: ['hashed']
-    };
-    let searchResult = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com');
-    if (searchResult.length === 1) {
-        let userObject = JSON.parse(searchResult[0]);
-        console.log("MSG: user is not binding.")
-        if (userObject.hashed === "")
-            return res.redirect("/");
-        req.user.hashed = userObject.hashed;
-        next();
-    }
-    else {
-        console.log("MSG: User not found.")
-        return res.redirect("/");
-    }
-}
-
 /* GET home page. */
 router.get('/', isAuthenticated, async function (req, res) {
     let accessBehaviors = await db.accessBehaviors.findAll({
@@ -42,7 +23,7 @@ router.get('/', isAuthenticated, async function (req, res) {
             [Op.and]: [
                 { identity: req.user.hashed },
                 req.query.orgA ? { orgA: req.query.orgA } : null,
-                req.query.orgB ? { orgA: req.query.orgNB } : null,
+                req.query.orgB ? { orgB: req.query.orgB } : null,
                 req.query.dateStart && req.query.dateEnd ? { timestamp: { [Op.between]: [req.query.dateStart, req.query.dateEnd] } } : null
             ]
         }
