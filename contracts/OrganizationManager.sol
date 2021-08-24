@@ -28,7 +28,7 @@ contract OrganizationManager {
                             0x8423B7478160163c6e3319E64a6Ad4B77dfb7015];
     
     // Pre-registered attributes
-    string[] _attributes = ["deposit", "test", "aaa"];
+    string[] _attributes = ["deposit", "pii", "aaa"];
     string[] _oneApprovedAttrs = ["bill", "bbb", "ggg"];
 
     // Permission of user and organization

@@ -186,7 +186,7 @@ block content
                             // For initial attribute in mode 1
                             for (let i = 0; i < result.length; ++i) {
                                 if (result[i] == target_address) continue;
-                                let fullName = org_mapping["0x"+result[i].substr(2).toUpperCase()][1]
+                                let fullName = org_mapping["0x"+result[i].substr(2).toUpperCase()][1];
                                 contractAccInstance.methods.validatePermission(selectAttr, target_address, result[i]).call({from: account})
                                 .then( (r) => {
                                     console.log(r);
@@ -213,6 +213,7 @@ block content
                                 $("#org-table>tbody").empty();
                                 for (let i = 0; i < result.length; ++i) {
                                     if (result[i] == target_address) continue;
+                                    let fullName = org_mapping["0x"+result[i].substr(2).toUpperCase()][1];
                                     contractAccInstance.methods.validatePermission(selectAttr, target_address, result[i]).call({from: account})
                                     .then( (r) => {
                                         console.log(r);
@@ -224,7 +225,7 @@ block content
                                                         <label class="custom-control-label" for="customCheck${i}"></label>
                                                     </div>
                                                 </td>
-                                                <td class="text-center">${result[i]}</td>
+                                                <td class="text-center">${fullName}</td>
                                                 <td class="text-center">`+
                                                 (r == false ? `<i class="fas fa-lock"></i>` : `<i class="fas fa-lock-open"></i>`)
                                                 +`</td>
