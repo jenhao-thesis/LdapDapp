@@ -151,6 +151,8 @@ block content
             let target_address = "#{org_address}";
             let org_mapping = JSON.parse("#{org_mapping}".replace(/&quot;/g,'"'));
             let account = "";
+            let accAddress;
+            
             window.ethereum.on('accountsChanged', function(accounts) {
                 account = accounts[0];
                 $(".current-account").val(account);
@@ -195,6 +197,7 @@ block content
                     // init acc instance and selected bank address
                     let contractAccInstance;
                     let selectedAddress;
+                    
                     $('#inputBankSelect').on('change', function(e) {
                         selectedAddress = this.value;
                         // Replace address with bank name
@@ -207,8 +210,8 @@ block content
                         contractOrgInstance.methods.getAccessManagerAddress(account).call({from: account})
                         .then( (r) => {
                             contractAccInstance = new web3.eth.Contract(data_acc.abi, r);
+                            accAddress = r;
                             console.log("accMgr:"+r);
-
                         })
                         .then( () => {
                             contractAccInstance.methods.validatePermission("pii", target_address, this.value).call({from: account})
@@ -293,6 +296,7 @@ block content
                 let formData = new FormData(form)
 
                 // To inspect formdata
+                formData.append("accAddress", accAddress);
                 console.log(formData);
                 for (var pair of formData.entries()) {
                     console.log(pair[0]+ ', ' + pair[1]); 
@@ -315,15 +319,19 @@ block content
 
                 $.ajax(item)
                 .done((r) => {
-                    console.log(r);
-                    alert("Send successfully.");
-
-                    current_fs = $(this).parent();
-                    next_fs = $(this).parent().next();
-                    showEffect();
+                    let response = JSON.parse(r);
+                    if (response["state"]) {
+                        current_fs = $(this).parent();
+                        next_fs = $(this).parent().next();
+                        showEffect();
+                    }
+                    else {
+                        alert(response["msg"]);
+                    }
                 })
                 .fail((r) => {
-                    alert("Something broke.");
+                    alert(`Something broke. Error message ${r.responseText}`);
+                    console.log(r);
                     console.log("Error", r.responseText);
                 });
 

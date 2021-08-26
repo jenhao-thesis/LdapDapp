@@ -212,10 +212,10 @@ exports.create_oao = async (req, res) => {
     await client.add(DN, oaoUser, function(err) {
         if (err) {
             console.log(err);
-            res.status(500).send({msg: "Error while add new user. Maybe user already exists"});
+            res.send({state: false, msg: "Error while add new user. Maybe user already exists"});
         }
         else {
-            res.send({msg: "Create successfully."});
+            res.send({state: true, msg: "Create successfully."});
         }
     });
 };

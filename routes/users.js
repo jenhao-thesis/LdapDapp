@@ -379,15 +379,42 @@ router.post('/oao', function(req, res, next) {
             })
             .catch((err) => {
                 console.log(err);
+                res.status(500).send({msg: err});
             });            
 
-            // TODO: Check whether the current bank has the correct permission.
+            // check whether already exist
+            let userObject;
+            let opts = {
+                filter: `(hashed=${identity})`,
+                scope: 'one'
+            };
+            let specificUser = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com')
+            if (specificUser && specificUser.length !== 0) {
+                userObject = JSON.parse(specificUser[0]);
+                delete userObject['userpassword'];
+                console.log("specific user:", userObject);
+            }            
+            if (userObject) {
+                return res.send({state: false, msg: "已擁有該銀行帳戶"});
+            }
+
+            // Check whether the current bank has the correct permission.
+            let accContractInstance = new web3.eth.Contract(acc_contract.abi, req.body.accAddress);
+            let permit = false;
+            await accContractInstance.methods.validatePermission("pii", admin_address, req.body.selectedBank).call({from: admin_address})
+            .then((r) => {
+                permit = r;
+            });
+            if (!permit) {
+                return res.send({status: false, msg: "尚未獲得存取權限"});
+            }
+
 
             // TODO: Get pii from another bank
 
             req.body.identity = identity;
             if (identity == "") {
-                res.status(500).send({msg: "Empty identity"});
+                res.send({state: false, msg: "Empty identity"});
             }
             else
                 next();
