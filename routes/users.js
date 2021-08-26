@@ -369,12 +369,28 @@ router.post('/oao', function(req, res, next) {
             console.log(req.file);
 
             // other information
-            console.log(req.body.ethAccount);
-            console.log(req.body.selectedBank);
+            console.log(req.body);
+            
+            // get identity
+            let identity = "";
+            await contractInstance.methods.getIdByOrg(req.body.ethAccount).call({from: admin_address})
+            .then((result) => {
+                identity = result
+            })
+            .catch((err) => {
+                console.log(err);
+            });            
 
-            // TODO: check content
+            // TODO: Check whether the current bank has the correct permission.
 
-            next()
+            // TODO: Get pii from another bank
+
+            req.body.identity = identity;
+            if (identity == "") {
+                res.status(500).send({msg: "Empty identity"});
+            }
+            else
+                next();
         }
     })
 }, user.create_oao)

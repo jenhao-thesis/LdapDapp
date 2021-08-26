@@ -121,7 +121,7 @@ block content
                                 button.btn.btn-primary.btn-block.confirm-approved-btn(type='button') 授權
                         hr.my-4
                         input.previous.action-button-previous(type='button' name='previous' value='上一步')
-                        input.next.action-button(type='button' name='make_payment' value='確認送出')
+                        input.confirm-and-submit-btn.action-button(type='button' name='make_payment' value='確認送出')
                     fieldset
                         .form-card
                             h2.fs-title.text-center 申請成功 !
@@ -251,16 +251,7 @@ block content
             var opacity;
             var forms = document.querySelectorAll('.needs-validation')
 
-            $(".next").click(function(){
-
-                if (!forms[0].checkValidity()) {
-                    forms[0].classList.add('was-validated')
-                    return;        
-                }
-
-                current_fs = $(this).parent();
-                next_fs = $(this).parent().next();
-
+            function showEffect() {
                 //Add Class Active
                 $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
 
@@ -280,6 +271,62 @@ block content
                     },
                     duration: 600
                 });
+
+            }
+
+            $(".next").click(function(){
+
+                if (!forms[0].checkValidity()) {
+                    forms[0].classList.add('was-validated')
+                    return;        
+                }
+
+                current_fs = $(this).parent();
+                next_fs = $(this).parent().next();
+                showEffect();
+            });
+
+            $(".confirm-and-submit-btn").click(function() {
+                let form = $("#msform")[0];
+
+                // 建立一個新的 FormData 物件
+                let formData = new FormData(form)
+
+                // To inspect formdata
+                console.log(formData);
+                for (var pair of formData.entries()) {
+                    console.log(pair[0]+ ', ' + pair[1]); 
+                }
+
+                // To send 
+                let item = {
+                    'url': `/users/oao`,
+                    'type': 'POST',
+                    'headers': {
+                        // 'Content-Type': 'multipart/form-data',
+                        // 使用 multipart/form-data 在此不需要設定 Content-Type。
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    'contentType': false, //required
+                    'processData': false, // required
+                    'mimeType': 'multipart/form-data',
+                    'data': formData
+                }                
+
+                $.ajax(item)
+                .done((r) => {
+                    console.log(r);
+                    alert("Send successfully.");
+
+                    current_fs = $(this).parent();
+                    next_fs = $(this).parent().next();
+                    showEffect();
+                })
+                .fail((r) => {
+                    alert("Something broke.");
+                    console.log("Error", r.responseText);
+                });
+
             });
 
             $(".previous").click(function(){

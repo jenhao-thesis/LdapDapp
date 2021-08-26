@@ -5,6 +5,7 @@ const { resolve } = require('path');
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));   
 const client = ldap.createClient(config.ldap.server);
 const util = require('util');
+const crypto = require("crypto");
 
 let defaultDN = "cn=%s,ou=location2,dc=jenhao,dc=com";
 let templateUser = {
@@ -191,9 +192,30 @@ exports.create_oao = async (req, res) => {
     
     console.log("```controller```");
     console.log(req.file);
-    console.log(req.body.ethAccount);
-    console.log(req.body.selectedBank);    
+    console.log(req.body);
     console.log("```controller```");
 
-    res.send({msg: "from controller"});
+    let randomCN = crypto.randomBytes(5).toString('hex');
+    let DN = util.format(defaultDN, randomCN); 
+    let oaoUser = {
+        cn: randomCN,
+        sn: 'new OAO',
+        mail: req.body.email,
+        objectClass: 'Person',
+        phone: req.body.phone,
+        hashed: req.body.identity,
+        idStatus: 1,
+        balance: 100,
+        idDoc: req.file.path
+    }
+
+    await client.add(DN, oaoUser, function(err) {
+        if (err) {
+            console.log(err);
+            res.status(500).send({msg: "Error while add new user. Maybe user already exists"});
+        }
+        else {
+            res.send({msg: "Create successfully."});
+        }
+    });
 };
