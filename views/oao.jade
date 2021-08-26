@@ -118,7 +118,7 @@ block content
                                     | &nbsp。
                                     span.text-muted (若已授權，無須再次授權)
                             .col-6.offset-3
-                                button.btn.btn-primary.btn-block(type='button') 授權
+                                button.btn.btn-primary.btn-block.confirm-approved-btn(type='button') 授權
                         hr.my-4
                         input.previous.action-button-previous(type='button' name='previous' value='上一步')
                         input.next.action-button(type='button' name='make_payment' value='確認送出')
@@ -174,7 +174,8 @@ block content
                     })
                 ).done(function() {
                     contractOrgInstance = new web3.eth.Contract(data_org.abi, contract_address);
-
+                    
+                    // Show banks that the user had registered.
                     contractOrgInstance.methods.getOrgList().call({from: account})
                     .then( async (orgs) => { // orgList      
                         $("#inputBankSelect").append(new Option("選擇銀行..", '', true, true));
@@ -184,12 +185,54 @@ block content
                             .then ( (r) => { // boolean
                                 console.log(orgs[i], r);
                                 if (r) {
-                                    $("#inputBankSelect").append(new Option(`銀行 ${orgs[i]}`, orgs[i]));
+                                    $("#inputBankSelect").append(new Option(org_mapping["0x"+orgs[i].substr(2).toUpperCase()][1], orgs[i]));
                                 }
 
                             })
                         }
-                    })              
+                    });
+
+                    // init acc instance and selected bank address
+                    let contractAccInstance;
+                    let selectedAddress;
+                    $('#inputBankSelect').on('change', function(e) {
+                        selectedAddress = this.value;
+                        // Replace address with bank name
+                        let currentFullName = org_mapping["0x"+target_address.substr(2).toUpperCase()][1];
+                        let selectedFullName = org_mapping["0x"+this.value.substr(2).toUpperCase()][1];
+                        $('.current-bank').text(currentFullName);
+                        $('.selected-bank').text(selectedFullName);
+
+                        // Show state of the bank
+                        contractOrgInstance.methods.getAccessManagerAddress(account).call({from: account})
+                        .then( (r) => {
+                            contractAccInstance = new web3.eth.Contract(data_acc.abi, r);
+                            console.log("accMgr:"+r);
+
+                        })
+                        .then( () => {
+                            contractAccInstance.methods.validatePermission("pii", target_address, this.value).call({from: account})
+                            .then( (r) => {
+                                let txt = (r) ? "已授權" : "未授權";
+                                let clr = (r) ? "green" : "red";
+                                $('.current-state').text(txt);
+                                $('.current-state').css({"color": clr});
+                            });
+                        });
+                    });
+
+                    $('.confirm-approved-btn').on('click', () => {
+                        contractAccInstance.methods.authorizeAccess("pii", target_address, selectedAddress).send({from: account})
+                        .on('transactionHash', function(hash){
+                            console.log(`transactionHash: ${hash}.`);                            
+                        })
+                        .on('receipt', function(receipt){
+                            console.log(`receipt:`, receipt);
+                            console.log(`log got:`, receipt.events.AccessAuthorization.returnValues);
+                            $('.current-state').text("已授權");
+                            $('.current-state').css({"color": "green"});
+                        });
+                    });
                 });         
             });
 
@@ -202,13 +245,6 @@ block content
                 $(this).next('.custom-file-label').html(fileName);
             });
 
-            $('#inputBankSelect').on('change', function(e) {
-                let currentFullName = org_mapping["0x"+target_address.substr(2).toUpperCase()][1];
-                let selectedFullName = org_mapping["0x"+this.value.substr(2).toUpperCase()][1];
-                $('.current-bank').text(currentFullName);
-                $('.selected-bank').text(selectedFullName);
-
-            });
 
             // ----------- multistep start -----------------
             var current_fs, next_fs, previous_fs; //fieldsets
