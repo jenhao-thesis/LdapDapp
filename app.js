@@ -8,7 +8,8 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var profile = require('./routes/profile');
 var dataSharing = require('./routes/dataSharing');
-var accessBehaviorTracking = require('./routes/accessBehaviorTracking')
+var userAccessBehaviorTracking = require('./routes/userAccessBehaviorTracking')
+var regAccessBehaviorTracking = require('./routes/regAccessBehaviorTracking')
 var metamask_connect = require('./routes/metamask-connect');
 
 var passport = require('passport');
@@ -64,7 +65,8 @@ app.use('/users', users);
 app.use('/profile', profile);
 app.use('/metamask-connect', metamask_connect);
 app.use('/dataSharing', dataSharing);
-app.use('/accessBehaviorTracking', accessBehaviorTracking);
+app.use('/userAccessBehaviorTracking', userAccessBehaviorTracking);
+app.use('/regAccessBehaviorTracking', regAccessBehaviorTracking);
 
 // api route
 require("./routes/token.routes")(app);

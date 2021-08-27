@@ -1,0 +1,81 @@
+extends layout
+
+block content
+    .row
+        .col-12
+            .container
+            form(action='/userAccessBehaviorTracking' method='get' id='myForm')
+                .form-row 
+                    .col-auto
+                        input(type='text' placeholder='存取資料的其他組織' name='orgA')
+                    .col-auto
+                        input.textbox-n(placeholder='開始日期' type='text' onfocus="(this.type='date')" onblur="(this.type='text')" name='dateStart')
+                    .col-auto
+                        input.textbox-n(placeholder='結束日期' type='text' onfocus="(this.type='date')" onblur="(this.type='text')" name='dateEnd')
+                    .col-auto
+                        button.btn.btn-primary.mb-2.saveData(type='submit') 篩選
+                    .col-auto    
+                        button.btn.btn-secondary.mb-2.resetData(type='submit') 重置
+
+            div(style='overflow-x:auto;')
+                table.mt-2.table.table-striped(style='table-layout: fixed;')
+                    thead
+                        tr
+                            th(scope='col') 身份
+                            th(scope='col') 資料屬性
+                            th(scope='col') 存取資料的其他組織
+                            th(scope='col') 提供資料的組織
+                            th(scope='col') 時間戳記
+                    tbody
+                        each val, idx in accessBehaviors
+                            tr
+                                td(style='word-wrap:break-word;') #{val.identity}
+                                td(style='word-wrap:break-word;') #{val.attribute}
+                                td(style='word-wrap:break-word;') #{val.orgA}
+                                td(style='word-wrap:break-word;') #{val.orgB}
+                                td(style='word-wrap:break-word;') #{val.timestamp}
+            div
+    
+    script. 
+        $(function() {
+            function getCookie(cname) {
+                let name = cname + "=";
+                let ca = document.cookie.split(';');
+                for(let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return "";
+            }
+            let cookieData = decodeURI(getCookie('formData'));
+            // if cookie exists continue
+            if (cookieData != "") {
+                // split cookieData string into an array of fields and their values
+                cookieArray = cookieData.split('&');
+                // go through each field and split it too to get field name and it's value
+                $.each(cookieArray, function(idx, val) {
+                field = val.split('=');
+                // populate field with data
+                $('#myForm [name="'+field[0]+'"]').val(field[1]);
+                });
+            }
+
+            $(".saveData").on("click", function(e) {
+                let formData = $('#myForm').serialize();
+                document.cookie = "formData=" + formData + "; path=/userAccessBehaviorTracking";        
+            });
+
+            $(".resetData").on("click", function(e) {
+                document.getElementById('myForm').reset();
+                document.cookie = "formData=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/userAccessBehaviorTracking";
+            });
+        });
+            
+
+
+   

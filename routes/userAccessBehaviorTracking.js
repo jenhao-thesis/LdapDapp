@@ -22,8 +22,7 @@ router.get('/', isAuthenticated, async function (req, res) {
         where: {
             [Op.and]: [
                 { identity: req.user.hashed },
-                req.query.orgA ? { orgA: req.query.orgA } : null,
-                req.query.orgB ? { orgB: req.query.orgB } : null,
+                req.query.orgA ? { orgA: { [Op.like]: `%${req.query.orgA }%` } } : null,
                 req.query.dateStart && req.query.dateEnd ? { timestamp: { [Op.between]: [req.query.dateStart, req.query.dateEnd] } } : null
             ]
         }
@@ -37,7 +36,7 @@ router.get('/', isAuthenticated, async function (req, res) {
     let data = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com');
     let userObject = JSON.parse(data);
     console.log(userObject);
-    res.render('accessBehaviorTracking', {
+    res.render('userAccessBehaviorTracking', {
         user: userObject,
         accessBehaviors: accessBehaviors
     });
