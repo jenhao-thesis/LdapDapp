@@ -14,4 +14,5 @@ db.sequelize = sequelize;
 db.tokens = require("./tokens.model.js")(sequelize, Sequelize);
 db.nonce = require("./nonce.model.js")(sequelize, Sequelize);
 db.invoice = require("./invoice.model.js")(sequelize, Sequelize);
+db.accessBehaviors = require("./accessBehavior.model.js")(sequelize, Sequelize);
 module.exports = db;

@@ -8,6 +8,8 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var profile = require('./routes/profile');
 var dataSharing = require('./routes/dataSharing');
+var userAccessBehaviorTracking = require('./routes/userAccessBehaviorTracking')
+var regAccessBehaviorTracking = require('./routes/regAccessBehaviorTracking')
 var metamask_connect = require('./routes/metamask-connect');
 
 var passport = require('passport');
@@ -64,11 +66,14 @@ app.use('/users', users);
 app.use('/profile', profile);
 app.use('/metamask-connect', metamask_connect);
 app.use('/dataSharing', dataSharing);
+app.use('/userAccessBehaviorTracking', userAccessBehaviorTracking);
+app.use('/regAccessBehaviorTracking', regAccessBehaviorTracking);
 
 // api route
 require("./routes/token.routes")(app);
 require("./routes/user.routes")(app);
 require("./routes/invoice.routes")(app);
+require("./routes/accessBehavior.routes")(app);
 require("./routes/test.routes")(app);
 
 passport.use(new LdapStrategy(OPTS));
