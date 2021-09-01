@@ -197,7 +197,7 @@ let getProtectedData = async (req, res, next) => {
                             const accessBehavior = {
                                 identity: req.user.hashed,
                                 attribute: 'balance',
-                                orgA: config.org_mapping[admin_address][1],
+                                orgA: config.org_mapping['0x'+ admin_address.substr(2).toUpperCase()][1],
                                 orgB: config.org_mapping[tokens[i].org][1],
                                 timestamp: formatDate(date)
                             }
@@ -238,7 +238,7 @@ let getProtectedData = async (req, res, next) => {
                                 const accessBehavior = {
                                     identity: req.user.hashed,
                                     attribute: 'bill',
-                                    orgA: config.org_mapping[admin_address][1],
+                                    orgA: config.org_mapping['0x'+ admin_address.substr(2).toUpperCase()][1],
                                     orgB: config.org_mapping[tokens[i].org][1],
                                     timestamp: formatDate(date)
                                 }
