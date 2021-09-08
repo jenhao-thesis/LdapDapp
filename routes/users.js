@@ -227,7 +227,53 @@ var verifyTokenForDeposit = function (req, res, next) {
         })
     }   
 };
+router.post('/executeTransaction',async function(req,res){
+    let {hashed,identity,sign_packet,packet,amount,nonce} = req.body;
+    console.log(hashed)
+    console.log(identity)
+    console.log(sign_packet)
+    console.log(packet)
+    console.log(amount)
+    console.log(nonce)
+    console.log('mamam')
+    let account = web3.eth.accounts.recover(packet, sign_packet)
+    if(account == identity){
+        //check nonce
+        let find_nonce = await db.nonce.findAll({
+            where: {
+                value: nonce
+            }
+        });
+        console.log(find_nonce)
 
+        if (find_nonce.length == 0) {
+            return res.json({success: false, message: "not found nonce", data: []});
+        }
+        let opts = {
+            filter: `(hashed=${hashed})`,
+            scope: 'one',
+            attributes: ['balance'],
+            attrsOnly: true
+        };
+        let specificUser = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com')
+        let user_balance = parseInt(JSON.parse(specificUser).balance);
+
+
+        
+        let dn = JSON.parse(specificUser).dn;
+        let change = {
+            operation: 'replace',
+            modification: {
+                balance : user_balance - amount
+            }
+        };
+        client.modify(dn, change, function (err) {
+            if (err) console.log("error", err);
+        });
+        return res.json({success: true, message: "successfully execute.", data: []});
+    }
+
+})
 router.post('/authenticate', async function(req, res) {
     // TODO: check target address whether own access right.
     const {identity, target_address, signature, nonce} = req.body;
@@ -302,6 +348,55 @@ router.get('/protected', verifyTokenForDeposit, async function(req, res) {
         return res.json({success: true, message: "ok, got token", data: specificUser});
     else 
         return res.json({success: false, message: "not found", data: []});
+});
+
+router.get('/depositCheck',verifyTokenForDeposit ,async function(req, res){
+    let data = req.decoded;
+    let hashed = data.hashed;
+    let {acc,amount} = req.query;
+
+    let opts = {
+        filter: `(hashed=${hashed})`,
+        scope: 'one',
+        attributes: ['balance'],
+        attrsOnly: true
+    };
+    let specificUser = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com')
+    let user_balance = parseInt(JSON.parse(specificUser).balance);
+    
+
+    /*
+    let dn = JSON.parse(specificUser).dn;
+    let change = {
+        operation: 'replace',
+        modification: {
+            balance : 1000
+        }
+    };
+    client.modify(dn, change, function (err) {
+        if (err) console.log("error", err);
+    });*/
+    
+    
+    if(user_balance >= parseInt(amount)){
+        let nonce;
+        let id;
+        let list;
+        await db.nonce.create({org: hashed, value: crypto.randomBytes(5).toString('hex')})
+        .then( (data) => {
+                console.log("generate successfully.")
+                id = data.id;
+                nonce = data.value;
+            })
+        .catch( (err) => console.log(err.message));
+
+        return res.json({success: true,message: "ok", data:nonce})
+    }
+    else
+    {
+        return res.json({success: false,message: "deposit is not enough.", data:0})
+    }
+   
 });
 
 router.get('/protectedInvoice', verifyTokenForInvoice, async function(req, res) {
