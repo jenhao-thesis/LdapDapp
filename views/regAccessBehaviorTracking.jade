@@ -1,44 +1,101 @@
-extends layout
+doctype html
+html
+  head
+    title= title
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    link(rel='stylesheet', href='/css/bootstrap.min.css')
+    link(rel='stylesheet', href='https://pro.fontawesome.com/releases/v5.10.0/css/all.css' integrity='sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p' crossorigin='anonymous')
+    link(href="/stylesheets/style.css" rel="stylesheet")
+  body
+    script(src='/js/jquery.min.js')
+    script(src='/js/bootstrap.min.js')
+    script(src='https://unpkg.com/bootstrap-show-password@1.2.1/dist/bootstrap-show-password.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js' integrity='sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==' crossorigin='anonymous')
 
-block content
-    .row
-        .col-12
-            .container
-            form(action='/regAccessBehaviorTracking' method='get' id='myForm')
-                .form-row 
-                    .col-auto
-                        input(type='text' placeholder='身份' name='identity')
-                    .col-auto
-                        input(type='text' placeholder='存取資料的其他組織' name='orgA')
-                    .col-auto
-                        input(type='text' placeholder='提供資料的組織' name='orgB')
-                    .col-auto
-                        input.textbox-n(placeholder='開始日期' type='text' onfocus="(this.type='date')" onblur="(this.type='text')" name='dateStart')
-                    .col-auto
-                        input.textbox-n(placeholder='結束日期' type='text' onfocus="(this.type='date')" onblur="(this.type='text')" name='dateEnd')
-                    .col-auto
-                        button.btn.btn-primary.mb-2.saveData(type='submit') 篩選
-                    .col-auto    
-                        button.btn.btn-secondary.mb-2.resetData(type='submit') 重置
+    nav.navbar.navbar-expand-lg.navbar-light.bg-light
+      .container
+        a.navbar-brand(href='#')
+          img.d-inline-block.align-text-top(src='/images/ethereum.png' alt='' width='14' height='24')
+          |  監管單位
+        
+        button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarNav' aria-controls='navbarNav' aria-expanded='false' aria-label='Toggle navigation')
+          span.navbar-toggler-icon
+        #navbarNav.collapse.navbar-collapse.justify-content-end
+          ul.navbar-nav
+            li.nav-item.px-2.active
+              a.nav-link(href='/')
+                | 首頁
+                span.sr-only (current)
+            if !user
+              li.nav-item.px-2
+                a.nav-link(href='#') 教學指南
+              li.nav-item.px-2
+                a.nav-link(href='#') 最新消息                
+              li.nav-item.px-2
+                a.button.btn.btn-danger(type='submit' style="background-color: #de5858 border-color: #de5858" href='/online-account-opening') 線上開戶
 
-            div(style='overflow-x:auto;')
-                table.mt-2.table.table-striped(style='table-layout: fixed;')
-                    thead
-                        tr
-                            th(scope='col') 身份
-                            th(scope='col') 資料屬性
-                            th(scope='col') 存取資料的其他組織
-                            th(scope='col') 提供資料的組織
-                            th(scope='col') 時間戳記
-                    tbody
-                        each val, idx in accessBehaviors
-                            tr
-                                td(style='word-wrap:break-word;') #{val.identity}
-                                td(style='word-wrap:break-word;') #{val.attribute}
-                                td(style='word-wrap:break-word;') #{val.orgA}
-                                td(style='word-wrap:break-word;') #{val.orgB}
-                                td(style='word-wrap:break-word;') #{val.timestamp}
-            div
+            if user
+              li.nav-item.px-2
+                a.nav-link(href='/profile/') 個人檔案        
+              li.nav-item.px-2
+                a.nav-link(href='/dataSharing/') 資料共享
+              li.nav-item
+                a.nav-link(href='/userAccessBehaviorTracking/') 存取紀錄追蹤
+              li.nav-item.px-2
+                a.nav-link(href='/users/logout') 登出
+
+    .container.mt-2
+        block content
+            .row
+                .col-12
+                    .container
+                    form(action='/regAccessBehaviorTracking' method='get' id='myForm')
+                        .form-row 
+                            .col-auto
+                                input(type='text' placeholder='身份' name='identity')
+                            .col-auto
+                                input(type='text' placeholder='存取資料的第三方組織' name='orgA')
+                            .col-auto
+                                input(type='text' placeholder='提供資料的組織' name='orgB')
+                            .col-auto
+                                input.textbox-n(placeholder='開始日期' type='text' onfocus="(this.type='date')" onblur="(this.type='text')" name='dateStart')
+                            .col-auto
+                                input.textbox-n(placeholder='結束日期' type='text' onfocus="(this.type='date')" onblur="(this.type='text')" name='dateEnd')
+                            .col-auto
+                                button.btn.btn-primary.mb-2.saveData(type='submit') 篩選
+                            .col-auto    
+                                button.btn.btn-secondary.mb-2.resetData(type='submit') 重置
+
+                    div(style='overflow-x:auto;')
+                        table.mt-2.table.table-striped(style='table-layout: fixed;')
+                            thead
+                                tr
+                                    th(scope='col') 身份
+                                    th(scope='col') 資料屬性
+                                    th(scope='col') 存取資料的其他組織
+                                    th(scope='col') 提供資料的組織
+                                    th(scope='col') 時間戳記
+                            tbody
+                                each val, idx in accessBehaviors
+                                    tr
+                                        td(style='word-wrap:break-word;') #{val.identity}
+                                        td(style='word-wrap:break-word;') #{val.attribute}
+                                        td(style='word-wrap:break-word;') #{val.orgA}
+                                        td(style='word-wrap:break-word;') #{val.orgB}
+                                        td(style='word-wrap:break-word;') #{val.timestamp}
+                    div
+
+    footer.my-5.pt-5.text-muted.text-center.text-small
+      p.mb-1 © 2020–2021 監管單位
+      ul.list-inline
+        li.list-inline-item
+          a(href='#') Privacy
+        li.list-inline-item
+          a(href='#') Terms
+        li.list-inline-item
+          a(href='#') Support
+    
     
     script. 
         $(function() {
