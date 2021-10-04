@@ -34,7 +34,10 @@ var searchOpts = {
     filter: '',
     scope: 'sub',
 };
-
+const formatDate = (current_datetime) => {
+    let formatted_date = current_datetime.getFullYear() + "-" + (current_datetime.getMonth() + 1) + "-" + current_datetime.getDate() + " " + current_datetime.getHours() + ":" + current_datetime.getMinutes() + ":" + current_datetime.getSeconds();
+    return formatted_date;
+}
 passport.use('local', new LocalStrategy( {
     // Override those field if you don'y need it
     // https://stackoverflow.com/questions/35079795/passport-login-authentication-without-password-field
@@ -171,6 +174,7 @@ var verifyTokenForInvoice = function (req, res, next) {
                 });
 
                 if (permit) {
+                    req.sub = decoded.sub
                     req.decoded = decoded
                     next();
                 }
@@ -209,6 +213,8 @@ var verifyTokenForDeposit = function (req, res, next) {
                 });
 
                 if (permit) {
+                    console.log(decoded.sub)
+                    req.sub = decoded.sub
                     req.decoded = decoded
                     next();
                 }
@@ -344,8 +350,19 @@ router.get('/protected', verifyTokenForDeposit, async function(req, res) {
         attrsOnly: true
     };
     let specificUser = await user.userSearch(opts, 'ou=location2,dc=jenhao,dc=com')
-    if (specificUser.length !== 0)
+    if (specificUser.length !== 0){
+        var date = new Date();
+        const accessBehavior = {
+            identity: hashed,
+            attribute: 'deposit',
+            orgA: config.org_mapping['0x'+ req.sub.substr(2).toUpperCase()][1],
+            orgB: config.org_mapping['0x'+ admin_address.substr(2).toUpperCase()][1],
+            timestamp: formatDate(date)
+        }
+        db.accessBehaviors.create(accessBehavior);
+
         return res.json({success: true, message: "ok, got token", data: specificUser});
+    }
     else 
         return res.json({success: false, message: "not found", data: []});
 });
@@ -365,18 +382,16 @@ router.get('/depositCheck',verifyTokenForDeposit ,async function(req, res){
     let user_balance = parseInt(JSON.parse(specificUser).balance);
     
 
-    /*
-    let dn = JSON.parse(specificUser).dn;
-    let change = {
-        operation: 'replace',
-        modification: {
-            balance : 1000
-        }
-    };
-    client.modify(dn, change, function (err) {
-        if (err) console.log("error", err);
-    });*/
-    
+    var date = new Date();
+
+    const accessBehavior = {
+        identity: hashed,
+        attribute: 'pay',
+        orgA: config.org_mapping['0x'+ req.sub.substr(2).toUpperCase()][1],
+        orgB: config.org_mapping['0x'+ admin_address.substr(2).toUpperCase()][1],
+        timestamp: formatDate(date)
+    }
+    db.accessBehaviors.create(accessBehavior);
     
     if(user_balance >= parseInt(amount)){
         let nonce;
@@ -419,6 +434,15 @@ router.get('/protectedInvoice', verifyTokenForInvoice, async function(req, res) 
 
     if (invoices.length !== 0) {
         console.log("Found record and return.");
+        var date = new Date();
+        const accessBehavior = {
+            identity: hashed,
+            attribute: 'bill',
+            orgA: config.org_mapping['0x'+ admin_address.substr(2).toUpperCase()][1],
+            orgB: req.sub,
+            timestamp: formatDate(date)
+        }
+        db.accessBehaviors.create(accessBehavior);
         return res.json({success: true, message: "ok, got token", data: invoices});
     }
     else
@@ -506,7 +530,7 @@ router.post('/oao', function(req, res, next) {
 
 
             // TODO: Get pii from another bank
-
+            
             req.body.identity = identity;
             if (identity == "") {
                 res.send({state: false, msg: "Empty identity"});
