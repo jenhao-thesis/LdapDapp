@@ -277,9 +277,51 @@ router.post('/bindAccount', isAuthenticated, async function (req, res, next) {
                         }
                     };
 
+                
+                    let signedTxObj;
+                    let tx_builder = contractInstance.methods.addUser(hashedId);
+                    let encode_tx = tx_builder.encodeABI();
+                    let transactionObject = {
+                        gas: 6721975,
+                        data: encode_tx,
+                        from: admin_address,
+                        to: contract_address
+                    }
+                    await web3.eth.accounts.signTransaction(transactionObject, config.admin_key, async function (error, signedTx) {
+                        if (error) {
+                            console.log("sign error");
+                        } else {
+                            signedTxObj = signedTx;
+                        }
+                    })
+                    
                     client.modify(req.user.dn, change, function (err) {
                         if (err) console.log("error", err);
+                        else{
+                            web3.eth.sendSignedTransaction(signedTxObj.rawTransaction)
+                            .on('receipt', function (receipt) {
+                                console.log(receipt);
+                                return res.send({
+                                    msg: `${req.body.uid}-${receipt.transactionHash}`
+                                });
+                            })
+                            .on('error', function (error) {
+                                console.log(`Send signed transaction failed.`);
+                                console.log(error)
+                                return res.status(500).send({
+                                    msg: "error"
+                                });
+                            })
+                            .catch((error) => {
+                                console.error(error);
+                                return res.send({
+                                    msg:error
+                                })
+                            })
+                        }
                     });
+                    
+
 
                     msg = `Your account already integrated into ${userAddress}`;
                 } else {

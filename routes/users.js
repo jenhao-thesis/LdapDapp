@@ -95,6 +95,32 @@ passport.use('local', new LocalStrategy( {
                 idStatus: 1,
                 balance: 100
             };
+            
+            // addUser on chain
+            /*
+            let signedTxObj;
+            let tx_builder = contractInstance.methods.addUser(identity);
+            let encode_tx = tx_builder.encodeABI();
+            let transactionObject = {
+                gas: 6721975,
+                data: encode_tx,
+                from: admin_address,
+                to: contract_address
+            }
+            
+            await web3.eth.accounts.signTransaction(transactionObject, config.admin_key, async function (error, signedTx) {
+                if (error) {
+                    console.log("sign error");
+                } else {
+                    signedTxObj = signedTx;
+                }
+            }).catch((error) => {
+                console.log("```");
+                console.error(error);
+                console.log("```");
+                return res.send({msg:error})
+            })*/
+
             await client.add(DN, tmpUser, function(err) {
                 if (err) {
                     console.log(err);
@@ -234,7 +260,7 @@ var verifyTokenForDeposit = function (req, res, next) {
     }   
 };
 router.post('/executeIncrease',async function(req ,res){
-    console.log('amamammmamamamamaamammaa')
+    
     let { sender_hased , sender_account , sign_packet , packet } = req.body;
     console.log(sign_packet,packet)
     let account = web3.eth.accounts.recover(packet, sign_packet)
