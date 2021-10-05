@@ -524,7 +524,6 @@ router.get('/auth/nonce', async function (req, res) {
 });
 
 router.post('/oao', function(req, res, next) {
-    
     upload(req, res, async function(err) {
         if (err instanceof multer.MulterError) {
             console.log('A Multer error occurred when uploading.', err);
@@ -587,10 +586,41 @@ router.post('/oao', function(req, res, next) {
             if (identity == "") {
                 res.send({state: false, msg: "Empty identity"});
             }
-            else
+            else{
+                // queryUser
+                let provider_ip = config.org_mapping['0x'+ req.body.selectedBank.substr(2).toUpperCase()][0]
+                await fetch(`http://${provider_ip}/users/oaoQueryUser?hashed=${identity}&org=${admin_address}`)
+                    .then(res => res.json())
+                    .then(json => {
+                        console.log(json)
+                        // addUser on Chain in here ... but skip !
+                    })
                 next();
+            }
         }
     })
 }, user.create_oao)
 
+router.get('/oaoQueryUser',function(req ,res ,next){
+    const {hashed,org} = req.query;
+    if(!hashed)
+        return res.json({'status':false,msg:"hashed of user is missing."})
+    // Need to check permission .... but skip !
+    console.log(hashed)
+
+    // Query User ... but skip !
+
+    // Add access behavior "pii"
+    var date = new Date();
+    const accessBehavior = {
+        identity: hashed,
+        attribute: 'pii',
+        orgA: config.org_mapping['0x'+ org.substr(2).toUpperCase()][1],
+        orgB: config.org_mapping['0x'+ admin_address.substr(2).toUpperCase()][1],
+        timestamp: formatDate(date)
+    }
+    db.accessBehaviors.create(accessBehavior);
+
+    return res.json({'status':true, msg:"success query user data."})
+})
 module.exports = router;
