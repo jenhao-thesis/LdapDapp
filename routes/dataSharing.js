@@ -123,6 +123,7 @@ let getHashed = async (req, res, next) => {
         if (userObject.hashed === "")
             return res.redirect("/");
         req.user.hashed = userObject.hashed;
+        console.log(req.user.hashed)
         next();
     }
     else {

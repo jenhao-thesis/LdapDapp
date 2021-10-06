@@ -1,0 +1,889 @@
+extends tsp_layout
+
+block content
+    .row
+        .col-12
+            ul#myTab.nav.nav-tabs(role='tablist')
+                li.nav-item
+                    a#loan-tab.nav-link.active(data-toggle='tab' href='#loan' role='tab' aria-controls='loan' aria-selected='true') 信用貸款
+                li.nav-item
+                    a#data-tab.nav-link(data-toggle='tab' href='#data' role='tab' aria-controls='data' aria-selected='false') 資料總覽
+                li.nav-item
+                    a#pay-tab.nav-link(data-toggle='tab' href='#pay_mode2' role='tab' aria-controls='pay_mode2' aria-selected='false') 整合支付
+
+            #myTabContent.tab-content
+                #loan.tab-pane.fade.show.active(role='tabpanel' aria-labelledby='loan-tab')
+                        .card(style='margin-top:10px')
+                            .card-header(href='#' style='background-color: white; font-weight:700 ') Bank A 獨享貸
+                            .card-body.text-center(style='padding-bottom: 10px;padding-top:10px')
+                                .row
+                                    .col-3
+                                        img.d-inline-block.align-text-top(src='/images/ethereum.png' alt='' width='28' height='48')
+                                    .col-3
+                                        .row
+                                            .col-12.label-text 2.58%
+                                            .col-12.label-blue 最低貸款利率
+                                            .col-12.label-hint 總費用年百分率 : 2.99%
+                                    .col-3 
+                                        .row
+                                            .col-12.label-text NT$ 88
+                                            .col-12.label-blue 手續費
+                                    .col-3 
+                                        .row
+                                            .col-12.label-text NT$ 220
+                                            .col-12.label-blue 最低每月還款額
+
+                        .card(style='margin-top:10px')
+                            .card-header(href='#' style='background-color: white; font-weight:700') Bank B 優利貸
+                            .card-body.text-center(style='padding-bottom: 10px;padding-top: 10px')
+                                .row
+                                    .col-3 
+                                       img.d-inline-block.align-text-top(src='/images/B.png' alt='' width='68' height='68')
+                                    .col-3
+                                        .row
+                                            .col-12.label-text 0.88%
+                                            .col-12.label-blue 最低貸款利率
+                                            .col-12.label-hint 總費用年百分率 : 2.78%
+                                    .col-3 
+                                        .row
+                                            .col-12.label-text NT$ 3000
+                                            .col-12.label-blue 手續費
+                                    .col-3 
+                                        .row
+                                            .col-12.label-text NT$ 212
+                                            .col-12.label-blue 最低每月還款額
+
+                        .card(style='margin-top:10px')
+                            .card-header(href='#' style='background-color: white; font-weight:700') Bank C 卡友貸款
+                            .card-body.text-center(style='padding-bottom: 10px;padding-top: 10px')
+                                .row
+                                    .col-3 
+                                       img.d-inline-block.align-text-top(src='/images/cat.png' alt='' width='88' height='78')
+                                    .col-3
+                                        .row
+                                            .col-12.label-text 0.68%
+                                            .col-12.label-blue 最低貸款利率
+                                            .col-12.label-hint 總費用年百分率 : 3.07%
+                                    .col-3 
+                                        .row
+                                            .col-12.label-text NT$ 2000
+                                            .col-12.label-blue 手續費
+                                    .col-3 
+                                        .row
+                                            .col-12.label-text NT$ 45,944
+                                            .col-12.label-blue 最低每月還款額
+
+                        .card(style='margin-top:10px')
+                            .card-header(href='#' style='background-color: white; font-weight:700') Bank D 就來貸專案
+                            .card-body.text-center(style='padding-bottom: 10px;padding-top: 10px')
+                                .row
+                                    .col-3 
+                                       img.d-inline-block.align-text-top(src='/images/dog.jpeg' alt='' width='88' height='78')
+                                    .col-3
+                                        .row
+                                            .col-12.label-text 0.1%
+                                            .col-12.label-blue 最低貸款利率
+                                            .col-12.label-hint 總費用年百分率 : 3.11%
+                                    .col-3 
+                                        .row
+                                            .col-12.label-text NT$ 6000
+                                            .col-12.label-blue 手續費
+                                    .col-3 
+                                        .row
+                                            .col-12.label-text NT$ 45,405
+                                            .col-12.label-blue 最低每月還款額
+                        
+                #data.tab-pane.fade(role='tabpanel' aria-labelledby='data-tab')
+                        .row.mt-2
+                            if !user
+                                .col-md-12.backdrop-filter
+                                    p.backdrop-text <i class="bi bi-lock-fill fa-5"></i> 登入使用更多功能
+                            .col-md-6.col.my-2
+                                .card
+                                    .card-header 總資產
+                                    .card-body
+                                        .chartjs-size-monitor
+                                        .chartjs-size-monitor-expand
+                                            div
+                                        .chartjs-size-monitor-shrink
+                                            div
+                                        h5.total-deposit.text-right.my-1.font-weight-bold NT$&nbsp;100
+                                        canvas#myDoughnut.chartjs-render-monitor(width='966', height='966', style='display: block; height: 483px; width: 483px;')
+                            .col-md-6.col.my-2
+                                .card
+                                    .card-header 總帳單
+                                    .card-body
+                                        .chartjs-size-monitor
+                                        .chartjs-size-monitor-expand
+                                            div
+                                        .chartjs-size-monitor-shrink
+                                            div
+                                        canvas#myLine.chartjs-render-monitor(width='966', height='966', style='display: block; height: 483px; width: 483px;')
+                
+
+                #pay_mode1.tab-pane.fade(role='tabpanel' aria-labelledby='data-tab')                  
+                        if !user
+                            .col-md-12.backdrop-filter
+                                p.backdrop-text <i class="bi bi-lock-fill fa-5"></i> 登入使用更多功能
+                        .row(style="background-color: rgba(119,170,67,0.1);margin-top:10px;margin-left:0px")
+                            .col-12(style= "color:rgba(119,170,67,.9);font-weight:700") 相關說明
+                            .col-12(style= "font-weight:400") 1. 流程進度 : 輸入繳費資訊 > 分配付款帳戶 > 繳費交易結果
+                            .col-12(style= "font-weight:400") 2. 限定本人繳費
+                    
+                        #pay_card.card(style='margin-top:10px')
+                                .card-header(href='#' style='background-color:skyblue; color:#000; font-weight:700 ;border-bottom:none') 輸入繳費資訊
+                                .card-body.text-center(style='padding-bottom: 10px;padding-top:10px')
+                                    .row
+                                        .col-md-3(style='text-align:right')
+                                            label.label-text(style='font-size:1rem;font-weight:400') 繳費號
+                                            span.label-text(style='font-size:1rem;color:red;font-weight:400') (必填)
+                                        .col-md-6(style='text-align:left')
+                                            <input type="text" name="WaterNo" id="paymentNumber" maxlength="10" value="" style="width:100%">
+                                        .col-md-3
+                                        .col-4
+
+                                        .col-4 
+                                            <input id="paymentBtn" type="submit" value="確認送出" class="btn btn-primary mt-4" style="padding-top:-15px;">
+                                        .col-4
+
+                #pay_mode2.tab-pane.fade(role='tabpanel' aria-labelledby='data-tab')                  
+                    if !user
+                        .col-md-12.backdrop-filter
+                            p.backdrop-text <i class="bi bi-lock-fill fa-5"></i> 登入使用更多功能
+                    .row(style="background-color: rgba(119,170,67,0.1);margin-top:10px;margin-left:0px")
+                            .col-12(style= "color:rgba(119,170,67,.9);font-weight:700") 相關說明
+                            .col-12(style= "font-weight:400") 1. 流程進度 : 輸入轉帳資訊 > 確認與簽名 > 轉帳交易結果
+                    .row.my-2
+                        .col-1
+                        .col-4.text-center
+                            發送帳戶
+                        .col-2
+                        .col-4.text-center
+                            接受帳戶
+                        .col-1
+                        
+                    .row
+                        .col-md-1
+                        table.col-12.col-md-4.table.text-center#pay_mode2_table
+                            thead.thead-light
+                                tr
+                                    th(scope="col") 已授權銀行
+                                    th(scope="col") 轉帳金額
+                            tbody
+                        .col-md-2.d-none.d-md-block
+                            <i class="bi bi-arrow-right fa-10x"></i>
+
+                        .col-4.d-md-none
+                        .col-4.d-md-none.text-center
+                            <i class="bi bi-arrow-down fa-5x"></i>
+                        .col-4.d-md-none
+
+                        table.col-md-4.col-12.table.text-center#receive_mode2_table
+                            thead.thead-light
+                                tr
+                                    th(scope="col") 轉帳銀行
+                                    th(scope="col") 帳戶公鑰
+                            tbody
+                                tr
+                                    th 
+                                        select#BankSelect.form-control
+                                    th
+                                        <input id="mode2_receive" type="text" placeholder="請輸入公鑰" aria-label="Parameter" aria-describedby="basic-addon2" required="required" class="form-control">
+                        .col-md-1
+                    .row.text-center
+                        .col-4.col-md-4
+                        .col-4.col-md-4
+                            <input id="pay_mode2_Btn" type="submit" value="確認送出" class="btn btn-primary mt-4" style="padding-top:-15px;"  data-toggle="modal" data-target="#infoModal">
+                        .col-4.col-md-4
+
+                           
+                                            
+            
+            #infoModal.modal.fade(tabindex='-1' role='dialog' aria-hidden='true')
+                .modal-dialog(role='document')
+                    .modal-content
+                        .modal-header
+                            h5.modal-title 確認存款餘額
+                        .modal-body
+                            .row
+                                #msg_info.col-md-12
+                            .row
+                                .col-md-4 
+                                #info_icon.col-12.col-md-4.text-center 
+                                    <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                                .col-md-4 
+                        .modal-footer.hide
+                            button.btn.btn-info.sign-btn(type='button' data-dismiss='modal') 簽名
+                            button.btn.btn-primary.reset-btn(type='button' data-dismiss='modal') 確認
+
+                                    
+                
+
+    
+    //h4.pb-2.border-bottom 信用貸款
+
+    script. 
+        $(function() {
+            let account = "";
+            let contract_address = "#{address}";
+            let target_address = "#{org_address}";
+            let selectAttr = "";                            
+            let org_mapping = JSON.parse("#{org_mapping}".replace(/&quot;/g,'"'));
+            let user = ("#{user}" == "true")
+
+            let transaction_package = []
+            let orgNameList = []
+            let orgName_mapping_address = {};
+            let amount;
+            let transaction_package_res;
+            let origin_html;
+
+
+            let transaction = []
+            let org_mapping_address = [];
+            let total_amount;
+            let transaction_response;
+            let origin_html_pay;
+
+            let origin_html_info;
+            
+
+            window.ethereum.on('accountsChanged', function(accounts) {
+                account = accounts[0];
+                $(".account").html("Account:" + account);    
+                $(".func4-input1").val(account);
+            });
+
+            function NumAutoPlusAnimation(targetEle, options) {
+
+                time = options.time  //總時間--毫秒為單位
+                finalNum = options.num //要顯示的最後數值
+                regulator = options.regulator //速度
+
+                step = finalNum / (time / regulator);
+                if(step < 1){
+                    step = 1;
+                }
+                count = 0;
+                initial = 0;
+
+                var timer = setInterval(function() {
+        
+                    count = count + step;
+                    count = Math.floor(count)
+                    if(count >=finalNum) {
+                        clearInterval(timer);
+                        count =finalNum;
+                    }
+                    $(targetEle).text(count);
+                }, 30);
+            }
+
+            function CreatePaymentPage(res){
+                 origin_html = $("#pay_card").html();
+                 $("#pay_card").empty();
+                 $("#pay_card").append('<div style="background-color:skyblue; color:#000; font-weight:700 ;border-bottom:none" class="card-header">分配付款帳戶</div>');
+                 $("#pay_card").append('<div id ="card_body" style="padding-bottom: 1rem;padding-top:1rem" class="card-body text-center"></div>')
+                 $("#card_body").append('<div class="row"><div class="col-md-3"></div><div class="col-md-6 col-12" style="font-size:1rem"><div class="row"><div class="col-md-5 col-5">'+'已分配金額'+'</div><div class="col-md-2 col-2"></div><div class="col-md-5 col-5">'+'應繳金額'+'</div></div></div><div class="col-md-3"></div></div>');
+                 $("#card_body").append('<div class="row"><div class="col-md-3"></div><div class="col-md-6 col-12" style="font-size:3.2rem"><div class="row"><div id="input_value" class="col-md-5 col-5">'+'0'+'</div><div class="col-md-2 col-2">'+'/'+'</div><div class="col-md-5 col-5">'+res.data[0].amount+'</div></div><div class="col-md-2"></div></div>')
+                 $("#card_body").append('<div class="row"><div class="col-md-2"></div><table id="select_bank" class="table col-8"><thead class="thead-light"><tr><th scope="col">銀行名稱</th> <th scope="col">付款金額</th></tr></thead><tbody></tbody></table><div class="col-md-2"></div></div>');
+                 $("#card_body").append('<div class="row"><div class="col-md-4"></div><div class="col-md-4"><input id="assignConfirmBtn" type="submit" value="確認送出" class="btn btn-primary" style="padding-top:-15px" data-toggle="modal" data-target="#infoModal"  disabled="disabled"></div><div class="col-md-4"></div> </div>')
+                 
+                 /*
+                 $("#select_bank").on("click", function(e) {
+
+                 }*/
+                
+                 $.getScript( "/javascripts/web3_bundle.js", async function(data, textStatus, jqxhr) {
+                     $.when(
+                        $.getJSON('/dataSharing/org.json', function(data) {
+                            data_org = data;
+                        }),
+                        $.getJSON('/dataSharing/acc.json', function(data) {
+                            data_acc = data;
+                        //console.log(data_acc)
+                        })
+                        /*
+                        $.getJSON('/contracts/OrganizationManager.json', function(data) {
+                            data_org = data;
+                        }),
+                        $.getJSON('/contracts/AccessManager.json', function(data) {
+                            data_acc = data;
+                        })*/
+                    ).done(function() {
+                        let contractOrgInstance = new web3.eth.Contract(data_org.abi, contract_address);
+                        // Show banks that the user had registered.
+
+                        contractOrgInstance.methods.getOrgList().call({from: account})
+                        .then( async (orgs) => { // orgList      
+                            console.log(org_mapping)
+                            console.log(orgs)
+                            for (var i = 0; i < orgs.length; i++) {
+                                await contractOrgInstance.methods.isRegistered(orgs[i]).call({from: account})
+                                .then ( (r) => { // boolean
+                                    console.log(orgs[i], r);
+                                    if (r) {
+                                        let upperAddress = "0x"+orgs[i].substr(2).toUpperCase();
+                                        let orgName = org_mapping[upperAddress][1];
+
+                                        orgNameList.push(orgName)
+                                        orgName_mapping_address[orgName] = upperAddress;
+
+                                        transaction_package[orgName]= []
+                                        transaction_package[orgName]['amount'] = 0
+            
+                                        $("#select_bank > tbody").append('<tr><th scope="row">'+ orgName +'</th><th><input id="'+ orgName +'" type="text" placeholder="輸入金額" aria-label="Parameter" aria-describedby="basic-addon2" required="required" class="form-control"></th></tr>')
+                                       
+                                    }
+                                    else{
+                                        //console.log("沒喔")
+                                    }
+                                })
+                            }
+                            $("#select_bank input[type='text']").on('change', function() {
+
+                                let input_text = $(this).val();
+
+                                if(!isNaN(input_text)){
+                                    let old_text = transaction_package[$(this).attr('id')]['amount'];
+                                    let update_value = input_text - old_text;
+                                    transaction_package[$(this).attr('id')]['amount'] = input_text
+                                    let new_value = parseInt($("#input_value").text()) + update_value;
+
+                                    if(new_value >= amount){
+                                        $("#assignConfirmBtn").removeAttr("disabled")
+                                    }
+                                    if(new_value < amount){
+                                        $("#assignConfirmBtn").attr("disabled","disabled")
+                                    }
+
+                                    NumAutoPlusAnimation("#input_value",{ time: 10, num:new_value, regulator: 1});
+                                }
+                                else
+                                {
+                                    $(this).val("")
+                                    alert('請輸入數字')
+                                }
+                                
+                            });
+                            
+                            
+
+                            $(".reset-btn").on('click',function(){
+                                $("#info_icon").empty();
+                                $("#info_icon").append('<div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>');
+                                $("#msg_info").empty();
+                                $("#msg_info").removeAttr("style");
+                                $(".reset-btn").hide();
+                            })
+                            $("#assignConfirmBtn").on('click',function(){
+                                $("#msg_info").empty();
+                                $("#info_icon").empty();
+                                $("#info_icon").append(origin_html_info);
+                                $(".cancel-btn").hide();
+                                $(".sign-btn").hide();
+                                $(".reset-btn").hide();
+                                
+
+                                let amount = []
+                                let org_address = []
+
+                                for (var i = 0; i < orgNameList.length; i++) {
+                                    org_address.push(orgName_mapping_address[orgNameList[i]])
+                                    amount.push(transaction_package[orgNameList[i]]['amount'])
+                                }
+                                console.log(orgNameList)
+                                console.log(amount)
+                                $.ajax({
+                                        url: '/tsp/depositCheck',
+                                        data:{
+                                            orgs: org_address,
+                                            amount: amount,
+                                        },
+                                        type: 'get',
+                                        success: function(res) {
+                                            transaction_package_res = res;
+                                            
+                                            if(res['status']){
+                                                setTimeout(function(){
+                                                    
+                                                    $("#info_icon").empty();
+                                                    $("#info_icon").append('<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="green" class="bi bi-check-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/></svg>')
+                                                    $("#msg_info").attr("style","padding-bottom:10px")
+                                                    $("#msg_info").append('<span class="font-weight-bold">餘額確認完成，請用私鑰進行簽名</span>')
+                                                    $(".sign-btn").show();
+                                                }, 1000);
+                                                console.log('餘額足夠')
+                                            }
+                                            else{
+                                                setTimeout(function(){ 
+                                                    $("#info_icon").empty();
+                                                    $("#info_icon").append('<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="red" class="bi bi-x-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>') 
+                                                    $("#msg_info").attr("style","padding-bottom:10px")
+                                                    $("#msg_info").append('<span class="font-weight-bold"> '+res['msg']+' </span>')
+                                                    $(".reset-btn").show();
+                                                }, 1000);
+                                                       
+                                            }
+                                        },
+                                        error: function(err) {
+                                            console.log("error");
+                                        }
+                                })
+                            });
+                        });
+
+                        
+
+                        
+
+                    })
+                })
+            }
+           
+            $("#paymentBtn").on("click", function(e) {
+                let payment_number = $('#paymentNumber').val();
+                $.ajax({
+                        url: '/tsp/queryPaymentInfo',
+                            data: { 
+                                payment_number: payment_number
+                            },
+                            type: 'get',
+                            success: function(res) {
+                                if(res.success){
+                                     console.log("success");
+                                     CreatePaymentPage(res);
+                                     amount = res.data[0].amount
+                                }
+                                else{
+                                    alert("繳費號不存在\!")
+                                }
+                               
+                                
+                            },
+                            error: function(err) {
+                                console.log("error");
+                    
+                            }
+                });
+                
+            });
+
+            $(".sign-btn").on('click',function(){
+                let packet;
+                let url;
+                if(transaction_response){
+                    // 整合支付
+                    url = '/tsp/executeTransfer'
+                    packet = JSON.stringify(transaction_response);
+                }
+                else{
+                    // 繳費
+                    url = 'tsp/executeTransaction',
+                    packet = JSON.stringify(transaction_package_res);
+                }
+                
+                web3.eth.personal.sign(packet, account).then((res) => {
+                    console.log(res)
+                    $.ajax({
+                        url: url,
+                        data:{
+                            packet : res
+                        },
+                        type: 'post',
+                        success: function(res) {
+                            console.log("success");
+                            console.log(res)
+                            if(res.success){
+                                alert('完成繳費')
+                                
+                                                    
+                                //$("#pay_card").empty();
+                                //$("#pay_card").append(origin_html);
+                                location.reload()
+                            }
+                        },
+                        error: function(err) {
+                            console.log("error");
+                            alert();
+                        }
+
+                    })
+                }).then(()=>{
+                    if(transaction_package_res){
+                        transaction_package = []
+                        orgNameList = []
+                        orgName_mapping_address = {};
+                        amount = 0;
+                        transaction_package_res = ""
+                    }
+                    else{
+                        transaction = []
+                        org_mapping_address = [];
+                        total_amount = 0
+                        transaction_response = ""
+                    }
+                    
+                })
+                                
+            })
+            
+            
+
+            $.getScript( "/javascripts/web3_bundle.js", async function(data, textStatus, jqxhr) {
+                let data_org, data_acc;
+                let contractAccInstance;
+                let contractOrgInstance;
+                
+                $.when(
+                    $.getJSON('/dataSharing/org.json', function(data) {
+                        data_org = data;
+                    }),
+                    $.getJSON('/dataSharing/acc.json', function(data) {
+                        data_acc = data;
+                    })
+                ).done(function() {
+
+                    if(!user){
+                        return;
+                    }
+
+                    web3.eth.getAccounts().then((accounts) => {
+                        account = accounts[0];
+                    });
+
+                    contractOrgInstance = new web3.eth.Contract(data_org.abi, contract_address);
+                    contractOrgInstance.methods.getOrgList().call({from: account})
+                    .then( (result) => { // orgList
+
+
+                        // Add option on BankSelect
+                        let first = true;
+                        for (let i = 0; i < result.length; ++i) {
+                            if (result[i] == target_address) continue;
+                            let upperAddress = "0x"+result[i].substr(2).toUpperCase();
+                            let orgName = org_mapping[upperAddress][1];
+                            if(first)
+                            {
+                                $("#BankSelect").append(new Option(orgName, orgName, true, true));
+                                first = false;
+                            }
+                            else{
+                                $("#BankSelect").append(new Option(orgName, orgName));
+                            }
+                        }
+
+                        contractOrgInstance.methods.getAccessManagerAddress(account).call({from: account})
+                        .then( (r) => {
+                            contractAccInstance = new web3.eth.Contract(data_acc.abi, r);
+                            console.log("accMgr:"+r);
+                            contractAccInstance.methods.owner().call({from: account})
+                            .then( (r) => {
+                                console.log("owner:"+r);
+                            });
+                        })
+                        .then(async() => {
+                            // Check the authorization of pay
+                            for (let i = 0; i < result.length; ++i) {
+                                if (result[i] == target_address) continue;
+                                await contractAccInstance.methods.validatePermission('pay', target_address, result[i]).call({from: account})
+                                .then( (r) => {
+                                    let upperAddress = "0x"+result[i].substr(2).toUpperCase();
+                                    let orgName = org_mapping[upperAddress][1];
+                                
+                                    
+
+                                    if(r){
+                                        transaction['mode2_'+orgName] = []
+                                        transaction['mode2_'+orgName]['amount'] = 0
+                                        org_mapping_address['mode2_'+orgName] = upperAddress;
+                                        $("#pay_mode2_table > tbody").append('<tr><th scope="row">'+ orgName +'</th><th><input id="mode2_'+ orgName +'" type="text" placeholder="輸入金額" aria-label="Parameter" aria-describedby="basic-addon2" required="required" class="form-control"></th></tr>')
+                                    }
+                                    if(i == result.length-1){
+                                        // Add row to show total amount
+                                        $("#pay_mode2_table > tbody").append('<tr><th scope="row">總共金額</th><th><div id="pay_mode2_total_amount">0</div></th></tr>')
+                                    }
+
+                                });
+                            }  
+                        })
+                        .then(()=>{
+                            //register event listener
+                            $("#pay_mode2_table input[type='text']").on('change', function() {
+                                let input_value = $(this).val();
+                                if(!isNaN(input_value)){
+                                    let old_value = transaction[$(this).attr('id')]['amount'];
+                                    let update_value = input_value - old_value;
+                                    transaction[$(this).attr('id')]['amount'] = input_value
+                                    
+                                    let new_value = parseInt($("#pay_mode2_total_amount").text()) + update_value;
+                                    
+                                    $("#pay_mode2_total_amount").text(new_value)
+                                }
+                                else
+                                {
+                                    $(this).val("")
+                                    alert('請輸入數字')
+                                }
+                            });
+                            origin_html_info = $("#info_icon").html()
+                            $("#pay_mode2_Btn").on('click',function(d){
+                            
+                                $(".cancel-btn").hide();
+                                $(".sign-btn").hide();
+                                $(".reset-btn").hide();
+                                $("#msg_info").empty();
+                                $("#info_icon").empty();
+                                $("#info_icon").append(origin_html_info);
+
+                                let bank = $("#BankSelect").val()
+                                let receive_address  = $("#mode2_receive").val()
+                                
+                                if(receive_address.length==0){
+                                    setTimeout(function(){ 
+                                        $("#info_icon").empty();
+                                        $("#info_icon").append('<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="red" class="bi bi-x-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>') 
+                                        $("#msg_info").attr("style","padding-bottom:10px")
+                                        $("#msg_info").append('<span class="font-weight-bold">帳戶公鑰不可為空</span>')
+                                        $(".reset-btn").show();
+                                    }, 500);
+                                    return;
+                                }
+                                
+                               
+
+                                let amount = []
+                                let org_address = []
+                                let orgs = Object.keys(transaction);
+                                
+                                bank = org_mapping_address['mode2_'+bank]
+                                for (var i = 0; i < orgs.length; i++) {
+                                    org_address.push(org_mapping_address[orgs[i]])
+                                    amount.push(transaction[orgs[i]]['amount'])
+                                }
+                                
+                                $.ajax({
+                                        url: '/tsp/depositCheck',
+                                        data:{
+                                            orgs: org_address,
+                                            amount: amount,
+                                            bank : bank,
+                                            receive_address : receive_address
+                                        },
+                                        type: 'get',
+                                        success: function(res) {
+                                            transaction_response = res;
+                                            if(res['status']){
+                                                setTimeout(function(){ 
+                                                    $("#info_icon").empty();
+                                                    $("#info_icon").append('<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="green" class="bi bi-check-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/></svg>')
+                                                    $("#msg_info").attr("style","padding-bottom:10px")
+                                                    $("#msg_info").append('<span class="font-weight-bold">餘額確認完成，請用私鑰進行簽名</span>')
+                                                    $(".sign-btn").show();
+                                                }, 1000);
+                                                console.log('餘額足夠')
+                                            }
+                                            else{
+                                                if(res['url']){
+                                                    //session timeout login plz
+                                                    console.log('123')
+                                                    location.reload()
+                                                }
+                                                else{
+                                                    setTimeout(function(){ 
+                                                        $("#info_icon").empty();
+                                                        $("#info_icon").append('<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="red" class="bi bi-x-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>') 
+                                                        $("#msg_info").attr("style","padding-bottom:10px")
+                                                        $("#msg_info").append('<span class="font-weight-bold"> '+res['msg']+' </span>')
+                                                        $(".reset-btn").show();
+                                                     }, 1000);
+                                                }
+                                                
+                                                       
+                                            }
+                                            console.log(res)
+                                         
+                                        },
+                                        error: function(err) {
+                                            console.log("error");
+                                        }
+                                })
+                                
+                            });
+                            
+                        })
+                    })
+                    .catch( (err) => {
+                        alert(err);
+                    });
+
+
+                   
+                    // Calculate balance
+                    let deposit = [#{user.balance}];
+                    
+                    //- let orgs = ["#{org_address}".substr(0,5)];
+
+                    let orgs = []
+                    // = [org_mapping["0x"+"#{org_address}".substr(2).toUpperCase()][1]];
+                    
+
+
+                    let a = JSON.parse("#{data}".replace(/&quot;/g,'"'));
+                    let b = JSON.parse("#{orgs}".replace(/&quot;/g,'"'));
+                    
+                    
+
+                    let total = 0;
+                    for (let i = 0; i < a.length; ++i) {
+                        deposit.push(a[i]);
+                        //- orgs.push(b[i]);
+                        orgs.push(org_mapping["0x"+b[i].substr(2).toUpperCase()][1]);
+                    }
+
+                    total = deposit.reduce((a,b)=>parseInt(a, 0)+parseInt(b,0));
+                    $(".total-deposit").html("NT$&nbsp"+total.toLocaleString('en-US'));
+                    // End calculate balance
+
+                    // Calculate invoice
+                    let onlyUnique = (v, idx, self) => {
+                        return self.indexOf(v) === idx;
+                    }
+
+                    let date = JSON.parse("#{date}".replace(/&quot;/g,'"'));
+                    let invoiceTotal = JSON.parse("#{total}".replace(/&quot;/g,'"'));
+                    let resOrg = JSON.parse("#{resOrg}".replace(/&quot;/g,'"'));
+                    //- let date = ["202103", "202104", "202103", "202103", "202103", "202105"];
+                    //- let invoiceTotal = [10, 25, 30, 21, 31, 8];
+                    //- let resOrg = ["0x123", "0x234", "0x123", "0x123", "0x456", "0x234"];
+
+                    console.log(date);
+                    console.log(invoiceTotal);
+                    console.log(resOrg);
+
+                    let mm = new Map();
+                    for (let i = 0; i < date.length; ++i) {
+                        if (mm[date[i]] !== undefined) mm[date[i]] += invoiceTotal[i];
+                        else mm[date[i]] = invoiceTotal[i];
+                    }
+                    let uniqueDate = [];
+                    let invoiceTotalByDate = [];
+                    for (let i in mm) {
+                        uniqueDate.push(i);
+                        invoiceTotalByDate.push(mm[i]);
+                    }
+
+                    let uniqueOrg = resOrg.filter(onlyUnique);
+                    let orgTotalDataset = [];
+                    for (let i = 0; i < uniqueOrg.length; ++i) {
+                        // inital 
+                        let tmp = [];
+                        for (let j = 0; j < uniqueDate.length; ++j) {
+                            tmp.push(0);
+                        }
+
+                        // calculate
+                        for (let k = 0; k < invoiceTotal.length; k++) {
+                            for (let m = 0; m < uniqueDate.length; m++) {
+                                if (uniqueDate[m] === date[k] && resOrg[k] == uniqueOrg[i]) {
+                                    tmp[m] += invoiceTotal[k];
+                                }
+                            }
+                        }
+
+                        // push into dataset
+                        orgTotalDataset.push(tmp);
+                    }
+
+                    orgTotalDataset.push(invoiceTotalByDate);
+
+                    // replace with fullname
+                    for (let i = 0; i < uniqueOrg.length; ++i) {
+                        uniqueOrg[i] = org_mapping["0x"+uniqueOrg[i].substr(2).toUpperCase()][1]
+                    }
+
+
+                    uniqueOrg.push("Total billing amount");
+                    // End calculate invoice
+
+                    if ("#{errorMsg}" !== "") alert("#{errorMsg}");
+
+                    // chart
+                    var ctx1 = document.getElementById("myDoughnut").getContext('2d');
+                    var myDoughnutChart = new Chart(ctx1, {
+                        type: "doughnut",
+                        data: {
+                            datasets: [
+                                {
+                                    backgroundColor: [
+                                        'rgba(255, 99, 132, 0.2)',
+                                        'rgba(54, 162, 235, 0.2)',
+                                        'rgba(255, 206, 86, 0.2)',
+                                        'rgba(75, 192, 192, 0.2)',
+                                        'rgba(153, 102, 255, 0.2)',
+                                        'rgba(255, 159, 64, 0.2)'
+                                    ],
+                                    borderColor: [
+                                        'rgba(255,99,132,1)',
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(255, 206, 86, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(153, 102, 255, 1)',
+                                        'rgba(255, 159, 64, 1)'
+                                    ],
+                                    borderWidth: 1,
+                                    hoverBorderWidth: 4,
+                                    data: deposit
+                                }
+                            ],
+
+                            // These labels appear in the legend and in the tooltips when hovering different arcs
+                            labels: orgs
+                        },
+                        options: {}
+                    });
+
+                    let bcolor = [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(254, 67, 101, 1)'
+                    ];
+                    let ds = [];
+                    for (let i = 0; i < uniqueOrg.length; i++) {
+                        ds.push({
+                            label: uniqueOrg[i],
+                            backgroundColor: ['rgba(0, 0, 0, 0)'],
+                            borderColor:[bcolor[i]],
+                            borderWidth: 1,
+                            data: orgTotalDataset[i]
+                        });
+                    }
+
+                    var ctx2 = document.getElementById("myLine").getContext('2d');
+                    var myLineChart = new Chart(ctx2, {
+                        type: "line",
+                        data: {
+                            datasets: ds ,
+                            // These labels appear in the legend and in the tooltips when hovering different arcs
+                            labels: uniqueDate
+                        },
+                        options: {
+                            elements: {
+                                line: {
+                                    tension: 0 // 禁用贝塞尔曲线
+                                }
+                            },
+                            scales: {
+                                //- yAxes: [{
+                                //-     ticks: { min: 0, max: 30}
+                                //- }]
+                            }
+
+                        }
+                    });
+                });
+            });
+        });

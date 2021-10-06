@@ -27,9 +27,15 @@ router.get('/org.json', function (req, res) {
 });
 
 router.post('/addUser', async function (req, res, next) {
+    console.log("123")
+    web3.eth.net.isListening()
+    .then(() => console.log('is connected'))
+    .catch(e => console.log('Wow. Something went wrong: '+ e));
+    
     let contract = JSON.parse(fs.readFileSync('./build/contracts/OrganizationManager.json', 'utf-8'));
     let contractInstance = new web3.eth.Contract(contract.abi, contract_address);
     let txHash;
+   
 
     // await web3.eth.getBalance(admin_address).then(function(result) {
     //     balance = result;
@@ -72,6 +78,7 @@ router.post('/addUser', async function (req, res, next) {
     let signedTxObj;
     let tx_builder = contractInstance.methods.addUser(userId);
     let encode_tx = tx_builder.encodeABI();
+
     let transactionObject = {
         gas: 6721975,
         data: encode_tx,

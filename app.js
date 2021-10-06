@@ -9,6 +9,7 @@ var users = require('./routes/users');
 var profile = require('./routes/profile');
 var dataSharing = require('./routes/dataSharing');
 var metamask_connect = require('./routes/metamask-connect');
+var tsp = require('./routes/tsp');
 
 var passport = require('passport');
 var cookieSession = require('cookie-session');
@@ -63,12 +64,14 @@ app.use('/users', users);
 app.use('/profile', profile);
 app.use('/metamask-connect', metamask_connect);
 app.use('/dataSharing', dataSharing);
+app.use('/tsp',tsp);
 
 // api route
 require("./routes/token.routes")(app);
 require("./routes/user.routes")(app);
 require("./routes/invoice.routes")(app);
 require("./routes/test.routes")(app);
+require("./routes/payment.routes")(app);
 
 passport.use(new LdapStrategy(OPTS));
 
