@@ -16,6 +16,7 @@ var crypto = require("crypto");
 const db = require("../models");
 const multer  = require('multer')
 const upload = multer({ dest: 'uploads/' }).single('idDoc')
+const fetch = require('node-fetch');
 
 const config = JSON.parse(fs.readFileSync('./server-config.json', 'utf-8'));    
 const web3 = new Web3(new Web3.providers.WebsocketProvider(config.web3_provider));
@@ -490,8 +491,8 @@ router.get('/protectedInvoice', verifyTokenForInvoice, async function(req, res) 
         const accessBehavior = {
             identity: hashed,
             attribute: 'bill',
-            orgA: config.org_mapping['0x'+ admin_address.substr(2).toUpperCase()][1],
-            orgB: req.sub,
+            orgA: config.org_mapping['0x'+ req.sub.substr(2).toUpperCase()][1],
+            orgB: config.org_mapping['0x'+ admin_address.substr(2).toUpperCase()][1],
             timestamp: formatDate(date)
         }
         db.accessBehaviors.create(accessBehavior);
@@ -581,13 +582,14 @@ router.post('/oao', function(req, res, next) {
 
 
             // TODO: Get pii from another bank
-            
+            console.log("hhahahahahahhaah")
             req.body.identity = identity;
             if (identity == "") {
                 res.send({state: false, msg: "Empty identity"});
             }
             else{
                 // queryUser
+                console.log("hellllllo")
                 let provider_ip = config.org_mapping['0x'+ req.body.selectedBank.substr(2).toUpperCase()][0]
                 await fetch(`http://${provider_ip}/users/oaoQueryUser?hashed=${identity}&org=${admin_address}`)
                     .then(res => res.json())
