@@ -582,7 +582,6 @@ router.post('/oao', function(req, res, next) {
 
 
             // TODO: Get pii from another bank
-            console.log("hhahahahahahhaah")
             req.body.identity = identity;
             if (identity == "") {
                 res.send({state: false, msg: "Empty identity"});
@@ -592,8 +591,10 @@ router.post('/oao', function(req, res, next) {
                 console.log("hellllllo")
                 let provider_ip = config.org_mapping['0x'+ req.body.selectedBank.substr(2).toUpperCase()][0]
                 await fetch(`http://${provider_ip}/users/oaoQueryUser?hashed=${identity}&org=${admin_address}`)
-                    .then(res => res.json())
-                    .then(json => {
+                    .then(function(response) {
+                        return response.json();
+                      })
+                    .then(function(json) {
                         console.log(json)
                         // addUser on Chain in here ... but skip !
                     })
