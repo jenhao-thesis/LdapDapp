@@ -740,8 +740,10 @@ block content
                         //- orgs.push(b[i]);
                         orgs.push(org_mapping["0x"+b[i].substr(2).toUpperCase()][1]);
                     }
-
-                    total = deposit.reduce((a,b)=>parseInt(a, 0)+parseInt(b,0));
+                    if(deposit.length!=0){
+                        total = deposit.reduce((a,b)=>parseInt(a, 0)+parseInt(b,0));
+                    }
+                    
                     $(".total-deposit").html("NT$&nbsp"+total.toLocaleString('en-US'));
                     // End calculate balance
 
