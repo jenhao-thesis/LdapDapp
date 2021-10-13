@@ -182,7 +182,7 @@ block content
                             thead.thead-light
                                 tr
                                     th(scope="col") 轉帳銀行
-                                    th(scope="col") 帳戶公鑰
+                                    th(scope="col") 收款人公鑰
                             tbody
                                 tr
                                     th 
@@ -472,6 +472,7 @@ block content
             $(".sign-btn").on('click',function(){
                 let packet;
                 let url;
+                console.log('123')
                 if(transaction_response){
                     // 整合支付
                     url = '/tsp/executeTransfer'
@@ -485,6 +486,7 @@ block content
                 
                 web3.eth.personal.sign(packet, account).then((res) => {
                     console.log(res)
+                    
                     $.ajax({
                         url: url,
                         data:{
@@ -492,14 +494,14 @@ block content
                         },
                         type: 'post',
                         success: function(res) {
-                            console.log("success");
-                            console.log(res)
                             if(res.success){
-                                alert('完成繳費')
-                                
-                                                    
+                                alert('完成繳費')   
                                 //$("#pay_card").empty();
                                 //$("#pay_card").append(origin_html);
+                                location.reload()
+                            }
+                            else{
+                                alert(res.msg)
                                 location.reload()
                             }
                         },
@@ -686,7 +688,7 @@ block content
                                             else{
                                                 if(res['url']){
                                                     //session timeout login plz
-                                                    console.log('123')
+                                                    alert('session過期請重新登入')
                                                     location.reload()
                                                 }
                                                 else{

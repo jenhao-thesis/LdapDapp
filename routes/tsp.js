@@ -518,6 +518,8 @@ let getDepositInfo = async (req , res , next) =>{
     }
 };
 router.post('/executeTransfer',async function(req,res){
+    console.log("executeTransfer")
+    console.log(req.user)
     if (req.isAuthenticated()) {
         let transaction_status = {status:true};
         let packet = req.body.packet;
@@ -578,7 +580,6 @@ router.post('/executeTransfer',async function(req,res){
 
                 if (json.success) {
                     console.log('hello')
-                      
                 } 
                 else {
                     transaction_status['status'] = false
@@ -593,10 +594,12 @@ router.post('/executeTransfer',async function(req,res){
             }
         }
         else{
-            console.log('123')
             return res.json({success: false, message: "ecRecover"})
         }
         
+    }
+    else{
+        return res.json({success: false, message: "session過期請重新登入"})
     }
 })
 
