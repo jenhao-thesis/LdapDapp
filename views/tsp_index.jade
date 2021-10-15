@@ -246,6 +246,10 @@ block content
             let origin_html_pay;
 
             let origin_html_info;
+
+            for(var key in org_mapping){
+                org_mapping_address[org_mapping[key][1]] = key
+            }
             
 
             window.ethereum.on('accountsChanged', function(accounts) {
@@ -440,7 +444,7 @@ block content
                     })
                 })
             }
-           
+            
             $("#paymentBtn").on("click", function(e) {
                 let payment_number = $('#paymentNumber').val();
                 $.ajax({
@@ -468,6 +472,7 @@ block content
                 });
                 
             });
+            
 
             $(".sign-btn").on('click',function(){
                 let packet;
@@ -593,13 +598,11 @@ block content
                                     let upperAddress = "0x"+result[i].substr(2).toUpperCase();
                                     let orgName = org_mapping[upperAddress][1];
                                 
-                                    
-
                                     if(r){
-                                        transaction['mode2_'+orgName] = []
-                                        transaction['mode2_'+orgName]['amount'] = 0
-                                        org_mapping_address['mode2_'+orgName] = upperAddress;
-                                        $("#pay_mode2_table > tbody").append('<tr><th scope="row">'+ orgName +'</th><th><input id="mode2_'+ orgName +'" type="text" placeholder="輸入金額" aria-label="Parameter" aria-describedby="basic-addon2" required="required" class="form-control"></th></tr>')
+                                        transaction[orgName] = []
+                                        transaction[orgName]['amount'] = 0
+                                        //org_mapping_address['mode2_'+orgName] = upperAddress;
+                                        $("#pay_mode2_table > tbody").append('<tr><th scope="row">'+ orgName +'</th><th><input id="'+ orgName +'" type="text" placeholder="輸入金額" aria-label="Parameter" aria-describedby="basic-addon2" required="required" class="form-control"></th></tr>')
                                     }
                                     if(i == result.length-1){
                                         // Add row to show total amount
@@ -658,7 +661,9 @@ block content
                                 let org_address = []
                                 let orgs = Object.keys(transaction);
                                 
-                                bank = org_mapping_address['mode2_'+bank]
+                                bank = org_mapping_address[bank]
+                                console.log('bankAddress:',bank)
+                                console.log(orgs)
                                 for (var i = 0; i < orgs.length; i++) {
                                     org_address.push(org_mapping_address[orgs[i]])
                                     amount.push(transaction[orgs[i]]['amount'])
@@ -688,7 +693,7 @@ block content
                                             else{
                                                 if(res['url']){
                                                     //session timeout login plz
-                                                    alert('session過期請重新登入')
+                                                    alert(res['msg'])
                                                     location.reload()
                                                 }
                                                 else{

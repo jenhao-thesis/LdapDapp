@@ -299,7 +299,7 @@ let getProtectedData = async (req, res, next) => {
                         .then(json => {
                             if (json.success) {
                                 result = JSON.parse(json.data);
-                                console.log(result);
+                                //console.log(result);
                                 orgs.push(tokens[i].org);
                                 data.push(result.balance);
                             } else {
@@ -329,7 +329,7 @@ let getProtectedData = async (req, res, next) => {
                             if (json.success) {
                                 result = json.data;
                                 for (let j = 0; j < result.length; ++j) {
-                                    console.log(result[j]);
+                                    //console.log(result[j]);
                                     date.push(result[j].invoiceDate);
                                     total.push(result[j].total);
                                     resOrg.push(tokens[i].org);
@@ -369,7 +369,8 @@ let getProtectedData = async (req, res, next) => {
 
 let getDepositInfo = async (req , res , next) =>{
     if (!req.isAuthenticated()) {
-        return  res.json({'status':false,'url':'/tsp'})
+        console.log('not login in')
+        return  res.json({'status':false,'url':'/tsp' , msg:"login first"})
     }
     else
     {
@@ -381,7 +382,7 @@ let getDepositInfo = async (req , res , next) =>{
 
         // check value is exist
         if(!orgs || !amount || !bank || !receive_address){
-            return  res.json({'status':false,'url':'/tsp'})
+            return  res.json({'status':false,'url':'/tsp','msg':'error'})
         }
 
         let transaction = {
@@ -406,20 +407,27 @@ let getDepositInfo = async (req , res , next) =>{
             try {
                 await contractInstance.methods.isRegistered(bank).call({from:receive_address})
                 .then ( (r) => {
-
                     if(r){
                         contractInstance.methods.getId().call({from: receive_address})
                         .then( (result) => {
                             transaction['receive_address'] = result
                             transaction['bank'] = bank
+                            console.log('===============\n')
+                            console.log(transaction['bank'])
+                            console.log('===============\n')
                         })
+                    }
+                    else{
+                        transaction['status'] = false
+                        transaction['receive_address'] = false
+                        transaction['msg'] += "收款人帳戶不存在"
                     }
                 })
             }
             catch(e) {
                 transaction['status'] = false
                 transaction['receive_address'] = false
-                transaction['msg'] += "account is not exist."
+                transaction['msg'] += "收款人帳戶不存在"
             }
                 
         }
@@ -500,7 +508,6 @@ let getDepositInfo = async (req , res , next) =>{
                 else{
                     transaction['status'] = false;
                     transaction['nonce'].push("-1")
-                    
                     transaction['msg']+= " Tsp does not have permission to check the " + config.org_mapping[orgs[i]][1] + " balance."
                     
                     
